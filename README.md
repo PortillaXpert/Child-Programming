@@ -107,9 +107,10 @@ La plataforma está pensada para docentes, facilitadores y estudiantes. Permite 
 <h2 id="contacto">Contacto</h2>
 
 <p>
-<b>Juan Pablo Rivera</b> – Everhech – juprivera@unicauca.edu.co<br />
-<b>Edwin Orlando Restrepo</b> – XxTorricellixX – erestrepom@unicauca.edu.co<br />
+<b>Juan Pablo Rivera</b> – PortillaXpert – juprivera@unicauca.edu.co<br />
+<b>Edwin Orlando Restrepo</b> – Everhech – erestrepom@unicauca.edu.co<br />
 <b>Jesús David Cárdenas</b> – Jdcarsa – jcardenass@unicauca.edu.co<br />
+<b>Andrés Torres Ciceri</b> – XxTorricellixX – andrestorresc@unicauca.edu.co<br />
 <b>Julio Ariel Hurtado Alegría:</b>  – ahurtado@unicauca.edu.co<br />
 Repositorio: <a href="https://github.com/PortillaXpert/Child-Programming">Child Programming</a>
 </p>
