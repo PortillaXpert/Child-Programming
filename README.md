@@ -45,7 +45,7 @@ Tecnologías utilizadas en el desarrollo:
 
 <ol>
   <li>Clona el repositorio:
-    <pre><code>git clone https://github.com/Everhech/child-programming.git</code></pre>
+    <pre><code>git clone https://github.com/PortillaXpert/child-programming.git</code></pre>
   </li>
   <li>Configura el backend con Oracle Database local.</li>
   <li>Ejecuta el frontend y backend en paralelo.</li>
