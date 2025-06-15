@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ~/docker-volumes/personal/cqrs-postgres:/var/lib/postgresql
+      - ~/Desktop/tmp:/tmp
+    ports:
+      - '10002:5432'
