@@ -8,9 +8,9 @@ spring:
     name: chpp_teams_proyects
 
   datasource:
-    url: jdbc:postgresql://localhost:10002/postgres
-    username: postgres
-    password: postgres
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
