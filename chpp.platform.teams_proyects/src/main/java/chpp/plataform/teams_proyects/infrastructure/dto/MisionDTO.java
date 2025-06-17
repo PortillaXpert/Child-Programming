@@ -16,6 +16,5 @@ public class MisionDTO {
     private List<String> objectives;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private List<TeamDTO> teams;
     private List<AttachmentDTO> materials;
 }

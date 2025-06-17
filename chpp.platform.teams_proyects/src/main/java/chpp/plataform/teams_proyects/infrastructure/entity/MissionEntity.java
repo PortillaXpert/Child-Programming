@@ -55,9 +55,6 @@ public class MissionEntity {
     @Column(nullable = false)
     private boolean active;
 
-    @OneToMany(mappedBy = "mission", fetch = FetchType.LAZY)
-    private List<TeamEntity> teams;
-
     @OneToMany(mappedBy = "mission",
             cascade = CascadeType.ALL,
             orphanRemoval = true,

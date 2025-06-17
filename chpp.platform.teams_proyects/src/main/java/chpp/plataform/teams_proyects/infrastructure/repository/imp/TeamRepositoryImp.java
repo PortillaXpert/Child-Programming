@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class TeamRepositoryImp implements ITeamRepository {
 
     private final JpaTeamRepository jpaTeamRepository;
-    private final JpaMissionRepository jpaMissionRepository;
+
 
     @Override
     public Team create(Team team) {
@@ -39,13 +39,6 @@ public class TeamRepositoryImp implements ITeamRepository {
         return TeamEntityMapper.toDomain(jpaTeamRepository.save(entity));
     }
 
-    @Override
-    public void delete(Long id) {
-        if (!jpaTeamRepository.existsById(id)) {
-            throw new EntityNotFoundException();
-        }
-        jpaTeamRepository.deleteById(id);
-    }
 
     @Override
     public Optional<Team> findById(Long id) {
@@ -93,17 +86,5 @@ public class TeamRepositoryImp implements ITeamRepository {
         jpaTeamRepository.delete(team);
     }
 
-    @Override
-    @Transactional
-    public void assignMission(Long teamId, Long missionId) {
-        TeamEntity team = jpaTeamRepository.findById(teamId)
-                .orElseThrow(() -> new EntityNotFoundException("Team not found"));
-
-        MissionEntity mission = jpaMissionRepository.findById(missionId)
-                .orElseThrow(() -> new EntityNotFoundException("Mission not found"));
-
-        team.setMission(mission);
-        jpaTeamRepository.save(team);
-    }
 
 }

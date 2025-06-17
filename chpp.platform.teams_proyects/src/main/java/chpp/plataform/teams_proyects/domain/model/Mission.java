@@ -19,6 +19,5 @@ public class Mission {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private boolean active;
-    private List<Team> teams;
     private List<Attachment> materials;
 }

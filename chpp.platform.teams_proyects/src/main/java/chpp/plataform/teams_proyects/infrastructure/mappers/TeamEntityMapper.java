@@ -14,7 +14,6 @@ public class TeamEntityMapper {
                 .id(team.getId())
                 .name(team.getName())
                 .course(team.getCourse())
-                .mission(null)
                 .students(team.getStudents() != null ?
                         team.getStudents().stream()
                                 .map(StudentEntityMapper::toEntity)
@@ -32,8 +31,7 @@ public class TeamEntityMapper {
                 entity.getStudents() != null ?
                         entity.getStudents().stream()
                                 .map(StudentEntityMapper::toDomain)
-                                .collect(Collectors.toList()) : null,
-                entity.getMission() != null ? entity.getMission().getId() : null
+                                .collect(Collectors.toList()) : null
         );
     }
 }

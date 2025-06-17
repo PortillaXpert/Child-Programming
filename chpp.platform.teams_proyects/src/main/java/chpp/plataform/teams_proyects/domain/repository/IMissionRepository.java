@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IMissionRepository {
-    Mission create(Mission mission);
+    Mission save(Mission mission);
     Optional<Mission> findById(Long id);
-    List<Mission> findMissions();
-    void update(Mission mission);
-    void deactivate(Long id);
+    List<Mission> findAll();
+    List<Mission> findByActiveTrue();
+    List<Mission> findByActiveFalse();
+    boolean deactivateMission(Long id);
 }

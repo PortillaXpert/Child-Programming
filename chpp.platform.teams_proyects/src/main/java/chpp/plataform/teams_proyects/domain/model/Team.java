@@ -14,5 +14,4 @@ public class Team {
     private String name;
     private String course;
     private List<Student> students;
-    private Long missionId;
 }

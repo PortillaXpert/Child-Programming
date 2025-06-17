@@ -88,15 +88,6 @@ public class TeamController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/{teamId}/missions/{missionId}")
-    @Operation(summary = "Asignar misión a equipo")
-    @ApiResponse(responseCode = "200", description = "Misión asignada")
-    public ResponseEntity<ResponseDto<Void>> assignMission(
-            @PathVariable Long teamId,
-            @PathVariable Long missionId) {
-        ResponseDto<Void> response = teamService.assignMission(teamId, missionId);
-        return ResponseEntity.ok(response);
-    }
 
     @DeleteMapping("/{teamId}")
     @Operation(summary = "Disolver equipo")

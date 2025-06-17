@@ -19,5 +19,4 @@ public interface ITeamService {
 
     ResponseDto<Void> dissolveTeam(Long teamId);
 
-    ResponseDto<Void> assignMission(Long teamId, Long missionId);
 }

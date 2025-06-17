@@ -25,13 +25,6 @@ public class TeamServiceImp implements ITeamService {
 
     @Override
     public ResponseDto<TeamDTO> createTeam(TeamDTO teamDto) {
-        if (teamDto.getId() != null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM010,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM010, teamDto.getId())
-            );
-        }
         Team team = TeamMapper.toDomain(teamDto);
         Team createdTeam = teamRepository.create(team);
         TeamDTO createdTeamDto = TeamMapper.toDTO(createdTeam);
@@ -152,30 +145,6 @@ public class TeamServiceImp implements ITeamService {
         return new ResponseDto<>(
                 HttpStatus.NO_CONTENT.value(),
                 MessageLoader.getInstance().getMessage(MessagesConstant.IM004),
-                null
-        );
-    }
-
-    @Override
-    public ResponseDto<Void> assignMission(Long teamId, Long missionId) {
-        if (missionId == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM006,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, "missionId")
-            );
-        }
-        //TODO
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new BusinessRuleException(
-                        HttpStatus.NOT_FOUND.value(),
-                        MessagesConstant.EM002,
-                        MessageLoader.getInstance().getMessage(MessagesConstant.EM002, teamId)
-                ));
-        //teamRepository.assignMission(teamId, missionId);
-        return new ResponseDto<>(
-                HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM003),
                 null
         );
     }
