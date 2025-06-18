@@ -6,6 +6,7 @@ import chpp.plataform.teams_proyects.domain.model.Mission;
 import chpp.plataform.teams_proyects.domain.repository.IMissionRepository;
 import chpp.plataform.teams_proyects.domain.service.IMissionService;
 import chpp.plataform.teams_proyects.infrastructure.dto.MisionDTO;
+import chpp.plataform.teams_proyects.infrastructure.exceptions.BusinessRuleException;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionMapper;
 import chpp.plataform.teams_proyects.infrastructure.messages.MessageLoader;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 
 @Service
@@ -36,7 +37,7 @@ public class MissionServiceImp implements IMissionService {
     }
 
     @Override
-    public  ResponseDto<List<MisionDTO>> getAllMissions() {
+    public ResponseDto<List<MisionDTO>> getAllMissions() {
         List<Mission> allMissions = missionRepository.findAll();
         if (allMissions.isEmpty()) {
             return new ResponseDto<>(
@@ -58,31 +59,114 @@ public class MissionServiceImp implements IMissionService {
 
     @Override
     public ResponseDto<MisionDTO> updateMission(Long id, MisionDTO missionDTO) {
-        return null;
+        Mission existingMission = missionRepository.findById(id)
+                .orElseThrow(() -> new BusinessRuleException(
+                        HttpStatus.NOT_FOUND.value(),
+                        MessagesConstant.EM002,
+                        MessageLoader.getInstance().getMessage(MessagesConstant.EM002, id)
+                ));
+
+        Mission updatedMission = MissionMapper.toDomain(missionDTO);
+        missionRepository.save(updatedMission);
+
+        return new ResponseDto<>(
+                HttpStatus.OK.value(),
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM003),
+                MissionMapper.toDTO(updatedMission)
+        );
     }
 
     @Override
     public ResponseDto<MisionDTO> getMissionById(Long id) {
-        return null;
+        Mission mission = missionRepository.findById(id)
+                .orElseThrow(() -> new BusinessRuleException(
+                        HttpStatus.NOT_FOUND.value(),
+                        MessagesConstant.EM002,
+                        MessageLoader.getInstance().getMessage(MessagesConstant.EM002, id)
+                ));
+
+        return new ResponseDto<>(
+                HttpStatus.OK.value(),
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
+                MissionMapper.toDTO(mission)
+        );
     }
 
     @Override
     public ResponseDto<List<MisionDTO>> getActiveMissions() {
-        return null;
+        List<MisionDTO> missions = missionRepository.findByActiveTrue().stream()
+                .map(MissionMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return new ResponseDto<>(
+                HttpStatus.OK.value(),
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
+                missions
+        );
     }
 
     @Override
     public ResponseDto<List<MisionDTO>> getInactiveMissions() {
-        return null;
+        List<MisionDTO> missions = missionRepository.findByActiveFalse().stream()
+                .map(MissionMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return new ResponseDto<>(
+                HttpStatus.OK.value(),
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
+                missions
+        );
     }
 
     @Override
     public ResponseDto<Void> activateMission(Long missionId) {
-        return null;
+        if (missionRepository.findById(missionId).isEmpty()) {
+            throw new BusinessRuleException(
+                    HttpStatus.NOT_FOUND.value(),
+                    MessagesConstant.EM002,
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM002, missionId)
+            );
+        }
+
+        boolean activated = missionRepository.activateMission(missionId);
+        if (!activated) {
+            throw new BusinessRuleException(
+                    HttpStatus.CONFLICT.value(),
+                    MessagesConstant.EM011,
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM011, "Mission", missionId)
+            );
+        }
+
+        return new ResponseDto<>(
+                HttpStatus.NO_CONTENT.value(),
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM003),
+                null
+        );
     }
 
     @Override
     public ResponseDto<Void> deactivateMission(Long missionId) {
-        return null;
+        if (missionRepository.findById(missionId).isEmpty()) {
+            throw new BusinessRuleException(
+                    HttpStatus.NOT_FOUND.value(),
+                    MessagesConstant.EM002,
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM002, missionId)
+            );
+        }
+
+        boolean deactivated = missionRepository.deactivateMission(missionId);
+        if (!deactivated) {
+            throw new BusinessRuleException(
+                    HttpStatus.CONFLICT.value(),
+                    MessagesConstant.EM011,
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM011, "Mission", missionId)
+            );
+        }
+
+        return new ResponseDto<>(
+                HttpStatus.NO_CONTENT.value(),
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM004),
+                null
+        );
     }
 }

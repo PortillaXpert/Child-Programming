@@ -23,7 +23,8 @@ public class StudentEntityMapper {
                 entity.getId(),
                 entity.getStudentCod(),
                 entity.getFullName(),
-                entity.getEmail()
+                entity.getEmail(),
+                entity.getTeam() != null ? entity.getTeam().getId() : null
         );
     }
 }

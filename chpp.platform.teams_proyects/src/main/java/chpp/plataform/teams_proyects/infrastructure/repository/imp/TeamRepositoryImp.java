@@ -3,8 +3,10 @@ package chpp.plataform.teams_proyects.infrastructure.repository.imp;
 import chpp.plataform.teams_proyects.domain.model.Team;
 import chpp.plataform.teams_proyects.domain.repository.ITeamRepository;
 import chpp.plataform.teams_proyects.infrastructure.entity.MissionEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.StudentEntity;
 import chpp.plataform.teams_proyects.infrastructure.entity.TeamEntity;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
+import chpp.plataform.teams_proyects.infrastructure.repository.jpa.IJpaStudentRepository;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaMissionRepository;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaTeamRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 public class TeamRepositoryImp implements ITeamRepository {
 
     private final JpaTeamRepository jpaTeamRepository;
-
+    private final IJpaStudentRepository jpaStudentRepository;
 
     @Override
     public Team create(Team team) {
@@ -70,12 +72,20 @@ public class TeamRepositoryImp implements ITeamRepository {
     @Override
     @Transactional
     public void reassignStudent(Long studentId, Long newTeamId) {
-        TeamEntity team = jpaTeamRepository.findById(newTeamId)
-                .orElseThrow(EntityNotFoundException::new);
 
-        // TODO Lógica de reasignación aquí
+        StudentEntity student = jpaStudentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Estudiante no encontrado con ID: " + studentId));
 
-        jpaTeamRepository.save(team);
+        TeamEntity newTeam = jpaTeamRepository.findById(newTeamId)
+                .orElseThrow(() -> new EntityNotFoundException("Equipo no encontrado con ID: " + newTeamId));
+
+
+        if (student.getTeam() != null && student.getTeam().getId().equals(newTeamId)) {
+            return;
+        }
+
+        student.setTeam(newTeam);
+        jpaStudentRepository.save(student);
     }
 
     @Override

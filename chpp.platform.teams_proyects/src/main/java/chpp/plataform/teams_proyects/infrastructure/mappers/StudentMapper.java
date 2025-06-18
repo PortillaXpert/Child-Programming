@@ -17,7 +17,7 @@ public class StudentMapper {
         return new Student(
                 dto.getId(),
                 dto.getStudentCod(),
-                dto.getFullName(),null
+                dto.getFullName(),null,null
         );
     }
 }

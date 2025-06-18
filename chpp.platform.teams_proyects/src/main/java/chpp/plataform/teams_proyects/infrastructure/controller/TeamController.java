@@ -7,6 +7,7 @@ import chpp.plataform.teams_proyects.infrastructure.dto.TeamDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ import java.util.List;
 
 @Log4j2
 @RestController
-@RequestMapping("/api/v1/teams")
+@RequestMapping("/teams")
 @Tag(name = "Teams Controller", description = "Manejo de equipos de ChildProgramming")
 @RequiredArgsConstructor
 public class TeamController {
@@ -37,7 +38,7 @@ public class TeamController {
     @PostMapping
     @Operation(summary = "Crear un nuevo equipo")
     @ApiResponse(responseCode = "201", description = "Equipo creado exitosamente")
-    public ResponseEntity<ResponseDto<TeamDTO>> createTeam(@RequestBody TeamDTO teamDTO) {
+    public ResponseEntity<ResponseDto<TeamDTO>> createTeam(@Valid @RequestBody TeamDTO teamDTO) {
         ResponseDto<TeamDTO> response = teamService.createTeam(teamDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -55,7 +56,7 @@ public class TeamController {
     @ApiResponse(responseCode = "200", description = "Equipo actualizado exitosamente")
     public ResponseEntity<ResponseDto<TeamDTO>> updateTeam(
             @PathVariable Long id,
-            @RequestBody TeamDTO teamDTO) {
+            @Valid @RequestBody TeamDTO teamDTO) {
         ResponseDto<TeamDTO> response = teamService.updateTeam(id, teamDTO);
         return ResponseEntity.ok(response);
     }
