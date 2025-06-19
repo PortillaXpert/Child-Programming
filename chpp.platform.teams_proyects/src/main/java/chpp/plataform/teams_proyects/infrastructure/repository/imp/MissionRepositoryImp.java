@@ -23,6 +23,7 @@ public class MissionRepositoryImp implements IMissionRepository {
     @Override
     public Mission save(Mission mission) {
         MissionEntity entity = MissionEntityMapper.toEntity(mission);
+        entity.setActive(true);
         MissionEntity savedEntity = jpaMissionRepository.save(entity);
         return MissionEntityMapper.toDomain(savedEntity);
     }
