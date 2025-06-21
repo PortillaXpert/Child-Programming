@@ -16,8 +16,7 @@ public class AttachmentMapper {
         return new Attachment(
                 dto.getId(),
                 dto.getFileName(),
-                dto.getUrl(),
-                null
+                dto.getUrl(), null
         );
     }
 }

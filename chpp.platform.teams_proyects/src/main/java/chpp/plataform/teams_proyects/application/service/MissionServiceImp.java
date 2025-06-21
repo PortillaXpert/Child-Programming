@@ -139,8 +139,8 @@ public class MissionServiceImp implements IMissionService {
 
         return new ResponseDto<>(
                 HttpStatus.NO_CONTENT.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM003),
-                null
+                MessagesConstant.IM005,
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM005, "activate")
         );
     }
 
@@ -165,8 +165,8 @@ public class MissionServiceImp implements IMissionService {
 
         return new ResponseDto<>(
                 HttpStatus.NO_CONTENT.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM004),
-                null
+                MessagesConstant.IM005,
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM005, "desactivate")
         );
     }
 }

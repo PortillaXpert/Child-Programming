@@ -90,7 +90,7 @@ public class MissionController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{id}/deactivate")
+    @PatchMapping("/{id}/desactivate")
     @Operation(summary = "Desactivar una misión")
     @ApiResponse(responseCode = "200", description = "Misión desactivada exitosamente")
     public ResponseEntity<ResponseDto<Void>> deactivateMission(@PathVariable Long id) {

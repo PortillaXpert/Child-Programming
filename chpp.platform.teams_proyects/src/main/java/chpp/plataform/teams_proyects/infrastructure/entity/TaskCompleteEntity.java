@@ -1,5 +1,6 @@
 package chpp.plataform.teams_proyects.infrastructure.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,5 +33,6 @@ public class TaskCompleteEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignment_id", nullable = false)
+    @JsonIgnore
     private MissionTeamAssignedEntity assignment;
 }

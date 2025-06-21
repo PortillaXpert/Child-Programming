@@ -11,5 +11,5 @@ public class Attachment {
     private Long id;
     private String fileName;
     private String url;
-    private Long missionId;
+    private Mission mission;
 }

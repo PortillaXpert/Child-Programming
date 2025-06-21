@@ -28,6 +28,7 @@ public class TeamServiceImp implements ITeamService {
         Team team = TeamMapper.toDomain(teamDto);
         Team createdTeam = teamRepository.create(team);
         TeamDTO createdTeamDto = TeamMapper.toDTO(createdTeam);
+        //TODO: Verificar si el estudiante ya esta en otro equipo antes de crear uno nuevo
         return new ResponseDto<>(
                 HttpStatus.CREATED.value(),
                 MessageLoader.getInstance().getMessage(MessagesConstant.IM002),
@@ -45,6 +46,7 @@ public class TeamServiceImp implements ITeamService {
                 ));
         Team team = TeamMapper.toDomain(teamDto);
         team.setId(id);
+
         Team updatedTeam = teamRepository.update(id,team);
         TeamDTO updatedTeamDto = TeamMapper.toDTO(updatedTeam);
         return new ResponseDto<>(

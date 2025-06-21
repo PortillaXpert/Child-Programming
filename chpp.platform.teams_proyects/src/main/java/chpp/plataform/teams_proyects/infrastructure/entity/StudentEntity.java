@@ -24,22 +24,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StudentEntity {
+    public class StudentEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @Column(unique = true, nullable = false)
-    private Long studentCod;
+        @Column(unique = true, nullable = false)
+        private Long studentCod;
 
-    @Column(nullable = false, length = 150)
-    private String fullName;
+        @Column(nullable = false, length = 150)
+        private String fullName;
 
-    @Column(nullable = false, unique = true, length = 100)
-    private String email;
+        @Column(nullable = false, unique = true, length = 100)
+        private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
-    private TeamEntity team;
-}
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "team_id")
+        private TeamEntity team;
+    }

@@ -71,4 +71,10 @@ public class MissionRepositoryImp implements IMissionRepository {
         return updatedRows > 0;
     }
 
+    //TODO: Implement update method
+    @Override
+    public Mission update(Mission mission) {
+        return null;
+    }
+
 }

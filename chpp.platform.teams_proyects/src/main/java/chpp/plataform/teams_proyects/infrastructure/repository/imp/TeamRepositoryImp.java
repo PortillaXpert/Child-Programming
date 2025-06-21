@@ -2,12 +2,10 @@ package chpp.plataform.teams_proyects.infrastructure.repository.imp;
 
 import chpp.plataform.teams_proyects.domain.model.Team;
 import chpp.plataform.teams_proyects.domain.repository.ITeamRepository;
-import chpp.plataform.teams_proyects.infrastructure.entity.MissionEntity;
 import chpp.plataform.teams_proyects.infrastructure.entity.StudentEntity;
 import chpp.plataform.teams_proyects.infrastructure.entity.TeamEntity;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.IJpaStudentRepository;
-import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaMissionRepository;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaTeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

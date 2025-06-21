@@ -11,9 +11,7 @@ public class AttachmentEntityMapper {
                 entity.getId(),
                 entity.getFileName(),
                 entity.getUrl(),
-                entity.getMission() != null ?
-                        MissionEntityMapper.toDomain(entity.getMission()).getId()
-                        : null
+                entity.getMission() != null ? MissionEntityMapper.toDomain(entity.getMission()) : null
         );
     }
 
@@ -22,7 +20,11 @@ public class AttachmentEntityMapper {
         entity.setId(attachment.getId());
         entity.setFileName(attachment.getFileName());
         entity.setUrl(attachment.getUrl());
+
+        if (attachment.getMission() != null) {
+            entity.setMission(MissionEntityMapper.toEntity(attachment.getMission()));
+        }
+
         return entity;
     }
-
 }
