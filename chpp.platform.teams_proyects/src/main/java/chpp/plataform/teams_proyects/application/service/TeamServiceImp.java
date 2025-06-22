@@ -25,10 +25,11 @@ public class TeamServiceImp implements ITeamService {
 
     @Override
     public ResponseDto<TeamDTO> createTeam(TeamDTO teamDto) {
+        validateTeamDTO(teamDto);
         Team team = TeamMapper.toDomain(teamDto);
         Team createdTeam = teamRepository.create(team);
         TeamDTO createdTeamDto = TeamMapper.toDTO(createdTeam);
-        //TODO: Verificar si el estudiante ya esta en otro equipo antes de crear uno nuevo
+        //TODO: Verificar si el estudiante ya está en otro equipo antes de crear uno nuevo
         return new ResponseDto<>(
                 HttpStatus.CREATED.value(),
                 MessageLoader.getInstance().getMessage(MessagesConstant.IM002),
@@ -38,16 +39,11 @@ public class TeamServiceImp implements ITeamService {
 
     @Override
     public ResponseDto<TeamDTO> updateTeam(Long id, TeamDTO teamDto) {
-        Team existingTeam = teamRepository.findById(id)
-                .orElseThrow(() -> new BusinessRuleException(
-                        HttpStatus.NOT_FOUND.value(),
-                        MessagesConstant.EM002,
-                        MessageLoader.getInstance().getMessage(MessagesConstant.EM002, id)
-                ));
+        Team existingTeam = getTeamOrThrow(id);
+        validateTeamDTO(teamDto);
         Team team = TeamMapper.toDomain(teamDto);
         team.setId(id);
-
-        Team updatedTeam = teamRepository.update(id,team);
+        Team updatedTeam = teamRepository.update(id, team);
         TeamDTO updatedTeamDto = TeamMapper.toDTO(updatedTeam);
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
@@ -65,61 +61,19 @@ public class TeamServiceImp implements ITeamService {
                     MessageLoader.getInstance().getMessage(MessagesConstant.EM004, "courseId")
             );
         }
-
         List<Team> teams = teamRepository.findByCourseId(courseId);
-
-        if (teams == null || teams.isEmpty()) {
-            return new ResponseDto<>(
-                    HttpStatus.OK.value(),
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM012),
-                    Collections.emptyList()
-            );
-        }
-
-        List<TeamDTO> teamDTOs = teams.stream()
-                .map(TeamMapper::toDTO)
-                .collect(Collectors.toList());
-
-        return new ResponseDto<>(
-                HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
-                teamDTOs
-        );
+        return getListResponseDto(teams);
     }
 
     @Override
     public ResponseDto<List<TeamDTO>> getTeams() {
-
         List<Team> teams = teamRepository.findAll();
-
-        if (teams.isEmpty()) {
-            return new ResponseDto<>(
-                    HttpStatus.OK.value(),
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM012),
-                    Collections.emptyList()
-            );
-        }
-
-        List<TeamDTO> teamDTOs = teams.stream()
-                .map(TeamMapper::toDTO)
-                .collect(Collectors.toList());
-
-        return new ResponseDto<>(
-                HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
-                teamDTOs
-        );
+        return getListResponseDto(teams);
     }
 
     @Override
     public ResponseDto<Void> reassignStudent(Long studentId, Long newTeamId) {
-        if (studentId == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM006,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, "studentId")
-            );
-        }
+        validateId(studentId, "studentId");
         if (!teamRepository.existsById(newTeamId)) {
             throw new BusinessRuleException(
                     HttpStatus.NOT_FOUND.value(),
@@ -137,12 +91,7 @@ public class TeamServiceImp implements ITeamService {
 
     @Override
     public ResponseDto<Void> dissolveTeam(Long teamId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new BusinessRuleException(
-                        HttpStatus.NOT_FOUND.value(),
-                        MessagesConstant.EM002,
-                        MessageLoader.getInstance().getMessage(MessagesConstant.EM002, teamId)
-                ));
+        getTeamOrThrow(teamId);
         teamRepository.dissolve(teamId);
         return new ResponseDto<>(
                 HttpStatus.NO_CONTENT.value(),
@@ -153,17 +102,62 @@ public class TeamServiceImp implements ITeamService {
 
     @Override
     public ResponseDto<TeamDTO> findTeamById(Long teamId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new BusinessRuleException(
-                        HttpStatus.NOT_FOUND.value(),
-                        MessagesConstant.EM002,
-                        MessageLoader.getInstance().getMessage(MessagesConstant.EM002, teamId)
-                ));
+        Team team = getTeamOrThrow(teamId);
         TeamDTO teamDto = TeamMapper.toDTO(team);
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
                 MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
                 teamDto
+        );
+    }
+
+
+    private void validateTeamDTO(TeamDTO dto) {
+        if (dto == null) {
+            throw new BusinessRuleException(
+                    HttpStatus.BAD_REQUEST.value(),
+                    MessagesConstant.EM004,
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM004, "team")
+            );
+        }
+
+    }
+
+    private void validateId(Long id, String fieldName) {
+        if (id == null) {
+            throw new BusinessRuleException(
+                    HttpStatus.BAD_REQUEST.value(),
+                    MessagesConstant.EM006,
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, fieldName)
+            );
+        }
+    }
+
+    private Team getTeamOrThrow(Long teamId) {
+        validateId(teamId, "teamId");
+        return teamRepository.findById(teamId)
+                .orElseThrow(() -> new BusinessRuleException(
+                        HttpStatus.NOT_FOUND.value(),
+                        MessagesConstant.EM002,
+                        MessageLoader.getInstance().getMessage(MessagesConstant.EM002, teamId)
+                ));
+    }
+
+    private ResponseDto<List<TeamDTO>> getListResponseDto(List<Team> teams) {
+        if (teams == null || teams.isEmpty()) {
+            return new ResponseDto<>(
+                    HttpStatus.OK.value(),
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM012),
+                    Collections.emptyList()
+            );
+        }
+        List<TeamDTO> teamDTOs = teams.stream()
+                .map(TeamMapper::toDTO)
+                .collect(Collectors.toList());
+        return new ResponseDto<>(
+                HttpStatus.OK.value(),
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
+                teamDTOs
         );
     }
 }

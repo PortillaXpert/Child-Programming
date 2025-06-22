@@ -3,12 +3,14 @@ package chpp.plataform.teams_proyects.infrastructure.repository.imp;
 import chpp.plataform.teams_proyects.domain.model.Mission;
 import chpp.plataform.teams_proyects.domain.repository.IMissionRepository;
 import chpp.plataform.teams_proyects.infrastructure.entity.MissionEntity;
+import chpp.plataform.teams_proyects.infrastructure.mappers.AttachmentEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaMissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,10 +73,26 @@ public class MissionRepositoryImp implements IMissionRepository {
         return updatedRows > 0;
     }
 
-    //TODO: Implement update method
+
     @Override
-    public Mission update(Mission mission) {
-        return null;
+    public Mission update(Long id,Mission mission) {
+
+        Optional<MissionEntity> optionalEntity = jpaMissionRepository.findById(mission.getId());
+        if (optionalEntity.isEmpty()) {
+            return null;
+        }
+        MissionEntity entity = optionalEntity.get();
+        entity.setTitle(mission.getTitle());
+        entity.setDescription(mission.getDescription());
+        entity.setObjectives(mission.getObjectives());
+        entity.setStartDate(mission.getStartDate());
+        entity.setEndDate(mission.getEndDate());
+        entity.setActive(mission.isActive());
+        entity.setMaterials(mission.getMaterials()
+                .stream().map(AttachmentEntityMapper::toEntity).collect(Collectors.toList()));
+
+        MissionEntity updatedEntity = jpaMissionRepository.save(entity);
+        return MissionEntityMapper.toDomain(updatedEntity);
     }
 
 }

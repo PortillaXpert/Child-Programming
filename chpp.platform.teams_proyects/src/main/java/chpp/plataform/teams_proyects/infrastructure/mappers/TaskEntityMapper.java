@@ -1,6 +1,6 @@
 package chpp.plataform.teams_proyects.infrastructure.mappers;
 
-import chpp.plataform.teams_proyects.domain.model.MissionTeamAssigment;
+
 import chpp.plataform.teams_proyects.domain.model.TaskComplete;
 import chpp.plataform.teams_proyects.infrastructure.entity.MissionTeamAssignedEntity;
 import chpp.plataform.teams_proyects.infrastructure.entity.TaskCompleteEntity;
@@ -28,13 +28,10 @@ public class TaskEntityMapper {
     public static TaskComplete toDomain(TaskCompleteEntity entity) {
         if (entity == null) return null;
 
-        MissionTeamAssigment assignmentRef = new MissionTeamAssigment();
-        assignmentRef.setId(entity.getAssignment().getId());
-
         return new TaskComplete(
                 entity.getId(),
                 entity.getTitle(),
-                assignmentRef
+               null
         );
     }
 }

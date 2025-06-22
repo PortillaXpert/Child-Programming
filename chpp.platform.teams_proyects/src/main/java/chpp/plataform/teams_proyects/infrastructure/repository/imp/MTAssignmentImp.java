@@ -3,7 +3,11 @@ import chpp.plataform.teams_proyects.domain.model.AssignmentStatus;
 import chpp.plataform.teams_proyects.domain.model.MissionTeamAssigment;
 import chpp.plataform.teams_proyects.domain.model.TaskComplete;
 import chpp.plataform.teams_proyects.domain.repository.IMTAssigmentRepository;
+import chpp.plataform.teams_proyects.infrastructure.mappers.MissionEntityMapper;
+import chpp.plataform.teams_proyects.infrastructure.mappers.MissionMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionTAEntityMapper;
+import chpp.plataform.teams_proyects.infrastructure.mappers.TaskEntityMapper;
+import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.IJpaMTAssignmentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +63,34 @@ public class MTAssignmentImp implements IMTAssigmentRepository {
 
         entity.setStatus(status);
         return mapper.toDomain(jpaRepository.save(entity));
+    }
+
+    @Override
+    public MissionTeamAssigment update(Long id, MissionTeamAssigment missionTeamAssigment) {
+        MissionTeamAssignedEntity entity = jpaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Assignment not found with id: " + id));
+
+        entity.setMission(MissionEntityMapper.toEntity(missionTeamAssigment.getMission()));
+        entity.setTeam(TeamEntityMapper.toEntity(missionTeamAssigment.getTeam()));
+        entity.setStatus(missionTeamAssigment.getStatus());
+        entity.setCompletedTasks(missionTeamAssigment.getTasksCompleted()
+                .stream().map(TaskEntityMapper::toEntity).collect(Collectors.toList()));
+
+        return mapper.toDomain(jpaRepository.save(entity));
+    }
+
+    @Override
+    public MissionTeamAssigment getById(Long id) {
+        MissionTeamAssignedEntity entity = jpaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Assignment not found with id: " + id));
+        return mapper.toDomain(entity);
+    }
+
+    @Override
+    public void delete(Long id) {
+        MissionTeamAssignedEntity entity = jpaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Assignment not found with id: " + id));
+        jpaRepository.delete(entity);
     }
 
 

@@ -13,4 +13,7 @@ public interface IMTAssigmentService {
     ResponseDto<List<MissionTeamAssignedDTO>> getAssignmentsByTeam(Long teamId);
     ResponseDto<MissionTeamAssignedDTO> updateTasks(Long assignmentId, List<TaskComplete> tasks);
     ResponseDto<MissionTeamAssignedDTO> updateStatus(Long assignmentId, AssignmentStatus status);
+    ResponseDto<MissionTeamAssignedDTO> getAssignmentById(Long assignmentId);
+    ResponseDto<MissionTeamAssignedDTO> update(Long id, MissionTeamAssignedDTO missionTeamAssignedDTO);
+    void delete(Long id);
 }

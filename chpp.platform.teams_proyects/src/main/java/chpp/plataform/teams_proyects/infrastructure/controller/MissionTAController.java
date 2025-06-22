@@ -58,8 +58,8 @@ public class MissionTAController {
     @ApiResponse(responseCode = "200", description = "Asignación encontrada")
     public ResponseEntity<ResponseDto<MissionTeamAssignedDTO>> getAssignmentById(
             @PathVariable Long assignmentId) {
-        // TODO: Implementar lógica de obtención por ID
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        ResponseDto<MissionTeamAssignedDTO> response = assignmentService.getAssignmentById(assignmentId);
+       return ResponseEntity.ok(response);
     }
 
     //TODO: Corregir el método de actualización de asignación
@@ -88,7 +88,7 @@ public class MissionTAController {
     @ApiResponse(responseCode = "204", description = "Asignación eliminada")
     public ResponseEntity<ResponseDto<Void>> deleteAssignment(
             @PathVariable Long assignmentId) {
-        // TODO: Implementar lógica de eliminación
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        assignmentService.delete(assignmentId);
+       return ResponseEntity.noContent().build();
     }
 }

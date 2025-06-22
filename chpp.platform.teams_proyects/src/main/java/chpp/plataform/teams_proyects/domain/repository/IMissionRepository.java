@@ -13,5 +13,5 @@ public interface IMissionRepository {
     List<Mission> findByActiveFalse();
     boolean deactivateMission(Long id);
     boolean activateMission(Long id);
-    Mission update(Mission mission);
+    Mission update(Long id,Mission mission);
 }

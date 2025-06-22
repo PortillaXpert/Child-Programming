@@ -78,7 +78,7 @@ public class TeamController {
         return ResponseEntity.ok(response);
     }
 
-    //TODO
+
     @PatchMapping("/students/{studentId}/reassign")
     @Operation(summary = "Reasignar estudiante a otro equipo")
     @ApiResponse(responseCode = "200", description = "Estudiante reasignado")
