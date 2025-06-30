@@ -1,5 +1,2 @@
-# child-programming-platform
-
-IDIS research group platform for support "child programming" project
-
-## Front documentation
+# child-programing-platform
+IDIS research group platform for suport "child programing" proyect
