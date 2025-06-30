@@ -97,4 +97,12 @@ public class TeamController {
         ResponseDto<Void> response = teamService.dissolveTeam(teamId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
+
+    @GetMapping("/student/{studentCode}")
+    @Operation(summary = "Obtener equipo por código de estudiante")
+    @ApiResponse(responseCode = "200", description = "Equipo encontrado por código de estudiante")
+    public ResponseEntity<ResponseDto<TeamDTO>> getTeamByStudentCode(@PathVariable String studentCode) {
+        ResponseDto<TeamDTO> response = teamService.getTeamByStudentCode(studentCode);
+        return ResponseEntity.ok(response);
+    }
 }

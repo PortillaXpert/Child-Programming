@@ -1,4 +1,4 @@
-package chpp.plataform.teams_proyects.infrastructure.entity;
+package chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities;
 
 import chpp.plataform.teams_proyects.domain.model.AssignmentStatus;
 import jakarta.persistence.CascadeType;

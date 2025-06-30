@@ -1,4 +1,4 @@
-package chpp.plataform.teams_proyects.infrastructure.entity;
+package chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
@@ -12,27 +12,30 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "tasks_completed")
-@Getter
-@Setter
+@Table(name = "attachments")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TaskCompleteEntity {
+public class AttachmentEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 200)
-    private String title;
+    @Column(nullable = false)
+    private String fileName;
+
+    @Column(nullable = false, unique = true, length = 512)
+    private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignment_id", nullable = false)
+    @JoinColumn(name = "mission_id")
     @JsonIgnore
-    private MissionTeamAssignedEntity assignment;
+    private MissionEntity mission;
+
 }

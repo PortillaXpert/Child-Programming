@@ -2,8 +2,8 @@ package chpp.plataform.teams_proyects.infrastructure.mappers;
 
 import chpp.plataform.teams_proyects.domain.model.MissionTeamAssigment;
 import chpp.plataform.teams_proyects.domain.model.TaskComplete;
-import chpp.plataform.teams_proyects.infrastructure.entity.MissionTeamAssignedEntity;
-import chpp.plataform.teams_proyects.infrastructure.entity.TaskCompleteEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.MissionTeamAssignedEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.TaskCompleteEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

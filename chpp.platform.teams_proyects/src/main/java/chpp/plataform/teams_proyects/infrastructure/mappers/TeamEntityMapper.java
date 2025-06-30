@@ -1,7 +1,7 @@
 package chpp.plataform.teams_proyects.infrastructure.mappers;
 
 import chpp.plataform.teams_proyects.domain.model.Team;
-import chpp.plataform.teams_proyects.infrastructure.entity.TeamEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.TeamEntity;
 
 import java.util.stream.Collectors;
 

@@ -1,7 +1,7 @@
 package chpp.plataform.teams_proyects.infrastructure.mappers;
 
 import chpp.plataform.teams_proyects.domain.model.Student;
-import chpp.plataform.teams_proyects.infrastructure.entity.StudentEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.StudentEntity;
 
 public class StudentEntityMapper {
 

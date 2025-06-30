@@ -54,7 +54,7 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
     }
 
     @Override
-    public ResponseDto<List<MissionTeamAssignedDTO>> getAssignmentsByTeam(Long teamId) {
+    public ResponseDto<List<MissionTeamAssignedDTO>> findInProgressByTeamId(Long teamId) {
         if (teamId == null) {
             throw new BusinessRuleException(
                     HttpStatus.BAD_REQUEST.value(),
@@ -62,7 +62,7 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
                     MessageLoader.getInstance().getMessage(MessagesConstant.EM006, "teamId")
             );
         }
-        List<MissionTeamAssigment> assignments = assignmentRepository.getAssignmentsByTeam(teamId);
+        List<MissionTeamAssigment> assignments = assignmentRepository.findInProgressByTeamId(teamId);
         return getListResponseDto(assignments);
     }
 

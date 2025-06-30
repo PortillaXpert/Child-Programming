@@ -46,10 +46,10 @@ public class MissionTAController {
 
     @GetMapping("/team/{teamId}")
     @Operation(summary = "Obtener asignaciones por equipo")
-    @ApiResponse(responseCode = "200", description = "Lista de asignaciones para el equipo")
-    public ResponseEntity<ResponseDto<List<MissionTeamAssignedDTO>>> getAssignmentsByTeam(
+    @ApiResponse(responseCode = "200", description = "Lista de asignaciones en progreso para el equipo")
+    public ResponseEntity<ResponseDto<List<MissionTeamAssignedDTO>>> findInProgressByTeamId(
             @PathVariable Long teamId) {
-        ResponseDto<List<MissionTeamAssignedDTO>> response = assignmentService.getAssignmentsByTeam(teamId);
+        ResponseDto<List<MissionTeamAssignedDTO>> response = assignmentService.findInProgressByTeamId(teamId);
         return ResponseEntity.ok(response);
     }
 

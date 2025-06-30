@@ -1,6 +1,6 @@
 package chpp.plataform.teams_proyects.infrastructure.repository.jpa;
 
-import chpp.plataform.teams_proyects.infrastructure.entity.MissionEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.MissionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -4,7 +4,6 @@ import chpp.plataform.teams_proyects.domain.model.MissionTeamAssigment;
 import chpp.plataform.teams_proyects.domain.model.TaskComplete;
 import chpp.plataform.teams_proyects.domain.repository.IMTAssigmentRepository;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionEntityMapper;
-import chpp.plataform.teams_proyects.infrastructure.mappers.MissionMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionTAEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TaskEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
@@ -13,7 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import chpp.plataform.teams_proyects.infrastructure.entity.MissionTeamAssignedEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.MissionTeamAssignedEntity;
 import java.util.List;
 
 import java.util.stream.Collectors;
@@ -41,8 +40,8 @@ public class MTAssignmentImp implements IMTAssigmentRepository {
     }
 
     @Override
-    public List<MissionTeamAssigment> getAssignmentsByTeam(Long teamId) {
-        return jpaRepository.findByTeamId(teamId)
+    public List<MissionTeamAssigment> findInProgressByTeamId(Long teamId) {
+        return jpaRepository.findInProgressByTeamId(teamId)
                 .stream()
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());

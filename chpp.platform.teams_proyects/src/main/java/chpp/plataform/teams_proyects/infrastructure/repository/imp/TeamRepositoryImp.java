@@ -2,8 +2,8 @@ package chpp.plataform.teams_proyects.infrastructure.repository.imp;
 
 import chpp.plataform.teams_proyects.domain.model.Team;
 import chpp.plataform.teams_proyects.domain.repository.ITeamRepository;
-import chpp.plataform.teams_proyects.infrastructure.entity.StudentEntity;
-import chpp.plataform.teams_proyects.infrastructure.entity.TeamEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.StudentEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.TeamEntity;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.IJpaStudentRepository;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaTeamRepository;
@@ -92,6 +92,15 @@ public class TeamRepositoryImp implements ITeamRepository {
                 .orElseThrow(EntityNotFoundException::new);
 
         jpaTeamRepository.delete(team);
+    }
+
+    @Override
+    public Team getTeamByStudentCode(String studentCode) {
+    TeamEntity teamEntity = jpaTeamRepository.findTeamByStudentCode(studentCode);
+    if (teamEntity == null) {
+        throw new EntityNotFoundException("Equipo no encontrado para el estudiante con código: " + studentCode);
+    }
+    return TeamEntityMapper.toDomain(teamEntity);
     }
 
 

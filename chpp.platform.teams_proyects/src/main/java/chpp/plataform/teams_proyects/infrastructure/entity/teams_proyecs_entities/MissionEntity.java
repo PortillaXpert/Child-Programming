@@ -1,8 +1,7 @@
-package chpp.plataform.teams_proyects.infrastructure.entity;
+package chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities;
 
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;

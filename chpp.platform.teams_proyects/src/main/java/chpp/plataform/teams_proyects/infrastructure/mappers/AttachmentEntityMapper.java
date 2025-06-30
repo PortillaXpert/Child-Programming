@@ -2,7 +2,7 @@ package chpp.plataform.teams_proyects.infrastructure.mappers;
 
 
 import chpp.plataform.teams_proyects.domain.model.Attachment;
-import chpp.plataform.teams_proyects.infrastructure.entity.AttachmentEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.AttachmentEntity;
 
 public class AttachmentEntityMapper {
 

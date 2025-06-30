@@ -1,5 +1,8 @@
 package chpp.plataform.teams_proyects.infrastructure.entity;
 
+
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.StudentEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.TeamEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

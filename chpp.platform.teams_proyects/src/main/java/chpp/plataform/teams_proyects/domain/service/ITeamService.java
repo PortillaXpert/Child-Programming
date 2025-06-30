@@ -18,5 +18,6 @@ public interface ITeamService {
     ResponseDto<Void> reassignStudent(Long studentId, Long newTeamId);
 
     ResponseDto<Void> dissolveTeam(Long teamId);
+    ResponseDto<TeamDTO> getTeamByStudentCode(String studentCode);
 
 }

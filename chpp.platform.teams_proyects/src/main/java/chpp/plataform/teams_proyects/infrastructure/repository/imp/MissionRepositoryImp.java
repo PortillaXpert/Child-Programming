@@ -2,7 +2,7 @@ package chpp.plataform.teams_proyects.infrastructure.repository.imp;
 
 import chpp.plataform.teams_proyects.domain.model.Mission;
 import chpp.plataform.teams_proyects.domain.repository.IMissionRepository;
-import chpp.plataform.teams_proyects.infrastructure.entity.MissionEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.MissionEntity;
 import chpp.plataform.teams_proyects.infrastructure.mappers.AttachmentEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaMissionRepository;
@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

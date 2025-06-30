@@ -2,8 +2,8 @@ package chpp.plataform.teams_proyects.infrastructure.mappers;
 
 import chpp.plataform.teams_proyects.domain.model.Attachment;
 import chpp.plataform.teams_proyects.domain.model.Mission;
-import chpp.plataform.teams_proyects.infrastructure.entity.AttachmentEntity;
-import chpp.plataform.teams_proyects.infrastructure.entity.MissionEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.AttachmentEntity;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.MissionEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;

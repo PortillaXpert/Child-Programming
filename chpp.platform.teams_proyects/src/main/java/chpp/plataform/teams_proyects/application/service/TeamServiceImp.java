@@ -101,6 +101,31 @@ public class TeamServiceImp implements ITeamService {
     }
 
     @Override
+    public ResponseDto<TeamDTO> getTeamByStudentCode(String studentCode) {
+        if (studentCode == null || studentCode.isBlank()) {
+            throw new BusinessRuleException(
+                    HttpStatus.BAD_REQUEST.value(),
+                    MessagesConstant.EM004,
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM004, "studentCode")
+            );
+        }
+        Team team = teamRepository.getTeamByStudentCode(studentCode);
+        if (team == null) {
+            throw new BusinessRuleException(
+                    HttpStatus.NOT_FOUND.value(),
+                    MessagesConstant.EM002,
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM002, studentCode)
+            );
+        }
+        TeamDTO teamDto = TeamMapper.toDTO(team);
+        return new ResponseDto<>(
+                HttpStatus.OK.value(),
+                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
+                teamDto
+        );
+    }
+
+    @Override
     public ResponseDto<TeamDTO> findTeamById(Long teamId) {
         Team team = getTeamOrThrow(teamId);
         TeamDTO teamDto = TeamMapper.toDTO(team);
