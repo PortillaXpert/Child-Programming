@@ -8,13 +8,20 @@ spring:
     name: chpp_teams_proyects
 
   datasource:
+    platform: postgres
+    initialize: true
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
+  sql:
+    init:
+      mode: always
+
   jpa:
+    database: POSTGRESQL
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
