@@ -15,7 +15,6 @@ public interface ITeamService {
     ResponseDto<List<TeamDTO>> getTeamsByCourse(String courseId);
     ResponseDto<List<TeamDTO>> getTeams();
 
-    ResponseDto<Void> reassignStudent(Long studentId, Long newTeamId);
 
     ResponseDto<Void> dissolveTeam(Long teamId);
     ResponseDto<TeamDTO> getTeamByStudentCode(String studentCode);

@@ -9,7 +9,8 @@ public class StudentMapper {
         return new StudentDTO(
                 student.getId(),
                 student.getStudentCod(),
-                student.getFullName()
+                student.getFullName(),
+                student.getCourse()
         );
     }
 
@@ -17,7 +18,10 @@ public class StudentMapper {
         return new Student(
                 dto.getId(),
                 dto.getStudentCod(),
-                dto.getFullName(),null,null
+                dto.getFullName(),
+                null,
+                dto.getCourse(),
+                null
         );
     }
 }

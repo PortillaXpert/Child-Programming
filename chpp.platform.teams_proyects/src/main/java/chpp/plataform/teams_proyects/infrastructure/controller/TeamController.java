@@ -52,7 +52,7 @@ public class TeamController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar un equipo existente")
+    @Operation(summary = "Actualizar un equipo existente / Reasignar estudiante a otro equipo")
     @ApiResponse(responseCode = "200", description = "Equipo actualizado exitosamente")
     public ResponseEntity<ResponseDto<TeamDTO>> updateTeam(
             @PathVariable Long id,
@@ -75,17 +75,6 @@ public class TeamController {
     public ResponseEntity<ResponseDto<List<TeamDTO>>> getTeamsByCourse(
             @PathVariable String courseId) {
         ResponseDto<List<TeamDTO>> response = teamService.getTeamsByCourse(courseId);
-        return ResponseEntity.ok(response);
-    }
-
-
-    @PatchMapping("/students/{studentId}/reassign")
-    @Operation(summary = "Reasignar estudiante a otro equipo")
-    @ApiResponse(responseCode = "200", description = "Estudiante reasignado")
-    public ResponseEntity<ResponseDto<Void>> reassignStudent(
-            @PathVariable Long studentId,
-            @RequestParam Long newTeamId) {
-        ResponseDto<Void> response = teamService.reassignStudent(studentId, newTeamId);
         return ResponseEntity.ok(response);
     }
 

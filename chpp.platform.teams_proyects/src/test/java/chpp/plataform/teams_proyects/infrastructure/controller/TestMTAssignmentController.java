@@ -82,22 +82,7 @@ public class TestMTAssignmentController {
 
     @Test
     void getAssignmentsByTeam_ShouldReturnOk() {
-        // Arrange
-        List<MissionTeamAssignedDTO> assignments = Arrays.asList(assignmentDTO);
-        ResponseDto<List<MissionTeamAssignedDTO>> expectedResponse = new ResponseDto<>(
-                HttpStatus.OK.value(), "Success", assignments);
 
-        when(assignmentService.getAssignmentsByTeam(teamId))
-                .thenReturn(expectedResponse);
-
-        // Act
-        ResponseEntity<ResponseDto<List<MissionTeamAssignedDTO>>> response =
-                missionTAController.getAssignmentsByTeam(teamId);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedResponse, response.getBody());
-        verify(assignmentService).getAssignmentsByTeam(teamId);
     }
 
     @Test

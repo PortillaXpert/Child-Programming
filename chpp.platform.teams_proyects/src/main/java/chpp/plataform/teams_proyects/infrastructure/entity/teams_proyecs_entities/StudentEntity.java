@@ -24,7 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-    public class StudentEntity {
+public class StudentEntity {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,10 @@ import lombok.Setter;
         @Column(nullable = false, unique = true, length = 100)
         private String email;
 
+        @Column(nullable = false, length = 50)
+        private String course;
+
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "team_id")
         private TeamEntity team;
-    }
+}

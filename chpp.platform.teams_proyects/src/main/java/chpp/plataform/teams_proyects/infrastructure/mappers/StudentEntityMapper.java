@@ -24,6 +24,7 @@ public class StudentEntityMapper {
                 entity.getStudentCod(),
                 entity.getFullName(),
                 entity.getEmail(),
+                entity.getCourse(),
                 entity.getTeam() != null ? entity.getTeam().getId() : null
         );
     }

@@ -12,5 +12,6 @@ public class Student {
     private Long studentCod;
     private String fullName;
     private String email;
+    private String course;
     private Long teamId;
 }

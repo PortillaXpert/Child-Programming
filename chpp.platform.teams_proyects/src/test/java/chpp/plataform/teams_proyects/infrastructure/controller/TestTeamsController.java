@@ -36,8 +36,8 @@ class TestTeamsController {
     @BeforeEach
     void setUp() {
 
-        StudentDTO student1 = new StudentDTO(1L, 1001L, "Juan Pérez");
-        StudentDTO student2 = new StudentDTO(2L, 1002L, "María García");
+        StudentDTO student1 = new StudentDTO(1L, 1001L, "Juan Pérez" , "1A");
+        StudentDTO student2 = new StudentDTO(2L, 1002L, "María García","1A");
 
         teamDTOWithStudents = new TeamDTO(
                 teamId,
@@ -159,30 +159,6 @@ class TestTeamsController {
         );
     }
 
-    @Test
-    void reassignStudent_shouldValidateParametersAndResponse() {
-        // Arrange
-        Long studentId = 1L;
-        Long newTeamId = 2L;
-        ResponseDto<Void> serviceResponse = new ResponseDto<>(
-                HttpStatus.OK.value(),
-                "Estudiante reasignado correctamente",
-                null
-        );
-
-        when(teamService.reassignStudent(studentId, newTeamId)).thenReturn(serviceResponse);
-
-        // Act
-        ResponseEntity<ResponseDto<Void>> response = teamController.reassignStudent(studentId, newTeamId);
-
-        // Assert
-        assertAll(
-                () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
-                () -> assertEquals("Estudiante reasignado correctamente", response.getBody().getMessage()),
-                () -> assertNull(response.getBody().getData()),
-                () -> verify(teamService).reassignStudent(studentId, newTeamId)
-        );
-    }
 
     @Test
     void dissolveTeam_shouldReturnCorrectStatusAndMessage() {

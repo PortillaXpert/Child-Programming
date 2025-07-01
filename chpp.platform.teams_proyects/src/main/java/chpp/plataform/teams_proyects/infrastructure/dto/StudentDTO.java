@@ -11,4 +11,5 @@ public class StudentDTO {
     private Long id;
     private Long studentCod;
     private String fullName;
+    private String course;
 }

@@ -12,7 +12,6 @@ public interface ITeamRepository {
     boolean existsById(Long id);
     List<Team> findAll();
     List<Team> findByCourseId(String courseId);
-    void reassignStudent(Long studentId, Long newTeamId);
     void dissolve(Long teamId);
     Team getTeamByStudentCode(String studentCode);
 }

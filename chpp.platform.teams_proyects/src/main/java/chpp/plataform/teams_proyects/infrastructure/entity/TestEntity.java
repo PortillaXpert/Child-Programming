@@ -17,6 +17,5 @@ public class TestEntity {
 
     @Column(nullable = false, length = 100)
     private String name;
-
-    @ManyToOne
+    
 }

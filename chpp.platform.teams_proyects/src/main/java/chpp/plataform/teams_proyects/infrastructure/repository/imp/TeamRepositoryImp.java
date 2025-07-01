@@ -2,15 +2,14 @@ package chpp.plataform.teams_proyects.infrastructure.repository.imp;
 
 import chpp.plataform.teams_proyects.domain.model.Team;
 import chpp.plataform.teams_proyects.domain.repository.ITeamRepository;
-import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.StudentEntity;
 import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.TeamEntity;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
-import chpp.plataform.teams_proyects.infrastructure.repository.jpa.IJpaStudentRepository;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaTeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -22,21 +21,13 @@ import java.util.stream.Collectors;
 public class TeamRepositoryImp implements ITeamRepository {
 
     private final JpaTeamRepository jpaTeamRepository;
-    private final IJpaStudentRepository jpaStudentRepository;
 
     @Override
+    @Transactional
     public Team create(Team team) {
-        TeamEntity entity = TeamEntityMapper.toEntity(team);
-        return TeamEntityMapper.toDomain(jpaTeamRepository.save(entity));
-    }
-
-    @Override
-    public Team update(Long id,Team team) {
-        if (!jpaTeamRepository.existsById(id)) {
-            throw new EntityNotFoundException();
-        }
-        TeamEntity entity = TeamEntityMapper.toEntity(team);
-        return TeamEntityMapper.toDomain(jpaTeamRepository.save(entity));
+        TeamEntity teamEntity = TeamEntityMapper.toEntity(team);
+        TeamEntity saved = jpaTeamRepository.save(teamEntity);
+        return TeamEntityMapper.toDomain(saved);
     }
 
 
@@ -67,24 +58,6 @@ public class TeamRepositoryImp implements ITeamRepository {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional
-    public void reassignStudent(Long studentId, Long newTeamId) {
-
-        StudentEntity student = jpaStudentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("Estudiante no encontrado con ID: " + studentId));
-
-        TeamEntity newTeam = jpaTeamRepository.findById(newTeamId)
-                .orElseThrow(() -> new EntityNotFoundException("Equipo no encontrado con ID: " + newTeamId));
-
-
-        if (student.getTeam() != null && student.getTeam().getId().equals(newTeamId)) {
-            return;
-        }
-
-        student.setTeam(newTeam);
-        jpaStudentRepository.save(student);
-    }
 
     @Override
     public void dissolve(Long teamId) {
@@ -102,6 +75,19 @@ public class TeamRepositoryImp implements ITeamRepository {
     }
     return TeamEntityMapper.toDomain(teamEntity);
     }
+
+    @Override
+    @Transactional
+    public Team update(Long teamId, Team teamUpdate) {
+        TeamEntity existingTeam = jpaTeamRepository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Equipo no encontrado"));
+
+        existingTeam.setName(teamUpdate.getName());
+        existingTeam.setCourse(teamUpdate.getCourse());
+
+        return TeamEntityMapper.toDomain(jpaTeamRepository.save(existingTeam));
+    }
+
 
 
 }
