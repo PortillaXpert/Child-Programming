@@ -61,7 +61,7 @@ const HomePage = () => {
         </Card>
 
         {selected.mision ? (
-          <MisionComponent />
+          <MisionComponent teamId={1}/>
         ) : selected.team ? (
           <TeamComponent  studentCode={20230005}/>
         ) : selected.task ? (

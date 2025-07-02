@@ -62,7 +62,7 @@ public class MissionTAController {
        return ResponseEntity.ok(response);
     }
 
-    //TODO: Corregir el método de actualización de asignación
+
     @PatchMapping("/{assignmentId}/tasks")
     @Operation(summary = "Actualizar tareas de una asignación")
     @ApiResponse(responseCode = "200", description = "Tareas actualizadas exitosamente")

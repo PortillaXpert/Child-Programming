@@ -98,7 +98,7 @@ function TeamComponent({ studentCode }) {
                                             p: 1.2,
                                         }}
                                     />
-                                    <Typography>{estudiante.name}</Typography>
+                                    <Typography>{estudiante.fullName}</Typography>
                                 </Box>
                             ))}
                     </Stack>
