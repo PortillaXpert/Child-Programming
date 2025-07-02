@@ -6,6 +6,7 @@ import DocIcon from '../components/icon/DocIcon'
 import { Box, Card, CardContent, CardHeader, List, Typography } from '@mui/material'
 import MisionComponent from '../components/homeComponenets/misionComponent'
 import WorkComponent from '../components/homeComponenets/WorkComponent'
+import TeamComponent from '../components/homeComponenets/TeamComponent'
 
 const HomePage = () => {
   const [selected, setSelected] = useState({ mision: false, team: false, task: false })
@@ -58,9 +59,17 @@ const HomePage = () => {
             </List>
           </CardContent>
         </Card>
-        {selected.mision ? <MisionComponent /> : selected.task ? <WorkComponent /> : <></>}
+
+        {selected.mision ? (
+          <MisionComponent />
+        ) : selected.team ? (
+          <TeamComponent  studentCode={20230005}/>
+        ) : selected.task ? (
+          <WorkComponent />
+        ) : null}
       </div>
     </>
   )
 }
+
 export default HomePage
