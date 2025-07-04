@@ -12,13 +12,21 @@ import { useEffect, useState } from 'react'
 import { getTeamByStudentCode } from '../../services/api/teamServiceApi'
 import SkeletonCard from '../others/skeletonCard'
 
-const pastelColors = [
-    '#FFD1DC', '#B2EBF2', '#FFF9C4', '#C8E6C9',
-    '#E1BEE7', '#FFECB3', '#D1C4E9', '#F8BBD0',
+const colors = [
+    '#6A5ACD',
+    '#008080', 
+    '#4B0082', 
+    '#FF8C00',
+    '#DA70D6', 
+    '#4682B4', 
+    '#CD5C5C', 
+    '#556B2F', 
+    '#B8860B', 
 ]
 
+
 function getColorByIndex(index) {
-    return pastelColors[index % pastelColors.length]
+    return colors[index % colors.length]
 }
 
 

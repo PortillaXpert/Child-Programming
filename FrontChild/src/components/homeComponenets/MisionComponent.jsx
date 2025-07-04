@@ -18,6 +18,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ButtonCustom from '../others/ButtonCustom'
 
 function MisionComponent({ teamId }) {
   const [mission, setMission] = useState(null)
@@ -65,7 +66,8 @@ function MisionComponent({ teamId }) {
   }
 
   return (
-    <Card sx={{ width: '50vw', height: '70vh', overflow: 'auto' }}>
+    <Card sx={{ width: '50vw', height: '70vh', overflow: 'auto', 
+      scrollbarColor: '#1976D2 white', scrollbarWidth: 'thin' }}>
       <CardHeader
         sx={{ bgcolor: '#1976D2', color: 'white', padding: '50px 10px' }}
         title={
@@ -96,7 +98,7 @@ function MisionComponent({ teamId }) {
         <Divider sx={{ margin: '15px 0' }} />
 
         <Box>
-          <Typography sx={{ fontSize: '20px', fontWeight: 'bold', mb: '10px', color: '#00695C' }}>
+          <Typography sx={{ fontSize: '20px', fontWeight: 'bold', mb: '10px', color: '#1976D2' }}>
             <LibraryBooksIcon></LibraryBooksIcon> Materiales
           </Typography>
 
@@ -124,7 +126,7 @@ function MisionComponent({ teamId }) {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <InsertDriveFileIcon sx={{ color: '#1976D2' }} />
                     <Box>
-                      <Typography sx={{ fontWeight: 500 }}>{mat.fileName}</Typography>
+                      <Typography sx={{ fontWeight: 500 }}>{mat.fileName?.replace(/\.[^/.]+$/, '')}</Typography>
                       <Box
                         sx={{
                           display: 'inline-block',
@@ -143,9 +145,6 @@ function MisionComponent({ teamId }) {
                   </Box>
 
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    <a href={mat.url} target="_blank" rel="noopener noreferrer">
-                      <VisibilityIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />
-                    </a>
                     <ArrowCircleDownIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />
                   </Box>
                 </Box>
@@ -155,11 +154,7 @@ function MisionComponent({ teamId }) {
             <Typography sx={{ ml: 2 }}>No hay materiales disponibles.</Typography>
           )}
         </Box>
-
         <Divider sx={{ margin: '15px 0' }} />
-
-        <Divider sx={{ margin: '15px 0' }} />
-
       <Box>
         <Typography
           sx={{
@@ -169,7 +164,7 @@ function MisionComponent({ teamId }) {
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            color: '#00695C',
+            color: '#1976D2',
           }}
         >
         <AccessTimeIcon></AccessTimeIcon>
@@ -190,7 +185,10 @@ function MisionComponent({ teamId }) {
           </Typography>
         </Box>
       </Box>
-
+      <Divider sx={{ margin: '15px 0' }} />
+      <Box sx={{display: 'flex' , justifyContent: 'center'}}>
+        <ButtonCustom label= {'Entregar Mision'}></ButtonCustom>
+      </Box>
       </CardContent>
     </Card>
   )
