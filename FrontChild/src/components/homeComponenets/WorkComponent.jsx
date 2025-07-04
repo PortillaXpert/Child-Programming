@@ -1,10 +1,10 @@
 import { CardContent, Typography, Box, Card, CardHeader, Button, IconButton } from '@mui/material'
 import { CancelRounded } from '@mui/icons-material'
 import { useTask } from '../../hooks/useTask'
-import NewTaskDialog from '../NewTaskDialog'
+import NewTaskDialog from '../task/NewTaskDialog'
 import { useState } from 'react'
 import { Error } from '..'
-import DeleteDialog from './DeleteDialog'
+import DeleteDialog from '../others/DeleteDialog'
 import { useNavigate } from 'react-router-dom'
 
 function WorkComponent() {

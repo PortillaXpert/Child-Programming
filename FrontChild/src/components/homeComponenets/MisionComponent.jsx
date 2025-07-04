@@ -9,7 +9,7 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { getAssignments, getMissionById } from '../../services/api/missionServiceApi'
-import SkeletonCard from '../others/skeletonCard'
+import SkeletonCard from '../common/skeletonCard'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -18,7 +18,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import ButtonCustom from '../others/ButtonCustom'
+import ButtonCustom from '../common/ButtonCustom'
 
 function MisionComponent({ teamId }) {
   const [mission, setMission] = useState(null)

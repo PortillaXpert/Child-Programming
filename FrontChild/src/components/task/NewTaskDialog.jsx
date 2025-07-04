@@ -1,4 +1,4 @@
-import { api } from '../services/endpoints'
+import { api } from '../../services/endpoints'
 import {
   Avatar,
   Box,

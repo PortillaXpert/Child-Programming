@@ -1,9 +1,9 @@
 export { default as ListTask } from './ListTask'
-export { default as NewTaskDialog } from './NewTaskDialog'
-export { default as HeaderPaperImg } from './HeaderPaperImg'
-export { default as HeaderPaperMedia } from './HeaderPaperMedia'
+export { default as NewTaskDialog } from './task/NewTaskDialog'
+export { default as HeaderPaperImg } from './estructure/Header/HeaderPaperImg'
+export { default as HeaderPaperMedia } from './estructure/Header/HeaderPaperMedia'
 export { default as TeamHeader } from './TeamHeader'
-export { default as Error } from './others/Error'
+export { default as Error } from './common/Error'
 export { default as TaskGroups } from './TaskGroups'
 
 export * from './index'
