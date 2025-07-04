@@ -1,4 +1,4 @@
-import { api } from '../services/endpoints'
+import { api } from '../../services/endpoints'
 import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, Stack, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 

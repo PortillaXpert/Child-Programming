@@ -4,9 +4,10 @@ import StarIcon from '../components/icon/StarIcon'
 import GroupIcon from '../components/icon/GroupIcon'
 import DocIcon from '../components/icon/DocIcon'
 import { Box, Card, CardContent, CardHeader, List, Typography } from '@mui/material'
-import MisionComponent from '../components/homeComponenets/misionComponent'
+import MisionComponent from '../components/homeComponenets/studenComponents/MisionComponent'
 import WorkComponent from '../components/homeComponenets/WorkComponent'
-import TeamComponent from '../components/homeComponenets/TeamComponent'
+import TeamComponent from '../components/homeComponenets/studenComponents/TeamComponent'
+import TeacherTeamComponent from '../components/homeComponenets/teacherComponents/teamsComponents/TeamTeacherComponent'
 
 const HomePage = () => {
   const [selected, setSelected] = useState({ mision: false, team: false, task: false })
@@ -16,6 +17,8 @@ const HomePage = () => {
     else if (option === 'team') setSelected({ mision: false, team: true, task: false })
     else setSelected({ mision: false, team: false, task: true })
   }
+
+  const role = 'TEACHER'
 
   return (
     <>
@@ -60,13 +63,20 @@ const HomePage = () => {
           </CardContent>
         </Card>
 
-        {selected.mision ? (
-          <MisionComponent teamId={1}/>
+        {
+        selected.mision ? (
+            <MisionComponent teamId={1} />
         ) : selected.team ? (
-          <TeamComponent  studentCode={20230005}/>
-        ) : selected.task ? (
+              role === 'TEACHER' ? (
+                <TeacherTeamComponent />
+                  ) : (
+                <TeamComponent studentCode={20230005} />
+                )
+          ) 
+          : selected.task ? (
           <WorkComponent />
-        ) : null}
+        ) : null
+      }
       </div>
     </>
   )

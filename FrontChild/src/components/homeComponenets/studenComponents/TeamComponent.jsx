@@ -9,8 +9,8 @@ import {
     Skeleton,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { getTeamByStudentCode } from '../../services/api/teamServiceApi'
-import SkeletonCard from '../common/skeletonCard'
+import { getTeamByStudentCode } from '../../../services/api/teamServiceApi'
+import SkeletonCard from '../../common/skeletonCard'
 
 const colors = [
     '#6A5ACD',
