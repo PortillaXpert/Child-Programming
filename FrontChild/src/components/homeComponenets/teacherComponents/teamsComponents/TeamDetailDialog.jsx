@@ -92,8 +92,8 @@ function TeamDetailDialog({ open, onClose, teamId }) {
                                                 alt="Ícono gato"
                                                 sx={{
                                                     bgcolor: getColorByIndex(idx),
-                                                    width: 40,
-                                                    height: 40,
+                                                    width: 35,
+                                                    height: 35,
                                                     p: 1.2
                                                 }}
                                             />
@@ -111,12 +111,6 @@ function TeamDetailDialog({ open, onClose, teamId }) {
                                                 />
                                             </Box>
                                         </Box>
-                                        <IconButton onClick={() => {
-                                            setSelectedStudent(student)
-                                            setConfirmOpen(true)
-                                        }}>
-                                            <DeleteIcon />
-                                        </IconButton>
                                     </Box>
                                 ))}
                             </Stack>

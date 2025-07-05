@@ -9,18 +9,19 @@ import {
     IconButton,
     TextField,
     InputAdornment,
-    Divider,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
 import GroupIcon from '@mui/icons-material/Group'
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
-import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { getAllTeams } from '../../../../services/api/teamServiceApi'
 import SkeletonCard from '../../../common/skeletonCard'
 import { Visibility } from '@mui/icons-material'
 import TeamDetailDialog from './TeamDetailDialog'
+import EditIcon from '@mui/icons-material/Edit';
+import TeamCreateEditView from './TeamCreateEditView'
+import ConfirmDialog from '../../../others/ConfirmDialog'
+import { deleteTeam } from '../../../../services/api/teamServiceApi'
 
 const colors = ['#6A5ACD', '#008080', '#4B0082', '#FF8C00', '#DA70D6']
 
@@ -34,11 +35,16 @@ function TeamTeacherComponent() {
     const [search, setSearch] = useState('')
     const [openDialog, setOpenDialog] = useState(false)
     const [selectedTeamId, setSelectedTeamId] = useState(null)
+    const [editingTeamId, setEditingTeamId] = useState(null)
+    const [isCreating, setIsCreating] = useState(false)
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
+    const [teamToDelete, setTeamToDelete] = useState(null)
 
     const handleOpenDialog = (id) => {
         setSelectedTeamId(id)
         setOpenDialog(true)
     }
+
     useEffect(() => {
         const fetchTeams = async () => {
             try {
@@ -58,8 +64,40 @@ function TeamTeacherComponent() {
         team.name.toLowerCase().includes(search.toLowerCase())
     )
 
-    return (
-        <Card sx={{ width: { xs: '90vw', md: '50vw' }, height: 'auto' }}>
+    if (loading || !teams) {
+        return <SkeletonCard titleLines={1} items={3} />
+    }
+
+    if (editingTeamId || isCreating) {
+        return (
+            <TeamCreateEditView
+                teamId={editingTeamId}
+                onBack={() => {
+                    setEditingTeamId(null)
+                    setIsCreating(false)
+                }}
+            />
+        )
+    }
+
+    const handleDeleteTeam = async () => {
+        try {
+            await deleteTeam(teamToDelete.id)
+            setTeams(prev => prev.filter(team => team.id !== teamToDelete.id))
+            setConfirmDeleteOpen(false)
+            setTeamToDelete(null)
+        } catch (error) {
+            console.error('Error al eliminar el equipo:', error)
+            alert('Ocurrió un error al eliminar el equipo.')
+        }
+    }
+    
+
+    return (        
+        <Card sx={{
+            width: '50vw', height: '70vh', overflowY: 'auto', overflowX: 'hidden',
+            scrollbarColor: '#1976D2 white', scrollbarWidth: 'thin'
+        }}>
             <CardHeader
                 sx={{ bgcolor: '#1976D2', color: 'white', p: 3 }}
                 title={
@@ -68,9 +106,8 @@ function TeamTeacherComponent() {
                             <GroupIcon sx={{ fontSize: 32 }} />
                             <Typography sx={{ fontSize: 22, fontWeight: 600 }}>Gestión de Equipos</Typography>
                         </Box>
-                        <IconButton color="inherit" onClick={() => alert('Crear equipo')}>
-                            <AddCircleOutlineIcon sx={{ fontSize: 20 }} /> 
-                            <Typography sx={{ fontSize: 18, marginLeft: '2px'}}>Crear Equipo</Typography>
+                        <IconButton color="inherit" onClick={() => setIsCreating(true)}>
+                            <Typography sx={{ fontSize: 18, marginLeft: '2px' }}>Crear Equipo</Typography>
                         </IconButton>
                     </Box>
                 }
@@ -93,9 +130,7 @@ function TeamTeacherComponent() {
                     }}
                 />
 
-                {loading ? (
-                    <SkeletonCard titleLines={1} items={3} />
-                ) : filteredTeams.length === 0 ? (
+                {filteredTeams.length === 0 ? (
                     <Typography color="text.secondary">No se encontraron equipos.</Typography>
                 ) : (
                     <Stack spacing={2}>
@@ -137,10 +172,16 @@ function TeamTeacherComponent() {
                                     </Box>
                                 </Box>
                                 <Box>
-                                    <IconButton onClick={() => handleOpenDialog(team.id)}>
-                                        <Visibility/>
+                                    <IconButton onClick={() => setEditingTeamId(team.id)}>
+                                        <EditIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => alert(`Eliminar equipo ${team.name}`)}>
+                                    <IconButton onClick={() => handleOpenDialog(team.id)}>
+                                        <Visibility />
+                                    </IconButton>
+                                    <IconButton onClick={() => {
+                                        setTeamToDelete(team)
+                                        setConfirmDeleteOpen(true)
+                                    }}>
                                         <DeleteIcon />
                                     </IconButton>
                                 </Box>
@@ -149,13 +190,24 @@ function TeamTeacherComponent() {
                     </Stack>
                 )}
             </CardContent>
+
             <TeamDetailDialog
                 open={openDialog}
                 onClose={() => setOpenDialog(false)}
                 teamId={selectedTeamId}
             />
+
+            <ConfirmDialog
+                open={confirmDeleteOpen}
+                onClose={() => setConfirmDeleteOpen(false)}
+                onConfirm={handleDeleteTeam}
+                title="¿Eliminar equipo?"
+                content={`¿Estás seguro de que deseas eliminar el equipo "${teamToDelete?.name}"?`}
+            />
+
         </Card>
     )
 }
+
 
 export default TeamTeacherComponent

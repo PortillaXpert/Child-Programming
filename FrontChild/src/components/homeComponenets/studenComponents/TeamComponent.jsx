@@ -52,7 +52,8 @@ function TeamComponent({ studentCode }) {
     return loading ? (
         <SkeletonCard titleLines={1} items={3} />
         ) : (
-            <Card sx={{ width: { xs: '90vw', md: '50vw' }, height: 'auto' }}>
+            <Card sx={{ width: '50vw', height: '70vh', overflow: 'auto', 
+                scrollbarColor: '#1976D2 white', scrollbarWidth: 'thin' }}>
                 <CardHeader
                     sx={{ bgcolor: '#1976D2', color: 'white', padding: '40px 20px' }}
                     title={

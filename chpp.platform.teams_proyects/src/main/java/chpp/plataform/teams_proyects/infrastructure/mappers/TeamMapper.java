@@ -17,7 +17,8 @@ public class TeamMapper {
                         team.getStudents().stream()
                                 .map(StudentMapper::toDTO)
                                 .collect(Collectors.toList())
-                        : null
+                        : null,
+                team.isActive()
 
         );
     }
@@ -32,6 +33,7 @@ public class TeamMapper {
                                 .map(StudentMapper::toDomain)
                                 .collect(Collectors.toList())
                         : null
+                ,dto.isActive()
         );
     }
 

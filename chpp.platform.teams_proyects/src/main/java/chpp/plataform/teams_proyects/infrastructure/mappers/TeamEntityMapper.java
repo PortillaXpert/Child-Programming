@@ -31,7 +31,8 @@ public class TeamEntityMapper {
                 entity.getStudents() != null ?
                         entity.getStudents().stream()
                                 .map(StudentEntityMapper::toDomain)
-                                .collect(Collectors.toList()) : null
+                                .collect(Collectors.toList()) : null,
+                entity.isActive()
         );
     }
 }

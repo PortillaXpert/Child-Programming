@@ -24,4 +24,5 @@ public class TeamDTO {
     @NotNull(message = "La lista de estudiantes no puede ser nula")
     @NotEmpty(message = "Debe haber al menos un estudiante")
     private List<StudentDTO> students;
+    private boolean active = true;
 }

@@ -2,6 +2,7 @@ package chpp.plataform.teams_proyects.infrastructure.repository.imp;
 
 import chpp.plataform.teams_proyects.domain.model.Team;
 import chpp.plataform.teams_proyects.domain.repository.ITeamRepository;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.StudentEntity;
 import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.TeamEntity;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaTeamRepository;
@@ -26,6 +27,7 @@ public class TeamRepositoryImp implements ITeamRepository {
     @Transactional
     public Team create(Team team) {
         TeamEntity teamEntity = TeamEntityMapper.toEntity(team);
+        teamEntity.setActive(true);
         TeamEntity saved = jpaTeamRepository.save(teamEntity);
         return TeamEntityMapper.toDomain(saved);
     }
@@ -44,7 +46,7 @@ public class TeamRepositoryImp implements ITeamRepository {
 
     @Override
     public List<Team> findAll() {
-        return jpaTeamRepository.findAll()
+        return jpaTeamRepository.findAllActiveTeams()
                 .stream()
                 .map(TeamEntityMapper::toDomain)
                 .collect(Collectors.toList());
@@ -52,11 +54,12 @@ public class TeamRepositoryImp implements ITeamRepository {
 
     @Override
     public List<Team> findByCourseId(String courseId) {
-        return jpaTeamRepository.findByCourse(courseId)
+        return jpaTeamRepository.findActiveTeamsByCourse(courseId)
                 .stream()
                 .map(TeamEntityMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
 
 
     @Override
@@ -64,12 +67,13 @@ public class TeamRepositoryImp implements ITeamRepository {
         TeamEntity team = jpaTeamRepository.findById(teamId)
                 .orElseThrow(EntityNotFoundException::new);
 
-        jpaTeamRepository.delete(team);
+        team.setActive(false);
+        jpaTeamRepository.save(team);
     }
 
     @Override
     public Team getTeamByStudentCode(String studentCode) {
-    TeamEntity teamEntity = jpaTeamRepository.findTeamByStudentCode(studentCode);
+    TeamEntity teamEntity = jpaTeamRepository.findActiveTeamByStudentCode(studentCode);
     if (teamEntity == null) {
         throw new EntityNotFoundException("Equipo no encontrado para el estudiante con código: " + studentCode);
     }
@@ -84,7 +88,7 @@ public class TeamRepositoryImp implements ITeamRepository {
 
         existingTeam.setName(teamUpdate.getName());
         existingTeam.setCourse(teamUpdate.getCourse());
-
+        existingTeam.setActive(true);
         return TeamEntityMapper.toDomain(jpaTeamRepository.save(existingTeam));
     }
 

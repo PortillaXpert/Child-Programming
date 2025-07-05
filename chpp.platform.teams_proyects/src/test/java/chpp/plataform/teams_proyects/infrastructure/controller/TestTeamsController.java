@@ -39,12 +39,6 @@ class TestTeamsController {
         StudentDTO student1 = new StudentDTO(1L, 1001L, "Juan Pérez" , "1A");
         StudentDTO student2 = new StudentDTO(2L, 1002L, "María García","1A");
 
-        teamDTOWithStudents = new TeamDTO(
-                teamId,
-                "Equipo A",
-                courseId,
-                Arrays.asList(student1, student2)
-        );
     }
 
     @Test

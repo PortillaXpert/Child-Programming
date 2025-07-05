@@ -9,11 +9,13 @@ import chpp.plataform.teams_proyects.domain.service.ITeamService;
 import chpp.plataform.teams_proyects.infrastructure.dto.TeamDTO;
 import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.StudentEntity;
 import chpp.plataform.teams_proyects.infrastructure.exceptions.BusinessRuleException;
+import chpp.plataform.teams_proyects.infrastructure.mappers.StudentMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamMapper;
 import chpp.plataform.teams_proyects.infrastructure.messages.MessageLoader;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.IJpaStudentRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,19 +36,28 @@ public class TeamServiceImp implements ITeamService {
     @Override
     public ResponseDto<TeamDTO> createTeam(TeamDTO teamDto) {
         validateTeamDTO(teamDto);
-        Team team = TeamMapper.toDomain(teamDto);
 
-        if (team.getStudents() != null && !team.getStudents().isEmpty()) {
-            List<StudentEntity> existingStudents = validateAndGetExistingStudents(team.getStudents());
+        Team team = TeamMapper.toDomain(teamDto);
+        team.setStudents(null);
+        team.setActive(true);
+        Team createdTeam = teamRepository.create(team);
+
+        if (teamDto.getStudents() != null && !teamDto.getStudents().isEmpty()) {
+            List<StudentEntity> existingStudents =
+                    validateAndGetExistingStudents
+                            (teamDto.getStudents().stream()
+                                    .map(StudentMapper::toDomain).toList());
+
             validateAllStudentsFromSameCourse(existingStudents);
             validateStudentsNotInOtherTeams(existingStudents, null);
 
             for (StudentEntity student : existingStudents) {
-                student.setTeam(TeamEntityMapper.toEntity(team));
+                student.setTeam(TeamEntityMapper.toEntity(createdTeam));
             }
+
+            jpaStudentRepository.saveAll(existingStudents);
         }
 
-        Team createdTeam = teamRepository.create(team);
         TeamDTO createdTeamDto = TeamMapper.toDTO(createdTeam);
         return new ResponseDto<>(
                 HttpStatus.CREATED.value(),
@@ -55,13 +66,15 @@ public class TeamServiceImp implements ITeamService {
         );
     }
 
+
+    @Transactional
     @Override
     public ResponseDto<TeamDTO> updateTeam(Long id, TeamDTO teamDto) {
         Team existingTeam = getTeamOrThrow(id);
         validateTeamDTO(teamDto);
         Team team = TeamMapper.toDomain(teamDto);
         team.setId(id);
-
+        team.setActive(true);
         if (team.getStudents() != null && !team.getStudents().isEmpty()) {
             List<StudentEntity> existingStudents = validateAndGetExistingStudents(team.getStudents());
             validateAllStudentsFromSameCourse(existingStudents);
@@ -114,13 +127,14 @@ public class TeamServiceImp implements ITeamService {
 
     private void validateStudentsNotInOtherTeams(List<StudentEntity> students, Long currentTeamId) {
         List<Long> studentsInOtherTeams = students.stream()
-                .filter(s -> s.getTeam() != null &&
-                        (!s.getTeam().getId().equals(currentTeamId)))
+                .filter(s -> s.getTeam() != null
+                        && s.getTeam().isActive()
+                        && !s.getTeam().getId().equals(currentTeamId))
                 .map(StudentEntity::getStudentCod)
                 .toList();
 
         if (!studentsInOtherTeams.isEmpty()) {
-            throw new IllegalStateException("Estudiantes ya asignados a otros equipos: " + studentsInOtherTeams);
+            throw new IllegalStateException("Estudiantes ya asignados a equipos activos: " + studentsInOtherTeams);
         }
     }
 
@@ -170,6 +184,7 @@ public class TeamServiceImp implements ITeamService {
     @Override
     public ResponseDto<Void> dissolveTeam(Long teamId) {
         getTeamOrThrow(teamId);
+
         teamRepository.dissolve(teamId);
         return new ResponseDto<>(
                 HttpStatus.NO_CONTENT.value(),

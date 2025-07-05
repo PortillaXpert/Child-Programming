@@ -9,8 +9,17 @@ import java.util.List;
 
 
 public interface JpaTeamRepository extends JpaRepository<TeamEntity, Long> {
-    List<TeamEntity> findByCourse(String courseId);
 
-    @Query("SELECT t FROM TeamEntity t JOIN t.students s WHERE s.studentCod = :studentCode")
-    TeamEntity findTeamByStudentCode(@Param("studentCode") String studentCode);
+
+    @Query("SELECT t FROM TeamEntity t WHERE t.active = true")
+    List<TeamEntity> findAllActiveTeams();
+
+
+    @Query("SELECT t FROM TeamEntity t WHERE t.course = :course AND t.active = true")
+    List<TeamEntity> findActiveTeamsByCourse(@Param("course") String course);
+
+
+    @Query("SELECT t FROM TeamEntity t JOIN t.students s WHERE s.studentCod = :studentCode AND t.active = true")
+    TeamEntity findActiveTeamByStudentCode(@Param("studentCode") String studentCode);
+
 }

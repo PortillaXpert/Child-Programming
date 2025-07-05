@@ -39,4 +39,6 @@ public class TeamEntity {
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<StudentEntity> students;
 
+    @Column(nullable = false)
+    private boolean active = true;
 }

@@ -55,15 +55,10 @@ function MisionComponent({ teamId }) {
     })
   }
 
-  if (loading) return <SkeletonCard titleLines={1} items={3} />
-
-  if (!mission) {
-    return (
-      <Typography sx={{ mt: 4, color: 'red' }}>
-        No se encontró ninguna misión asignada.
-      </Typography>
-    )
+  if (loading || !mission) {
+    return <SkeletonCard titleLines={1} items={0} />
   }
+  
 
   return (
     <Card sx={{ width: '50vw', height: '70vh', overflow: 'auto', 
