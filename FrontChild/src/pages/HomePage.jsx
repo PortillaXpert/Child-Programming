@@ -18,7 +18,7 @@ const HomePage = () => {
     else setSelected({ mision: false, team: false, task: true })
   }
 
-  const role = 'TEACHER'
+  const role = 'PROFESOR'
 
   return (
     <>
@@ -67,10 +67,10 @@ const HomePage = () => {
         selected.mision ? (
             <MisionComponent teamId={1} />
         ) : selected.team ? (
-              role === 'TEACHER' ? (
-                <TeacherTeamComponent />
-                  ) : (
+              role === 'ESTUDIANTE' ? (
                 <TeamComponent studentCode={20230005} />
+                  ) : (
+                    <TeacherTeamComponent />
                 )
           ) 
           : selected.task ? (

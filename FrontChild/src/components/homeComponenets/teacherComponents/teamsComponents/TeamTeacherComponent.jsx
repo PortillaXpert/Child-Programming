@@ -1,71 +1,47 @@
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    Typography,
-    Box,
-    Avatar,
-    Stack,
-    IconButton,
-    TextField,
-    InputAdornment,
-} from '@mui/material'
-import { useEffect, useState } from 'react'
-import SearchIcon from '@mui/icons-material/Search'
-import GroupIcon from '@mui/icons-material/Group'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { getAllTeams } from '../../../../services/api/teamServiceApi'
-import SkeletonCard from '../../../common/skeletonCard'
-import { Visibility } from '@mui/icons-material'
-import TeamDetailDialog from './TeamDetailDialog'
-import EditIcon from '@mui/icons-material/Edit';
-import TeamCreateEditView from './TeamCreateEditView'
-import ConfirmDialog from '../../../others/ConfirmDialog'
-import { deleteTeam } from '../../../../services/api/teamServiceApi'
-
-const colors = ['#6A5ACD', '#008080', '#4B0082', '#FF8C00', '#DA70D6']
-
-function getColorByIndex(index) {
-    return colors[index % colors.length]
-}
+import { useEffect, useState } from 'react';
+import { getAllTeams, deleteTeam } from '../../../../services/api/teamServiceApi';
+import SkeletonCard from '../../../common/skeletonCard';
+import TeamDetailDialog from './TeamDetailDialog';
+import TeamCreateEditView from './TeamCreateEditView';
+import ConfirmDialog from '../../../others/ConfirmDialog';
+import TeamCardContainer from '../../../teams/TeamCardContainer';
+import TeamHeader from '../../../teams/TeamHeader';
+import SearchInput from '../../../common/SearchInput';
+import TeamList from '../../../teams/TeamList';
 
 function TeamTeacherComponent() {
-    const [teams, setTeams] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [search, setSearch] = useState('')
-    const [openDialog, setOpenDialog] = useState(false)
-    const [selectedTeamId, setSelectedTeamId] = useState(null)
-    const [editingTeamId, setEditingTeamId] = useState(null)
-    const [isCreating, setIsCreating] = useState(false)
-    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
-    const [teamToDelete, setTeamToDelete] = useState(null)
+    const [teams, setTeams] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState('');
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedTeamId, setSelectedTeamId] = useState(null);
+    const [editingTeamId, setEditingTeamId] = useState(null);
+    const [isCreating, setIsCreating] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [teamToDelete, setTeamToDelete] = useState(null);
 
-    const handleOpenDialog = (id) => {
-        setSelectedTeamId(id)
-        setOpenDialog(true)
-    }
+    const fetchTeams = async () => {
+        setLoading(true);
+        try {
+            const data = await getAllTeams();
+            setTeams(data);
+        } catch (err) {
+            console.error('Error al cargar equipos:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchTeams = async () => {
-            try {
-                const data = await getAllTeams()
-                setTeams(data)
-            } catch (err) {
-                console.error('Error al cargar equipos:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchTeams()
-    }, [])
+        fetchTeams();
+    }, []);
 
     const filteredTeams = teams.filter((team) =>
         team.name.toLowerCase().includes(search.toLowerCase())
-    )
+    );
 
     if (loading || !teams) {
-        return <SkeletonCard titleLines={1} items={3} />
+        return <SkeletonCard titleLines={1} items={3} />;
     }
 
     if (editingTeamId || isCreating) {
@@ -73,123 +49,46 @@ function TeamTeacherComponent() {
             <TeamCreateEditView
                 teamId={editingTeamId}
                 onBack={() => {
-                    setEditingTeamId(null)
-                    setIsCreating(false)
+                    setEditingTeamId(null);
+                    setIsCreating(false);
+                    fetchTeams();
                 }}
             />
-        )
+        );
     }
 
     const handleDeleteTeam = async () => {
         try {
-            await deleteTeam(teamToDelete.id)
-            setTeams(prev => prev.filter(team => team.id !== teamToDelete.id))
-            setConfirmDeleteOpen(false)
-            setTeamToDelete(null)
+            await deleteTeam(teamToDelete.id);
+            setTeams((prev) => prev.filter((team) => team.id !== teamToDelete.id));
+            setConfirmDeleteOpen(false);
+            setTeamToDelete(null);
         } catch (error) {
-            console.error('Error al eliminar el equipo:', error)
-            alert('Ocurrió un error al eliminar el equipo.')
+            console.error('Error al eliminar el equipo:', error);
+            alert('Ocurrió un error al eliminar el equipo.');
         }
-    }
-    
+    };
 
-    return (        
-        <Card sx={{
-            width: '50vw', height: '70vh', overflowY: 'auto', overflowX: 'hidden',
-            scrollbarColor: '#1976D2 white', scrollbarWidth: 'thin'
-        }}>
-            <CardHeader
-                sx={{ bgcolor: '#1976D2', color: 'white', p: 3 }}
-                title={
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <GroupIcon sx={{ fontSize: 32 }} />
-                            <Typography sx={{ fontSize: 22, fontWeight: 600 }}>Gestión de Equipos</Typography>
-                        </Box>
-                        <IconButton color="inherit" onClick={() => setIsCreating(true)}>
-                            <Typography sx={{ fontSize: 18, marginLeft: '2px' }}>Crear Equipo</Typography>
-                        </IconButton>
-                    </Box>
+    return (
+        <>
+            <TeamCardContainer
+                header={<TeamHeader onCreate={() => setIsCreating(true)} />}
+                search={<SearchInput value={search} onChange={(e) => setSearch(e.target.value)} />}
+                list={
+                    <TeamList
+                        teams={filteredTeams}
+                        onEdit={(id) => setEditingTeamId(id)}
+                        onView={(id) => {
+                            setSelectedTeamId(id);
+                            setOpenDialog(true);
+                        }}
+                        onDelete={(team) => {
+                            setTeamToDelete(team);
+                            setConfirmDeleteOpen(true);
+                        }}
+                    />
                 }
             />
-            <CardContent>
-                <TextField
-                    label="Buscar equipo"
-                    fullWidth
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    variant="outlined"
-                    size="small"
-                    sx={{ mb: 3 }}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-
-                {filteredTeams.length === 0 ? (
-                    <Typography color="text.secondary">No se encontraron equipos.</Typography>
-                ) : (
-                    <Stack spacing={2}>
-                        {filteredTeams.map((team, index) => (
-                            <Box
-                                key={index}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    bgcolor: '#ffffff',
-                                    borderRadius: 2,
-                                    px: 2,
-                                    py: 1,
-                                    boxShadow: 1,
-                                    transition: 'transform 0.2s',
-                                    '&:hover': {
-                                        transform: 'scale(1.01)',
-                                        boxShadow: 3,
-                                    },
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    <Avatar
-                                        src="/caticon.svg"
-                                        alt="Ícono gato"
-                                        sx={{
-                                            bgcolor: getColorByIndex(index),
-                                            width: 40,
-                                            height: 40,
-                                            p: 1.2,
-                                        }}
-                                    />
-                                    <Box>
-                                        <Typography sx={{ fontWeight: 600 }}>{team.name}</Typography>
-                                        <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                                            Curso: {team.course} • {team.students.length} estudiantes
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Box>
-                                    <IconButton onClick={() => setEditingTeamId(team.id)}>
-                                        <EditIcon />
-                                    </IconButton>
-                                    <IconButton onClick={() => handleOpenDialog(team.id)}>
-                                        <Visibility />
-                                    </IconButton>
-                                    <IconButton onClick={() => {
-                                        setTeamToDelete(team)
-                                        setConfirmDeleteOpen(true)
-                                    }}>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </Box>
-                            </Box>
-                        ))}
-                    </Stack>
-                )}
-            </CardContent>
 
             <TeamDetailDialog
                 open={openDialog}
@@ -204,10 +103,8 @@ function TeamTeacherComponent() {
                 title="¿Eliminar equipo?"
                 content={`¿Estás seguro de que deseas eliminar el equipo "${teamToDelete?.name}"?`}
             />
-
-        </Card>
-    )
+        </>
+    );
 }
 
-
-export default TeamTeacherComponent
+export default TeamTeacherComponent;

@@ -31,7 +31,7 @@ function TeamEditView({ teamId, onBack }) {
     const [studentToDelete, setStudentToDelete] = useState(null)
     const navigate = useNavigate()
     const [snackbarOpen, setSnackbarOpen] = useState(false)
-    const message = teamId ? 'Equipo actualizado correctamente.' : 'Equipo creado correctamente.'
+    const message = teamId ? '¡Equipo actualizado correctamente!' : '¡Equipo guardado con éxito!'
 
     useEffect(() => {
         if (teamId) {
