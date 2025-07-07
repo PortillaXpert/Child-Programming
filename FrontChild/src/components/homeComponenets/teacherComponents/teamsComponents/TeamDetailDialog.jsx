@@ -4,15 +4,13 @@ import {
     DialogContent,
     DialogActions,
     Typography,
-    Avatar,
     Stack,
     IconButton,
     Box,
     Button,
-    Chip
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import DeleteIcon from '@mui/icons-material/Delete'
+import StudentItem from '../../../teams/StudentItem'
 import { useEffect, useState } from 'react'
 import { getTeamById, updateTeam } from '../../../../services/api/teamServiceApi'
 import ConfirmDialog from '../../../others/ConfirmDialog'
@@ -74,46 +72,9 @@ function TeamDetailDialog({ open, onClose, teamId }) {
                             <Typography fontWeight={600} sx={{ mt: 2, mb: 1 }}>Estudiantes</Typography>
                             <Stack spacing={1}>
                                 {team.students.map((student, idx) => (
-                                    <Box
-                                        key={student.id}
-                                        display="flex"
-                                        alignItems="center"
-                                        justifyContent="space-between"
-                                        sx={{
-                                            bgcolor: '#f4f6f8',
-                                            borderRadius: 2,
-                                            px: 2,
-                                            py: 1
-                                        }}
-                                    >
-                                        <Box display="flex" alignItems="center" gap={2}>
-                                            <Avatar
-                                                src="/caticon.svg"
-                                                alt="Ícono gato"
-                                                sx={{
-                                                    bgcolor: getColorByIndex(idx),
-                                                    width: 35,
-                                                    height: 35,
-                                                    p: 1.2
-                                                }}
-                                            />
-                                            <Box>
-                                                <Typography fontWeight={500}>{student.fullName}</Typography>
-                                                <Chip
-                                                    label={`Cod: ${student.studentCod}`}
-                                                    size="small"
-                                                    sx={{
-                                                        mt: 0.5,
-                                                        bgcolor: getColorByIndex(idx),
-                                                        color: 'white',
-                                                        fontWeight: 'bold'
-                                                    }}
-                                                />
-                                            </Box>
-                                        </Box>
-                                    </Box>
+                                    <StudentItem student={student} index={idx} showCode />
                                 ))}
-                            </Stack>
+                                </Stack>
                         </>
                     ) : (
                         <Typography color="text.secondary">Cargando...</Typography>

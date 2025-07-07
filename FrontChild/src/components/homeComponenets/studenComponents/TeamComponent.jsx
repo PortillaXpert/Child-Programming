@@ -41,7 +41,7 @@ function TeamComponent({ studentCode }) {
                     <Typography sx={{ fontSize: '18px', fontWeight: 600, mb: 2 }}>Integrantes</Typography>
                     <Stack spacing={2}>
                         {team.students?.map((estudiante, index) => (
-                            <StudentItem key={index} student={estudiante} index={index} />
+                            <StudentItem student={estudiante} index={index} />
                         ))}
                     </Stack>
                 </>

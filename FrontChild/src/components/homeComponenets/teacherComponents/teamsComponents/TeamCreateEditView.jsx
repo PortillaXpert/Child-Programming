@@ -8,18 +8,16 @@ import {
     Stack,
     TextField,
     Typography,
-    Avatar,
-    Chip
+    Snackbar,
+    Alert,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { useNavigate } from 'react-router-dom'
 import { getTeamById, updateTeam, createTeam } from '../../../../services/api/teamServiceApi'
 import ConfirmDialog from '../../../others/ConfirmDialog'
-import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
+import StudentItem from '../../../teams/StudentItem'
 
 const colors = ['#6A5ACD', '#008080', '#4B0082', '#FF8C00', '#DA70D6']
 const getColorByIndex = (index) => colors[index % colors.length]
@@ -27,10 +25,12 @@ const getColorByIndex = (index) => colors[index % colors.length]
 function TeamEditView({ teamId, onBack }) {
     const [team, setTeam] = useState({ name: '', course: '', students: [] })
     const [newStudent, setNewStudent] = useState({ fullName: '', studentCod: '' })
+    const [errors, setErrors] = useState({ fullName: '', studentCod: '' })
+    const [teamErrors, setTeamErrors] = useState({ name: '', course: '' })
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [studentToDelete, setStudentToDelete] = useState(null)
-    const navigate = useNavigate()
     const [snackbarOpen, setSnackbarOpen] = useState(false)
+    const navigate = useNavigate()
     const message = teamId ? '¡Equipo actualizado correctamente!' : '¡Equipo guardado con éxito!'
 
     useEffect(() => {
@@ -43,6 +43,48 @@ function TeamEditView({ teamId, onBack }) {
 
     const handleChange = (field, value) => {
         setTeam((prev) => ({ ...prev, [field]: value }))
+        setTeamErrors((prev) => ({ ...prev, [field]: '' }))
+    }
+
+    const validateTeamFields = () => {
+        const newTeamErrors = { name: '', course: '' }
+        let isValid = true
+
+        if (!team.name.trim()) {
+            newTeamErrors.name = 'El nombre del equipo es obligatorio.'
+            isValid = false
+        }
+        if (!team.course.trim()) {
+            newTeamErrors.course = 'El curso es obligatorio.'
+            isValid = false
+        }
+
+        setTeamErrors(newTeamErrors)
+        return isValid
+    }
+
+    const validateInputs = () => {
+        const newErrors = { fullName: '', studentCod: '' }
+        let isValid = true
+
+        if (!newStudent.fullName.trim()) {
+            newErrors.fullName = 'El nombre no puede estar vacío.'
+            isValid = false
+        }
+
+        if (!newStudent.studentCod.trim()) {
+            newErrors.studentCod = 'El código no puede estar vacío.'
+            isValid = false
+        } else if (!/^\d+$/.test(newStudent.studentCod)) {
+            newErrors.studentCod = 'El código debe ser numérico.'
+            isValid = false
+        } else if (team.students.some(s => s.studentCod === newStudent.studentCod.trim())) {
+            newErrors.studentCod = 'Este código ya está registrado.'
+            isValid = false
+        }
+
+        setErrors(newErrors)
+        return isValid
     }
 
     const confirmDeleteStudent = (student) => {
@@ -61,31 +103,38 @@ function TeamEditView({ teamId, onBack }) {
     }
 
     const handleAddStudent = () => {
-        if (!newStudent.fullName || !newStudent.studentCod) return
+        if (!validateInputs()) return
+
         const newEntry = {
-            fullName: newStudent.fullName,
-            studentCod: newStudent.studentCod,
+            fullName: newStudent.fullName.trim(),
+            studentCod: newStudent.studentCod.trim(),
             course: team.course,
         }
+
         setTeam((prev) => ({
             ...prev,
             students: [...prev.students, newEntry],
         }))
         setNewStudent({ fullName: '', studentCod: '' })
+        setErrors({ fullName: '', studentCod: '' })
+        setTeamErrors((prev) => ({ ...prev, students: '' }))
     }
 
     const handleSave = async () => {
-        
+        const teamValid = validateTeamFields()
+        if (!teamValid) return
+        if (team.students.length === 0) {
+            setTeamErrors((prev) => ({ ...prev, students: 'Debe agregar al menos un estudiante.' }))
+            return
+        }
         try {
             if (teamId) {
                 await updateTeam(team.id, team)
-                navigate(`/home`)
-                setSnackbarOpen(true) 
             } else {
                 await createTeam(team)
-                navigate(`/home`)
-                setSnackbarOpen(true) 
             }
+            navigate(`/home`)
+            setSnackbarOpen(true)
             onBack()
         } catch (err) {
             console.error('Error al guardar equipo:', err)
@@ -96,8 +145,7 @@ function TeamEditView({ teamId, onBack }) {
 
     return (
         <>
-            <Card sx={{ width: '50vw', height: '70vh', overflowY: 'auto', overflowX: 'hidden',
-                scrollbarColor: '#1976D2 white', scrollbarWidth: 'thin'}}>
+            <Card sx={{ width: '50vw', height: '70vh', overflowY: 'auto', overflowX: 'hidden', scrollbarColor: '#1976D2 white', scrollbarWidth: 'thin' }}>
                 <CardHeader
                     sx={{ bgcolor: '#1976D2', color: 'white', p: 3 }}
                     title={
@@ -115,57 +163,34 @@ function TeamEditView({ teamId, onBack }) {
                             label="Nombre del equipo"
                             value={team.name}
                             onChange={(e) => handleChange('name', e.target.value)}
+                            error={!!teamErrors.name}
+                            helperText={teamErrors.name}
                             fullWidth
                         />
                         <TextField
                             label="Curso"
                             value={team.course}
                             onChange={(e) => handleChange('course', e.target.value)}
+                            error={!!teamErrors.course}
+                            helperText={teamErrors.course}
                             fullWidth
                         />
 
                         <Typography fontWeight={600}>Estudiantes</Typography>
                         {team.students.map((student, idx) => (
-                            <Box
+                            <StudentItem
                                 key={idx}
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="space-between"
-                                sx={{
-                                    bgcolor: '#f4f6f8',
-                                    borderRadius: 2,
-                                    px: 2,
-                                    py: 1,
-                                }}
-                            >
-                                <Box display="flex" alignItems="center" gap={2}>
-                                    <Avatar
-                                        src="/caticon.svg"
-                                        sx={{
-                                            bgcolor: getColorByIndex(idx),
-                                            width: 40,
-                                            height: 40,
-                                            p: 1.2,
-                                        }}
-                                    />
-                                    <Box>
-                                        <Typography>{student.fullName}</Typography>
-                                        <Chip
-                                            label={`Cod: ${student.studentCod}`}
-                                            size="small"
-                                            sx={{
-                                                mt: 0.5,
-                                                bgcolor: getColorByIndex(idx),
-                                                color: 'white',
-                                            }}
-                                        />
-                                    </Box>
-                                </Box>
-                                <IconButton onClick={() => confirmDeleteStudent(student)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </Box>
+                                student={student}
+                                index={idx}
+                                showCode
+                                onDelete={confirmDeleteStudent}
+                            />
                         ))}
+                        {teamErrors.students && (
+                        <Typography color="error" variant="body2" sx={{ ml: 1 }}>
+                            {teamErrors.students}
+                        </Typography>
+                        )}
 
                         <Typography fontWeight={600}>Agregar Estudiante</Typography>
                         <Stack direction="row" spacing={2}>
@@ -173,12 +198,16 @@ function TeamEditView({ teamId, onBack }) {
                                 label="Nombre completo"
                                 value={newStudent.fullName}
                                 onChange={(e) => setNewStudent({ ...newStudent, fullName: e.target.value })}
+                                error={!!errors.fullName}
+                                helperText={errors.fullName}
                                 fullWidth
                             />
                             <TextField
                                 label="Código"
                                 value={newStudent.studentCod}
                                 onChange={(e) => setNewStudent({ ...newStudent, studentCod: e.target.value })}
+                                error={!!errors.studentCod}
+                                helperText={errors.studentCod}
                                 fullWidth
                             />
                             <IconButton onClick={handleAddStudent} sx={{ alignSelf: 'center' }}>
@@ -211,8 +240,10 @@ function TeamEditView({ teamId, onBack }) {
                 <Alert
                     severity="success"
                     variant="filled"
-                    sx={{ width: '100%' , backgroundColor: '#5be031', color: 'white'}}
-                >{message}</Alert>
+                    sx={{ width: '100%', backgroundColor: '#5be031', color: 'white' }}
+                >
+                    {message}
+                </Alert>
             </Snackbar>
         </>
     )
