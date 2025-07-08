@@ -123,8 +123,8 @@ function TeamEditView({ teamId, onBack }) {
     const handleSave = async () => {
         const teamValid = validateTeamFields()
         if (!teamValid) return
-        if (team.students.length === 0) {
-            setTeamErrors((prev) => ({ ...prev, students: 'Debe agregar al menos un estudiante.' }))
+        if (team.students.length  < 2) {
+            setTeamErrors((prev) => ({ ...prev, students: 'Debe agregar al menos dos estudiantes.' }))
             return
         }
         try {

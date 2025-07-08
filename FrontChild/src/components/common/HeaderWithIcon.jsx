@@ -12,7 +12,7 @@ function HeaderWithIcon({ title, subtitle, iconSrc }) {
             }}
         >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <img src={iconSrc} alt="Ícono" style={{ width: 32, height: 32 }} />
+                <img src={iconSrc} alt="Ícono" style={{ width: 32, height: 32 , color:'white' }} />
                 <Box>
                     <Typography sx={{ fontSize: 22, fontWeight: 600 }}>{title}</Typography>
                     {subtitle && (
