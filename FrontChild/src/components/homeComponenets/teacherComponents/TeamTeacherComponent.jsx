@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { getAllTeams, deleteTeam } from '@/services/api/teamServiceApi';
 import SkeletonCard from '@/components/common/skeletonCard';
-import TeamDetailDialog from './TeamDetailDialog';
-import TeamCreateEditView from './TeamCreateEditView';
+import TeamDetailDialog from '@/components/teams/TeamDetailDialog';
+import TeamCreateEditView from '@/components/teams/TeamCreateEditView';
 import ConfirmDialog from '@/components/others/ConfirmDialog';
-import TeamCardContainer from '@/components/teams/TeamCardContainer';
+import CardContainer from '@/components/common/CardContainer';
 import TeamHeader from '@/components/teams/TeamHeader';
 import SearchInput from '@/components/common/SearchInput';
 import TeamList from '@/components/teams/TeamList';
@@ -71,7 +71,7 @@ function TeamTeacherComponent() {
 
     return (
         <>
-            <TeamCardContainer
+            <CardContainer
                 header={<TeamHeader onCreate={() => setIsCreating(true)} />}
                 search={<SearchInput value={search} onChange={(e) => setSearch(e.target.value)} />}
                 list={

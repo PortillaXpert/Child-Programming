@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@mui/material';
 
-function TeamCardContainer({ header, search, list, content }) {
+function CardContainer({ header, search, list, content }) {
     return (
         <Card
             sx={{
@@ -22,4 +22,4 @@ function TeamCardContainer({ header, search, list, content }) {
     );
 }
 
-export default TeamCardContainer;
+export default CardContainer;

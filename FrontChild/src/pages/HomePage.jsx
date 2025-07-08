@@ -7,7 +7,8 @@ import { Box, Card, CardContent, CardHeader, List, Typography } from '@mui/mater
 import MisionComponent from '../components/homeComponenets/studenComponents/MisionComponent'
 import WorkComponent from '../components/homeComponenets/WorkComponent'
 import TeamComponent from '../components/homeComponenets/studenComponents/TeamComponent'
-import TeacherTeamComponent from '../components/homeComponenets/teacherComponents/teamsComponents/TeamTeacherComponent'
+import TeacherTeamComponent from '../components/homeComponenets/teacherComponents/TeamTeacherComponent'
+import MissionTeacherComponent from '../components/homeComponenets/teacherComponents/MissionTeacherComponent'
 
 const HomePage = () => {
   const [selected, setSelected] = useState({ mision: false, team: false, task: false })
@@ -18,7 +19,7 @@ const HomePage = () => {
     else setSelected({ mision: false, team: false, task: true })
   }
 
-  const role = 'ESTUDIANTE' // This should be dynamically set based on user role
+  const role = 'PROFESOR' // This should be dynamically set based on user role
 
   return (
     <>
@@ -65,8 +66,12 @@ const HomePage = () => {
 
         {
         selected.mision ? (
-            <MisionComponent teamId={1} />
-        ) : selected.team ? (
+            (role === 'ESTUDIANTE' ? (
+              <MisionComponent teamId={1} />
+            ) : (
+              <MissionTeacherComponent/>
+            )
+            )) : selected.team ? (
               role === 'ESTUDIANTE' ? (
                 <TeamComponent studentCode={20230005} />
                   ) : (

@@ -14,3 +14,53 @@ export async function getMissionById(id) {
     const json = await res.json()
     return json.data
 }
+
+export async function getMissions() {
+    const res = await fetch(`${API_BASE}/missions`)
+    if (!res.ok) {
+        throw new Error(`Error fetching missions: ${res.statusText}`)
+    }
+    const json = await res.json()
+    console.log('Missions fetched:', json.data)
+    return json.data
+}
+
+export async function createMission(missionData) {
+    const res = await fetch(`${API_BASE}/missions`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(missionData),
+    })
+    if (!res.ok) {
+        throw new Error(`Error creating mission: ${res.statusText}`)
+    }
+    const json = await res.json()
+    return json.data
+}
+
+export async function updateMission(id, missionData) {
+    const res = await fetch(`${API_BASE}/missions/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(missionData),
+    })
+    if (!res.ok) {
+        throw new Error(`Error updating mission with ID ${id}: ${res.statusText}`)
+    }
+    const json = await res.json()
+    return json.data
+}
+
+export async function deleteMission(id) {
+    const res = await fetch(`${API_BASE}/missions/${id}`, {
+        method: 'DELETE',
+    })
+    if (!res.ok) {
+        throw new Error(`Error deleting mission with ID ${id}: ${res.statusText}`)
+    }
+    return true
+}

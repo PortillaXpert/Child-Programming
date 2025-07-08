@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getTeamByStudentCode } from '@/services/api/teamServiceApi';
 import SkeletonCard from '@/components/common/skeletonCard';
-import TeamCardContainer from '@/components/teams/TeamCardContainer';
+import CardContainer from '@/components/common/CardContainer';
 import HeaderWithIcon from '@/components/common/HeaderWithIcon';
 import StudentItem from '@/components/teams/StudentItem';
 import { Typography, Stack } from '@mui/material';
@@ -28,7 +28,7 @@ function TeamComponent({ studentCode }) {
     if (loading) return <SkeletonCard titleLines={1} items={3} />;
 
     return (
-        <TeamCardContainer
+        <CardContainer
             header={
                 <HeaderWithIcon
                     title={team?.name?.toUpperCase()}
