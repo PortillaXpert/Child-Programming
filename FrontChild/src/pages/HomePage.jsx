@@ -18,7 +18,7 @@ const HomePage = () => {
     else setSelected({ mision: false, team: false, task: true })
   }
 
-  const role = 'PROFESOR' // This should be dynamically set based on user role
+  const role = 'ESTUDIANTE' // This should be dynamically set based on user role
 
   return (
     <>

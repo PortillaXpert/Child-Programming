@@ -15,12 +15,10 @@ import { useEffect, useState } from 'react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import AddIcon from '@mui/icons-material/Add'
 import { useNavigate } from 'react-router-dom'
-import { getTeamById, updateTeam, createTeam } from '@services/api/teamServiceApi'
-import ConfirmDialog from '@others/ConfirmDialog'
-import StudentItem from '@teams/StudentItem'
+import { getTeamById, updateTeam, createTeam } from '@/services/api/teamServiceApi'
+import ConfirmDialog from '@/components/others/ConfirmDialog'
+import StudentItem from '@/components/teams/StudentItem'
 
-const colors = ['#6A5ACD', '#008080', '#4B0082', '#FF8C00', '#DA70D6']
-const getColorByIndex = (index) => colors[index % colors.length]
 
 function TeamEditView({ teamId, onBack }) {
     const [team, setTeam] = useState({ name: '', course: '', students: [] })

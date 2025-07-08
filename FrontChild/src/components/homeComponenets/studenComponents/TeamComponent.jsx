@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getTeamByStudentCode } from '../../../services/api/teamServiceApi';
-import SkeletonCard from '../../common/skeletonCard';
-import TeamCardContainer from '../../teams/TeamCardContainer';
-import HeaderWithIcon from '../../common/HeaderWithIcon';
-import StudentItem from '../../teams/StudentItem';
+import { getTeamByStudentCode } from '@/services/api/teamServiceApi';
+import SkeletonCard from '@/components/common/skeletonCard';
+import TeamCardContainer from '@/components/teams/TeamCardContainer';
+import HeaderWithIcon from '@/components/common/HeaderWithIcon';
+import StudentItem from '@/components/teams/StudentItem';
 import { Typography, Stack } from '@mui/material';
 
 function TeamComponent({ studentCode }) {

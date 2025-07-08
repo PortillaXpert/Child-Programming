@@ -11,9 +11,9 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useState } from 'react'
-import StudentItem from '@/teams/StudentItem';
+import StudentItem from '@/components/teams/StudentItem';
 import { getTeamById, updateTeam } from '@/services/api/teamServiceApi';
-import ConfirmDialog from '@/others/ConfirmDialog';
+import ConfirmDialog from '@/components/others/ConfirmDialog';
 
 function TeamDetailDialog({ open, onClose, teamId }) {
     const [team, setTeam] = useState(null)
