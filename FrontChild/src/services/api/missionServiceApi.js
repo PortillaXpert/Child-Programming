@@ -21,11 +21,11 @@ export async function getMissions() {
         throw new Error(`Error fetching missions: ${res.statusText}`)
     }
     const json = await res.json()
-    console.log('Missions fetched:', json.data)
     return json.data
 }
 
 export async function createMission(missionData) {
+    console.log('Creating mission with data:', missionData)
     const res = await fetch(`${API_BASE}/missions`, {
         method: 'POST',
         headers: {
@@ -41,6 +41,7 @@ export async function createMission(missionData) {
 }
 
 export async function updateMission(id, missionData) {
+    console.log('Update mission with data:', missionData)
     const res = await fetch(`${API_BASE}/missions/${id}`, {
         method: 'PUT',
         headers: {
@@ -56,8 +57,8 @@ export async function updateMission(id, missionData) {
 }
 
 export async function deleteMission(id) {
-    const res = await fetch(`${API_BASE}/missions/${id}`, {
-        method: 'DELETE',
+    const res = await fetch(`${API_BASE}/missions/${id}/desactivate`, {
+        method: 'PATCH',
     })
     if (!res.ok) {
         throw new Error(`Error deleting mission with ID ${id}: ${res.statusText}`)

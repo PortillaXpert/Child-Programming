@@ -20,7 +20,7 @@ import ConfirmDialog from '@/components/others/ConfirmDialog'
 import StudentItem from '@/components/teams/StudentItem'
 
 
-function TeamEditView({ teamId, onBack }) {
+function TeamCreateEditView({ teamId, onBack }) {
     const [team, setTeam] = useState({ name: '', course: '', students: [] })
     const [newStudent, setNewStudent] = useState({ fullName: '', studentCod: '' })
     const [errors, setErrors] = useState({ fullName: '', studentCod: '' })
@@ -131,9 +131,7 @@ function TeamEditView({ teamId, onBack }) {
             } else {
                 await createTeam(team)
             }
-            navigate(`/home`)
             setSnackbarOpen(true)
-            onBack()
         } catch (err) {
             console.error('Error al guardar equipo:', err)
         }
@@ -247,4 +245,4 @@ function TeamEditView({ teamId, onBack }) {
     )
 }
 
-export default TeamEditView
+export default TeamCreateEditView

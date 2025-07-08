@@ -37,17 +37,6 @@ function MisionComponent({ teamId }) {
     fetchMission()
   }, [])
 
-  const formatDate = (iso) => {
-    if (!iso) return 'Fecha no disponible'
-    const date = new Date(iso)
-    return date.toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
 
   if (loading || !mission) {
     return <SkeletonCard titleLines={1} items={0} />

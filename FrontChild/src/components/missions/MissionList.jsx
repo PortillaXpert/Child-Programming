@@ -3,7 +3,6 @@ import {
     Typography,
     IconButton,
     Avatar,
-    Chip,
     Stack,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -24,14 +23,20 @@ function MissionList({ missions, onEdit, onView, onDelete }) {
             {missions.map((mission, index) => (
                 <Box
                     key={mission.id}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
                     sx={{
-                        bgcolor: '#f4f6f8',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        bgcolor: '#ffffff',
                         borderRadius: 2,
                         px: 2,
                         py: 1,
+                        boxShadow: 1,
+                        transition: 'transform 0.2s',
+                        '&:hover': {
+                            transform: 'scale(1.01)',
+                            boxShadow: 3,
+                        },
                     }}
                 >
                     <Box display="flex" alignItems="center" gap={2}>

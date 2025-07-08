@@ -2,6 +2,7 @@ package chpp.plataform.teams_proyects.infrastructure.repository.imp;
 
 import chpp.plataform.teams_proyects.domain.model.Mission;
 import chpp.plataform.teams_proyects.domain.repository.IMissionRepository;
+import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.AttachmentEntity;
 import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.MissionEntity;
 import chpp.plataform.teams_proyects.infrastructure.mappers.AttachmentEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionEntityMapper;
@@ -87,8 +88,12 @@ public class MissionRepositoryImp implements IMissionRepository {
         entity.setStartDate(mission.getStartDate());
         entity.setEndDate(mission.getEndDate());
         entity.setActive(mission.isActive());
-        entity.setMaterials(mission.getMaterials()
-                .stream().map(AttachmentEntityMapper::toEntity).collect(Collectors.toList()));
+        List<AttachmentEntity> nuevos = mission.getMaterials()
+                .stream().map(AttachmentEntityMapper::toEntity).toList();
+
+        entity.getMaterials().clear();
+        entity.getMaterials().addAll(nuevos);
+
 
         MissionEntity updatedEntity = jpaMissionRepository.save(entity);
         return MissionEntityMapper.toDomain(updatedEntity);

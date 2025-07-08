@@ -7,6 +7,7 @@ import CardContainer from '@/components/common/CardContainer'
 import MissionHeader from '@/components/missions/MissionHeader'
 import MissionList from '@/components/missions/MissionList'
 import MissionDetailDialog from '@/components/missions/MissionDetailDialog'
+import MissionCreateEditView from '@/components/missions/MissionCreateEditView'
 
 function MissionTeacherComponent() {
     const [missions, setMissions] = useState([])
@@ -44,8 +45,16 @@ function MissionTeacherComponent() {
     }
 
     if (editingMissionId || isCreating) {
-        // falta crear / editar misión
-        return null
+        return (
+            <MissionCreateEditView
+                missionId={editingMissionId}
+                onBack={() => {
+                    setEditingMissionId(null)
+                    setIsCreating(false)
+                    fetchMissions()
+                }}
+            />
+        )
     }
 
     const handleDeleteMission = async () => {
