@@ -10,16 +10,10 @@ import {
     Button,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import StudentItem from '../../../teams/StudentItem'
 import { useEffect, useState } from 'react'
-import { getTeamById, updateTeam } from '../../../../services/api/teamServiceApi'
-import ConfirmDialog from '../../../others/ConfirmDialog'
-
-const colors = ['#6A5ACD', '#008080', '#4B0082', '#FF8C00', '#DA70D6']
-
-function getColorByIndex(index) {
-    return colors[index % colors.length]
-}
+import StudentItem from '@/teams/StudentItem';
+import { getTeamById, updateTeam } from '@/services/api/teamServiceApi';
+import ConfirmDialog from '@/others/ConfirmDialog';
 
 function TeamDetailDialog({ open, onClose, teamId }) {
     const [team, setTeam] = useState(null)

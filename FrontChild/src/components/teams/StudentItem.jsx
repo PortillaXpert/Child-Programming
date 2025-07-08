@@ -1,4 +1,3 @@
-// components/teams/StudentItem.jsx
 import { Box, Avatar, Typography, Chip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
