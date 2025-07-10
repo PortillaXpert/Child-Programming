@@ -101,7 +101,7 @@ function MissionTeacherComponent() {
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={handleDeleteMission}
                 title="¿Eliminar misión?"
-                content={`¿Estás seguro de que deseas eliminar la misión "${missionToDelete?.title}"?`}
+                content={`¿Estás seguro de que deseas desactivar esta misión?`}
             />
         </>
     )

@@ -101,7 +101,7 @@ function TeamTeacherComponent() {
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={handleDeleteTeam}
                 title="¿Eliminar equipo?"
-                content={`¿Estás seguro de que deseas eliminar el equipo "${teamToDelete?.name}"?`}
+                content={`¿Estás seguro de que deseas desactivar este equipo?`}
             />
         </>
     );

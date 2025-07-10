@@ -32,4 +32,5 @@ public class MisionDTO {
     private LocalDateTime endDate;
 
     private List<AttachmentDTO> materials;
+    private boolean active;
 }

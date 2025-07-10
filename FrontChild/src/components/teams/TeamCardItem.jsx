@@ -1,7 +1,5 @@
-import { Box, Typography, Avatar, IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Typography, Avatar} from '@mui/material';
+import ActionButtons from '@/components/common/ActionButtons';
 
 const colors = ['#6A5ACD', '#008080', '#4B0082', '#FF8C00', '#DA70D6'];
 const getColorByIndex = (index) => colors[index % colors.length];
@@ -38,11 +36,7 @@ const TeamCardItem = ({ team, index, onEdit, onView, onDelete }) => {
                     </Typography>
                 </Box>
             </Box>
-            <Box>
-                <IconButton onClick={() => onEdit(team.id)}><EditIcon /></IconButton>
-                <IconButton onClick={() => onView(team.id)}><VisibilityIcon /></IconButton>
-                <IconButton onClick={() => onDelete(team)}><DeleteIcon /></IconButton>
-            </Box>
+            <ActionButtons id={team.id} onEdit={onEdit} onView={onView} onDelete={onDelete}/>
         </Box>
     );
 };

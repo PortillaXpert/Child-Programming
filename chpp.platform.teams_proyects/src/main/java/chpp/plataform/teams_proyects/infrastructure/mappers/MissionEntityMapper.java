@@ -39,6 +39,7 @@ public class MissionEntityMapper {
             );
         }
 
+
         return mission;
     }
 

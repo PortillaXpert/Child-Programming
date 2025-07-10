@@ -26,6 +26,7 @@ public class MissionServiceImp implements IMissionService {
     @Override
     public ResponseDto<MisionDTO> createMission(MisionDTO missionDTO) {
         validateMissionDTO(missionDTO);
+        missionDTO.setActive(true);
         Mission mission = MissionMapper.toDomain(missionDTO);
         Mission savedMission = missionRepository.save(mission);
         MisionDTO savedMissionDTO = MissionMapper.toDTO(savedMission);

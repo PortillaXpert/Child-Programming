@@ -5,10 +5,9 @@ import {
     Avatar,
     Stack,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import Chip from '@mui/material/Chip';
+import ActionButtons from '@/components/common/ActionButtons';
 
 const colors = ['#6A5ACD', '#008080', '#4B0082', '#FF8C00', '#DA70D6'];
 const getColorByIndex = (index) => colors[index % colors.length];
@@ -45,20 +44,23 @@ function MissionList({ missions, onEdit, onView, onDelete }) {
                         </Avatar>
                         <Box>
                             <Typography fontWeight={600}>{mission.title}</Typography>
+                            <Chip
+                                label={mission.active ? 'Activa' : 'Inactiva'}
+                                size="small"
+                                sx={{
+                                mt: 0.5,
+                                bgcolor: mission.active ? 'green' : 'gray',
+                                color: 'white',
+                                }}
+                            />
                         </Box>
                     </Box>
-
-                    <Box>
-                        <IconButton onClick={() => onEdit(mission.id)}>
-                            <EditIcon />
-                        </IconButton>
-                        <IconButton onClick={() => onView(mission.id)}>
-                            <VisibilityIcon />
-                        </IconButton>
-                        <IconButton onClick={() => onDelete(mission)}>
-                            <DeleteIcon />
-                        </IconButton>
-                    </Box>
+                    <ActionButtons 
+                        id={mission.id}
+                        onEdit={onEdit}
+                        onView={onView}
+                        onDelete={onDelete}
+                    />
                 </Box>
             ))}
         </Stack>

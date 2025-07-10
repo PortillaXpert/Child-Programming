@@ -19,7 +19,8 @@ public class MissionMapper {
                         mission.getMaterials().stream()
                                 .map(AttachmentMapper::toDTO)
                                 .collect(Collectors.toList())
-                        : null
+                        : null,
+                mission.isActive()
         );
     }
 

@@ -1,4 +1,17 @@
 import { CardHeader, Box, Typography, IconButton } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import Tooltip from '@mui/material/Tooltip';
+
+const tooltipStyles = {
+    sx: {
+        bgcolor: 'white',
+        color: '#1976D2',
+        fontSize: '0.875rem',
+        borderRadius: 1,
+        px: 1.5,
+        py: 0.5,
+    }
+}
 
 const MissionHeader = ({ onCreate }) => (
     <CardHeader
@@ -9,9 +22,12 @@ const MissionHeader = ({ onCreate }) => (
                 <img src={'./star.svg'} alt="Ícono" style={{ width: 32, height: 32 , color:'white' }} />
                     <Typography sx={{ fontSize: 22, fontWeight: 600 }}>Gestión de Misiones</Typography>
                 </Box>
-                <IconButton color="inherit" onClick={onCreate}>
-                    <Typography sx={{ fontSize: 18 }}>Crear Mision</Typography>
-                </IconButton>
+                <Tooltip title="Crear misión"  componentsProps={{ tooltip: tooltipStyles }} placement="left"    >
+                    <IconButton color="inherit" onClick={onCreate}>
+                        <AddCircleOutlineIcon fontSize='large'></AddCircleOutlineIcon>
+                        <Typography sx={{ fontSize: 18 }}></Typography>
+                    </IconButton>
+                </Tooltip>
             </Box>
         }
     />
