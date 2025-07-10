@@ -9,17 +9,26 @@ import WorkComponent from '../components/homeComponenets/WorkComponent'
 import TeamComponent from '../components/homeComponenets/studenComponents/TeamComponent'
 import TeacherTeamComponent from '../components/homeComponenets/teacherComponents/TeamTeacherComponent'
 import MissionTeacherComponent from '../components/homeComponenets/teacherComponents/MissionTeacherComponent'
+import { Assignment } from '@mui/icons-material'
 
 const HomePage = () => {
-  const [selected, setSelected] = useState({ mision: false, team: false, task: false })
+  const [selected, setSelected] = useState({
+    mision: false,
+    team: false,
+    assignment: false,
+    task: false
+  })
 
   const handleChangeSelected = (option) => {
-    if (option === 'mision') setSelected({ mision: true, team: false, task: false })
-    else if (option === 'team') setSelected({ mision: false, team: true, task: false })
-    else setSelected({ mision: false, team: false, task: true })
+    setSelected({
+      mision: option === 'mision',
+      team: option === 'team',
+      assignment: option === 'assignment',
+      task: option === 'task'
+    })
   }
 
-  const role = 'PROFESOR' // This should be dynamically set based on user role
+  const role = 'PROFESOR'
 
   return (
     <>
@@ -29,9 +38,9 @@ const HomePage = () => {
           <CardHeader
             sx={{ bgcolor: '#1976D2', color: 'white', padding: '50px 10px' }}
             title={
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyItems: 'center', gap: '30px', ml: '30px' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '30px', ml: '30px' }}>
                 <img src="/dashboard.svg" />
-                <Typography sx={{ color: 'white', pl: '5px', fontSize: '20px', fontWeight: '500' }}>
+                <Typography sx={{ color: 'white', fontSize: '20px', fontWeight: 500 }}>
                   Dashboard
                 </Typography>
               </Box>
@@ -53,6 +62,15 @@ const HomePage = () => {
                 changeOption={handleChangeSelected}
                 selected={selected.team}
               />
+              {role === 'PROFESOR' && (
+                <ListOptions
+                  icon={<Assignment sx={{ color: selected.assignment ? '#1976D2' : '#64B5F6' , fontSize: 30 }} />}
+                  textOption="ASIGNACIONES"
+                  option="assignment"
+                  changeOption={handleChangeSelected}
+                  selected={selected.assignment}
+                />
+              )}
               <ListOptions
                 icon={<DocIcon color={selected.task ? '#1976D2' : '#64B5F6'} />}
                 textOption="TAREAS"
@@ -64,24 +82,23 @@ const HomePage = () => {
           </CardContent>
         </Card>
 
-        {
-        selected.mision ? (
-            (role === 'ESTUDIANTE' ? (
-              <MisionComponent teamId={1} />
-            ) : (
-              <MissionTeacherComponent/>
-            )
-            )) : selected.team ? (
-              role === 'ESTUDIANTE' ? (
-                <TeamComponent studentCode={20230005} />
-                  ) : (
-                    <TeacherTeamComponent />
-                )
-          ) 
-          : selected.task ? (
+        {selected.mision ? (
+          role === 'ESTUDIANTE' ? (
+            <MisionComponent teamId={1} />
+          ) : (
+            <MissionTeacherComponent />
+          )
+        ) : selected.team ? (
+          role === 'ESTUDIANTE' ? (
+            <TeamComponent studentCode={20230005} />
+          ) : (
+            <TeacherTeamComponent />
+          )
+        ) : selected.assignment ? (
+          <div>Componente de Asignaciones</div>
+        ) : selected.task ? (
           <WorkComponent />
-        ) : null
-      }
+        ) : null}
       </div>
     </>
   )
