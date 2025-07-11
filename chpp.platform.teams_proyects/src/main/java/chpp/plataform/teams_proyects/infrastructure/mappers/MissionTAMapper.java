@@ -47,6 +47,8 @@ public class MissionTAMapper {
 
         if (domain.getTeam() != null) {
             dto.setTeamId(domain.getTeam().getId());
+            dto.setTeamName(domain.getTeam().getName());
+            dto.setTeamCourse(domain.getTeam().getCourse());
         }
 
         dto.setStatus(domain.getStatus());

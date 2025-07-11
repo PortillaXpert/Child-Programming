@@ -43,7 +43,7 @@ const EntityCardItem = ({ item, index, icon, title, subtitle,
                 )}
             </Box>
         </Box>
-        <ActionButtons id={item.id} onEdit={onEdit} onView={onView} onDelete={onDelete} />
+        <ActionButtons item={item} onEdit={onEdit} onView={onView} onDelete={onDelete} />
     </Box>
 );
 

@@ -12,7 +12,7 @@ function ConfirmDialog({ open, onClose, onConfirm, title, content }) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancelar</Button>
-                <Button onClick={onConfirm} color="error" variant="contained">Eliminar</Button>
+                <Button onClick={onConfirm} color="error" variant="contained">Confirmar</Button>
             </DialogActions>
         </Dialog>
     )

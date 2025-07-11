@@ -2,7 +2,7 @@
 import { Box, IconButton, Tooltip } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-import DeleteIcon from '@mui/icons-material/Delete'
+import BlockIcon from '@mui/icons-material/Block';
 
 const tooltipStyles = {
     sx: {
@@ -15,12 +15,12 @@ const tooltipStyles = {
     }
 }
 
-function ActionButtons({ onEdit, onView, onDelete, id }) {
+function ActionButtons({ onEdit, onView, onDelete, item }) {
     return (
         <Box display={'flex'} gap={'4px'}>
             <Tooltip title="Editar"  componentsProps={{ tooltip: tooltipStyles }}>
                 <IconButton size="small"
-                    onClick={() => onEdit(id)} 
+                    onClick={() => onEdit(item.id)} 
                     sx={{ bgcolor: '#1976D2', color: 'white', '&:hover': { bgcolor: '#125a9c' } }}
                 >
                     <EditIcon fontSize="small"/>
@@ -28,7 +28,7 @@ function ActionButtons({ onEdit, onView, onDelete, id }) {
             </Tooltip>
             <Tooltip title="Ver"  componentsProps={{ tooltip: tooltipStyles }}>
                 <IconButton size="small"
-                    onClick={() => onView(id)} 
+                    onClick={() => onView(item.id)} 
                     sx={{ bgcolor: '#1976D2', color: 'white', '&:hover': { bgcolor: '#125a9c' } }}
                 >
                     <VisibilityIcon fontSize="small" />
@@ -36,10 +36,10 @@ function ActionButtons({ onEdit, onView, onDelete, id }) {
             </Tooltip>
             <Tooltip title="Desactivar"  componentsProps={{ tooltip: tooltipStyles }} >
                 <IconButton size="small"
-                    onClick={() => onDelete(id)} 
+                    onClick={() => onDelete(item)} 
                     sx={{ bgcolor: '#1976D2', color: 'white', '&:hover': { bgcolor: '#125a9c' } }}
                 >
-                    <DeleteIcon  fontSize="small"/>
+                    <BlockIcon  fontSize="small"/>
                 </IconButton>
             </Tooltip>
         </Box>

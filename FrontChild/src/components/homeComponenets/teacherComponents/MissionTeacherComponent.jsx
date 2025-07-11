@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getMissions, deleteMission } from '@/services/api/missionServiceApi'
 import SkeletonCard from '@/components/common/skeletonCard'
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import EntityList from '@/components/common/EntityList';
 import EntityCardItem from '@/components/common/EntityCardItem';
 import ConfirmDialog from '@/components/others/ConfirmDialog'
@@ -10,6 +9,7 @@ import CardContainer from '@/components/common/CardContainer'
 import SectionHeader from '@/components/common/SectionHeader'
 import MissionDetailDialog from '@/components/missions/MissionDetailDialog'
 import MissionCreateEditView from '@/components/missions/MissionCreateEditView'
+import StarIcon from '@/components/icon/StarIcon';
 
 function MissionTeacherComponent() {
     const [missions, setMissions] = useState([])
@@ -62,7 +62,11 @@ function MissionTeacherComponent() {
     const handleDeleteMission = async () => {
         try {
             await deleteMission(missionToDelete.id)
-            setMissions((prev) => prev.filter((m) => m.id !== missionToDelete.id))
+            setMissions((prev) =>
+                prev.map((m) =>
+                    m.id === missionToDelete.id ? { ...m, active: false } : m
+                )
+            )
             setConfirmDeleteOpen(false)
             setMissionToDelete(null)
         } catch (error) {
@@ -96,7 +100,7 @@ function MissionTeacherComponent() {
                             <EntityCardItem
                                 item={mission}
                                 index={index}
-                                icon={<AssignmentIcon />}
+                                icon={<StarIcon color = 'white' />}
                                 title={mission.title}
                                 chipLabel={mission.active ? 'Activa' : 'Inactiva'}
                                 chipColor={mission.active ? 'green' : 'gray'}

@@ -18,6 +18,8 @@ public class MissionTeamAssignedDTO {
     private String titleMission;
     private Long missionId;
     private Long teamId;
+    private String teamName;
+    private String teamCourse;
     private AssignmentStatus status;
     private List<TaskComplete> tasksCompleted;
 }

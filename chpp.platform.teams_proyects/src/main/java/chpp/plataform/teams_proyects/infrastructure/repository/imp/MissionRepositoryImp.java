@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -75,12 +76,12 @@ public class MissionRepositoryImp implements IMissionRepository {
 
 
     @Override
-    public Mission update(Long id,Mission mission) {
-
-        Optional<MissionEntity> optionalEntity = jpaMissionRepository.findById(mission.getId());
+    public Mission update(Long id, Mission mission) {
+        Optional<MissionEntity> optionalEntity = jpaMissionRepository.findById(id);
         if (optionalEntity.isEmpty()) {
             return null;
         }
+
         MissionEntity entity = optionalEntity.get();
         entity.setTitle(mission.getTitle());
         entity.setDescription(mission.getDescription());
@@ -88,15 +89,33 @@ public class MissionRepositoryImp implements IMissionRepository {
         entity.setStartDate(mission.getStartDate());
         entity.setEndDate(mission.getEndDate());
         entity.setActive(mission.isActive());
+
+        List<AttachmentEntity> actuales = entity.getMaterials();
         List<AttachmentEntity> nuevos = mission.getMaterials()
-                .stream().map(AttachmentEntityMapper::toEntity).toList();
+                .stream()
+                .map(dto -> {
+                    AttachmentEntity nuevo = AttachmentEntityMapper.toEntity(dto);
+                    nuevo.setMission(entity);
+                    return nuevo;
+                })
+                .toList();
 
-        entity.getMaterials().clear();
-        entity.getMaterials().addAll(nuevos);
+        actuales.removeIf(actual ->
+                nuevos.stream().noneMatch(nuevo
+                        -> Objects.equals(nuevo.getId(), actual.getId()))
+        );
 
+        for (AttachmentEntity nuevo : nuevos) {
+            boolean yaExiste = actuales.stream()
+                    .anyMatch(actual -> Objects.equals(actual.getId(), nuevo.getId()));
+            if (!yaExiste) {
+                actuales.add(nuevo);
+            }
+        }
 
         MissionEntity updatedEntity = jpaMissionRepository.save(entity);
         return MissionEntityMapper.toDomain(updatedEntity);
     }
+
 
 }

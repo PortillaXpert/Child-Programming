@@ -41,7 +41,6 @@ export async function createMission(missionData) {
 }
 
 export async function updateMission(id, missionData) {
-    console.log('Update mission with data:', missionData)
     const res = await fetch(`${API_BASE}/missions/${id}`, {
         method: 'PUT',
         headers: {
