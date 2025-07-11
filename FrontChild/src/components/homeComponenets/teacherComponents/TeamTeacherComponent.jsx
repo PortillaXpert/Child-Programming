@@ -7,7 +7,8 @@ import ConfirmDialog from '@/components/others/ConfirmDialog';
 import CardContainer from '@/components/common/CardContainer';
 import SectionHeader from '@/components/common/SectionHeader';
 import SearchInput from '@/components/common/SearchInput';
-import TeamList from '@/components/teams/TeamList';
+import EntityList from '@/components/common/EntityList';
+import EntityCardItem from '@/components/common/EntityCardItem';
 
 function TeamTeacherComponent() {
     const [teams, setTeams] = useState([]);
@@ -73,27 +74,45 @@ function TeamTeacherComponent() {
         <>
             <CardContainer
                 header={
-                        <SectionHeader
+                    <SectionHeader
                         title="Gestión de Equipos"
-                        icon={'./iconteam.svg'}
+                        icon="./iconteam.svg"
                         onCreate={() => setIsCreating(true)}
-                        tooltipText="Crear equipo"/>}
-                search={<SearchInput value={search} onChange={(e) => setSearch(e.target.value)} />}
+                        tooltipText="Crear equipo"
+                    />
+                }
+                search={
+                    <SearchInput
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        label="Buscar equipo"
+                    />
+                }
                 list={
-                    <TeamList
-                        teams={filteredTeams}
-                        onEdit={(id) => setEditingTeamId(id)}
-                        onView={(id) => {
-                            setSelectedTeamId(id);
-                            setOpenDialog(true);
-                        }}
-                        onDelete={(team) => {
-                            setTeamToDelete(team);
-                            setConfirmDeleteOpen(true);
-                        }}
+                    <EntityList
+                        items={filteredTeams}
+                        renderItem={(team, index) => (
+                            <EntityCardItem
+                                item={team}
+                                index={index}
+                                icon={<img src="/caticon.svg" alt="Ícono gato" style={{ width: 24 }} />}
+                                title={team.name}
+                                subtitle={`Curso: ${team.course} • ${team.students.length} estudiantes`}
+                                onEdit={(id) => setEditingTeamId(id)}
+                                onView={(id) => {
+                                    setSelectedTeamId(id);
+                                    setOpenDialog(true);
+                                }}
+                                onDelete={(team) => {
+                                    setTeamToDelete(team);
+                                    setConfirmDeleteOpen(true);
+                                }}
+                            />
+                        )}
                     />
                 }
             />
+
 
             <TeamDetailDialog
                 open={openDialog}

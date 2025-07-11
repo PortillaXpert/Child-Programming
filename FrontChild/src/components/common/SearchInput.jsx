@@ -1,7 +1,7 @@
 import { TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
-const SearchInput = ({ value, onChange, label = 'Buscar equipo' }) => (
+const SearchInput = ({ value, onChange, label}) => (
     <TextField
         label={label}
         fullWidth
