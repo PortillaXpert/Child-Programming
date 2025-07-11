@@ -1,6 +1,7 @@
 import { CardHeader, Box, Typography, IconButton } from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Tooltip from '@mui/material/Tooltip';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import GroupIcon from '@mui/icons-material/Group';
 
 const tooltipStyles = {
     sx: {
@@ -11,21 +12,24 @@ const tooltipStyles = {
         px: 1.5,
         py: 0.5,
     }
-}
+};
 
-const MissionHeader = ({ onCreate }) => (
+const SectionHeader = ({ title, icon, onCreate, tooltipText }) => (
     <CardHeader
         sx={{ bgcolor: '#1976D2', color: 'white', p: 3 }}
         title={
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <img src={'./star.svg'} alt="Ícono" style={{ width: 32, height: 32 , color:'white' }} />
-                    <Typography sx={{ fontSize: 22, fontWeight: 600 }}>Gestión de Misiones</Typography>
+                    {typeof icon === 'string' ? (
+                        <img src={icon} alt="Ícono" style={{ width: 32, height: 32 }} />
+                    ) : (
+                        icon
+                    )}
+                    <Typography sx={{ fontSize: 22, fontWeight: 600 }}>{title}</Typography>
                 </Box>
-                <Tooltip title="Crear misión"  componentsProps={{ tooltip: tooltipStyles }} placement="left"    >
+                <Tooltip title={tooltipText} componentsProps={{ tooltip: tooltipStyles }} placement="left">
                     <IconButton color="inherit" onClick={onCreate}>
-                        <AddCircleOutlineIcon fontSize='large'></AddCircleOutlineIcon>
-                        <Typography sx={{ fontSize: 18 }}></Typography>
+                        <AddCircleOutlineIcon fontSize='large' />
                     </IconButton>
                 </Tooltip>
             </Box>
@@ -33,4 +37,4 @@ const MissionHeader = ({ onCreate }) => (
     />
 );
 
-export default MissionHeader;
+export default SectionHeader;

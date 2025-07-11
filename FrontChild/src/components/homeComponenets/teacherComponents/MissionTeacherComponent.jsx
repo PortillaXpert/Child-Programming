@@ -4,7 +4,7 @@ import SkeletonCard from '@/components/common/skeletonCard'
 import ConfirmDialog from '@/components/others/ConfirmDialog'
 import SearchInput from '@/components/common/SearchInput'
 import CardContainer from '@/components/common/CardContainer'
-import MissionHeader from '@/components/missions/MissionHeader'
+import SectionHeader from '@/components/common/SectionHeader'
 import MissionList from '@/components/missions/MissionList'
 import MissionDetailDialog from '@/components/missions/MissionDetailDialog'
 import MissionCreateEditView from '@/components/missions/MissionCreateEditView'
@@ -72,7 +72,11 @@ function MissionTeacherComponent() {
     return (
         <>
             <CardContainer
-                header={<MissionHeader onCreate={() => setIsCreating(true)} />}
+                header={<SectionHeader
+                        title="Gestión de Misiones"
+                        icon="./star.svg"
+                        onCreate={() => setIsCreating(true)}
+                        tooltipText="Crear misión"/>}
                 search={<SearchInput value={search} onChange={(e) => setSearch(e.target.value)} />}
                 list={
                     <MissionList

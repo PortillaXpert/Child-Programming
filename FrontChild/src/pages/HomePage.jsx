@@ -10,6 +10,7 @@ import TeamComponent from '../components/homeComponenets/studenComponents/TeamCo
 import TeacherTeamComponent from '../components/homeComponenets/teacherComponents/TeamTeacherComponent'
 import MissionTeacherComponent from '../components/homeComponenets/teacherComponents/MissionTeacherComponent'
 import { Assignment } from '@mui/icons-material'
+import AssignmentTeacherComponent from '@/components/homeComponenets/teacherComponents/AssignmentTeacherComponent'
 
 const HomePage = () => {
   const [selected, setSelected] = useState({
@@ -95,7 +96,7 @@ const HomePage = () => {
             <TeacherTeamComponent />
           )
         ) : selected.assignment ? (
-          <div>Componente de Asignaciones</div>
+          <AssignmentTeacherComponent/>
         ) : selected.task ? (
           <WorkComponent />
         ) : null}

@@ -5,7 +5,7 @@ import TeamDetailDialog from '@/components/teams/TeamDetailDialog';
 import TeamCreateEditView from '@/components/teams/TeamCreateEditView';
 import ConfirmDialog from '@/components/others/ConfirmDialog';
 import CardContainer from '@/components/common/CardContainer';
-import TeamHeader from '@/components/teams/TeamHeader';
+import SectionHeader from '@/components/common/SectionHeader';
 import SearchInput from '@/components/common/SearchInput';
 import TeamList from '@/components/teams/TeamList';
 
@@ -72,7 +72,12 @@ function TeamTeacherComponent() {
     return (
         <>
             <CardContainer
-                header={<TeamHeader onCreate={() => setIsCreating(true)} />}
+                header={
+                        <SectionHeader
+                        title="Gestión de Equipos"
+                        icon={'./iconteam.svg'}
+                        onCreate={() => setIsCreating(true)}
+                        tooltipText="Crear equipo"/>}
                 search={<SearchInput value={search} onChange={(e) => setSearch(e.target.value)} />}
                 list={
                     <TeamList
