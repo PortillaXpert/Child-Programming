@@ -1,4 +1,4 @@
-import { api } from '../../services/endpoints'
+import { api } from '../../../services/endpoints'
 import { Button, Dialog, DialogActions, DialogContent, Typography } from '@mui/material'
 
 const DeleteDialog = ({ open, close, idTask, mutate }) => {

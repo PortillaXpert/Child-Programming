@@ -1,19 +1,16 @@
 import {
     Dialog,
-    DialogTitle,
     DialogContent,
     DialogActions,
     Typography,
     Stack,
-    IconButton,
-    Box,
     Button,
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import DialogHeader from '../common/DialogHeader';
 import { useEffect, useState } from 'react'
 import StudentItem from '@/components/teams/StudentItem';
 import { getTeamById, updateTeam } from '@/services/api/teamServiceApi';
-import ConfirmDialog from '@/components/others/ConfirmDialog';
+import ConfirmDialog from '@/components/others/dialog/ConfirmDialog';
 
 function TeamDetailDialog({ open, onClose, teamId }) {
     const [team, setTeam] = useState(null)
@@ -46,14 +43,8 @@ function TeamDetailDialog({ open, onClose, teamId }) {
     return (
         <>
             <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-                <DialogTitle sx={{ bgcolor: '#1976D2', color: 'white' }}>
-                    <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography fontWeight={600}>Detalles del Equipo</Typography>
-                        <IconButton onClick={onClose} sx={{ color: 'white' }}>
-                            <CloseIcon />
-                        </IconButton>
-                    </Box>
-                </DialogTitle>
+                <DialogHeader title="Detalles del Equipo" onClose={onClose} />
+
 
                 <DialogContent dividers>
                     {team ? (

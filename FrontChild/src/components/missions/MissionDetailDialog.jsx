@@ -1,18 +1,17 @@
-// components/missions/MissionDetailDialog.jsx
+
 import {
     Dialog,
-    DialogTitle,
     DialogContent,
     Divider,
     Typography,
-    Box,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { getMissionById } from '@/services/api/missionServiceApi'
 import ObjectivesSection from './ObjectivesSection'
 import MaterialsSection from './MaterialsSection'
 import TimeSection from './TimeSection'
-import SkeletonCard from '@/components/common/skeletonCard'
+import SkeletonCard from '@/components/others/skeletonCard'
+import DialogHeader from '@/components/common/DialogHeader'
 
 const MissionDetailDialog = ({ open, onClose, missionId }) => {
     const [mission, setMission] = useState(null)
@@ -38,9 +37,8 @@ const MissionDetailDialog = ({ open, onClose, missionId }) => {
     return (
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth sx={{overflow: 'auto', 
             scrollbarColor: '#1976D2 white', scrollbarWidth: 'thin'}}>
-            <DialogTitle sx={{ bgcolor: '#1976D2', color: 'white' }}>
-                Detalles de la Misión
-            </DialogTitle>
+            <DialogHeader title="Detalles de la misión" onClose={onClose} />
+
             <DialogContent dividers sx={{ maxHeight: '70vh' }}>
                 {loading ? (
                     <SkeletonCard titleLines={1} items={0} />

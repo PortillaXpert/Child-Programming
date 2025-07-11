@@ -1,7 +1,6 @@
 import { CardHeader, Box, Typography, IconButton } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import GroupIcon from '@mui/icons-material/Group';
 
 const tooltipStyles = {
     sx: {

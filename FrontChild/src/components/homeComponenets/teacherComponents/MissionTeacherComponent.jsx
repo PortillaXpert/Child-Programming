@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { getMissions, deleteMission } from '@/services/api/missionServiceApi'
-import SkeletonCard from '@/components/common/skeletonCard'
+import SkeletonCard from '@/components/others/skeletonCard'
 import EntityList from '@/components/common/EntityList';
-import EntityCardItem from '@/components/common/EntityCardItem';
-import ConfirmDialog from '@/components/others/ConfirmDialog'
-import SearchInput from '@/components/common/SearchInput'
+import EntityCardItem from '@/components/common/ui/EntityCardItem';
+import ConfirmDialog from '@/components/others/dialog/ConfirmDialog'
+import SearchInput from '@/components/common/ui/SearchInput'
 import CardContainer from '@/components/common/CardContainer'
 import SectionHeader from '@/components/common/SectionHeader'
 import MissionDetailDialog from '@/components/missions/MissionDetailDialog'

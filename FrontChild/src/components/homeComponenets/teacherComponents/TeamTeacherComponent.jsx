@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { getAllTeams, deleteTeam } from '@/services/api/teamServiceApi';
-import SkeletonCard from '@/components/common/skeletonCard';
+import SkeletonCard from '@/components/others/skeletonCard';
 import TeamDetailDialog from '@/components/teams/TeamDetailDialog';
 import TeamCreateEditView from '@/components/teams/TeamCreateEditView';
-import ConfirmDialog from '@/components/others/ConfirmDialog';
+import ConfirmDialog from '@/components/others/dialog/ConfirmDialog';
 import CardContainer from '@/components/common/CardContainer';
 import SectionHeader from '@/components/common/SectionHeader';
-import SearchInput from '@/components/common/SearchInput';
+import SearchInput from '@/components/common/ui/SearchInput';
 import EntityList from '@/components/common/EntityList';
-import EntityCardItem from '@/components/common/EntityCardItem';
+import EntityCardItem from '@/components/common/ui/EntityCardItem';
 
 function TeamTeacherComponent() {
     const [teams, setTeams] = useState([]);

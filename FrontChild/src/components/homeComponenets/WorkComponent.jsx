@@ -4,7 +4,7 @@ import { useTask } from '../../hooks/useTask'
 import NewTaskDialog from '../task/NewTaskDialog'
 import { useState } from 'react'
 import { Error } from '..'
-import DeleteDialog from '../others/DeleteDialog'
+import DeleteDialog from '../others/dialog/DeleteDialog'
 import { useNavigate } from 'react-router-dom'
 
 function WorkComponent() {

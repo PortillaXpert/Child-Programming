@@ -8,3 +8,12 @@ export async function getAllAssignments() {
     const json = await res.json()
     return json.data
 }
+
+export async function getAssignmentById(assignmentId) {
+    const res = await fetch(`${API_URL}/mission-assignments/${assignmentId}`)
+    if (!res.ok) {
+        throw new Error(`Error fetching assignment: ${res.statusText}`)
+    }
+    const json = await res.json()
+    return json.data
+}

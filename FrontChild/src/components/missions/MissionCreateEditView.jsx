@@ -3,23 +3,21 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader,
     IconButton,
     Stack,
     TextField,
     Typography,
-    Snackbar,
-    Alert
 } from '@mui/material'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import AddIcon from '@mui/icons-material/Add'
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { getMissionById, createMission, updateMission } from '@/services/api/missionServiceApi'
-import CustomDataTimePicker from '@/components/others/CustomDataTimePicker'
+import CustomDataTimePicker from '@/components/common/ui/CustomDataTimePicker'
 import DeleteIcon from '@mui/icons-material/Delete'
-import dayjs from 'dayjs'
+import { validateMissionFields } from '@/utils/validators/missionValidators';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+import FormHeader from '@/components/common/FormHeader'
+import CustomSnackBar from '@/components/common/ui/CustomSnackBar'
+
 function MissionCreateEditView({ missionId, onBack }) {
     const [mission, setMission] = useState({
         title: '',
@@ -33,7 +31,6 @@ function MissionCreateEditView({ missionId, onBack }) {
     const [newObjective, setNewObjective] = useState('')
     const [errors, setErrors] = useState({})
     const [snackbarOpen, setSnackbarOpen] = useState(false)
-    const navigate = useNavigate()
 
     useEffect(() => {
         if (missionId) {
@@ -46,16 +43,6 @@ function MissionCreateEditView({ missionId, onBack }) {
     const handleChange = (field, value) => {
         setMission(prev => ({ ...prev, [field]: value }))
         setErrors(prev => ({ ...prev, [field]: '' }))
-    }
-
-    const validateFields = () => {
-        const newErrors = {}
-        if (!mission.title.trim()) newErrors.title = 'El título es obligatorio.'
-        if (!mission.description.trim()) newErrors.description = 'La descripción es obligatoria.'
-        if (!mission.startDate) newErrors.startDate = 'La fecha de inicio es obligatoria.'
-        if (mission.objectives.length === 0) newErrors.objectives = 'Debe haber al menos un objetivo.'
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
     }
 
     const handleAddObjective = () => {
@@ -75,18 +62,21 @@ function MissionCreateEditView({ missionId, onBack }) {
     }
 
     const handleSave = async () => {
-        if (!validateFields()) return
+        const { isValid, errors } = validateMissionFields(mission);
+        setErrors(errors);
+        if (!isValid) return;
+    
         try {
             if (missionId) {
-                await updateMission(missionId, mission)
+                await updateMission(missionId, mission);
             } else {
-                await createMission(mission)
+                await createMission(mission);
             }
-            setSnackbarOpen(true)
+            setSnackbarOpen(true);
         } catch (error) {
-            console.error('Error al guardar misión:', error)
+            console.error('Error al guardar misión:', error);
         }
-    }
+    };
 
     const handleFileUpload = (e) => {
         const file = e.target.files[0]
@@ -110,26 +100,13 @@ function MissionCreateEditView({ missionId, onBack }) {
         }))
     }
     
-
     return (
         <>
             <Card sx={{ width: '50vw', height: '80vh', overflowY: 'auto',
                 overflowX: 'hidden',
                 scrollbarColor: '#1976D2 white',
                 scrollbarWidth: 'thin',  }}>
-                <CardHeader
-                    sx={{ bgcolor: '#1976D2', color: 'white' }}
-                    title={
-                        <Box display="flex" alignItems="center" gap={2}>
-                            <IconButton onClick={onBack} sx={{ color: 'white' }}>
-                                <ArrowBackIcon />
-                            </IconButton>
-                            <Typography variant="h6">
-                                {missionId ? 'Editar Misión' : 'Crear Misión'}
-                            </Typography>
-                        </Box>
-                    }
-                />
+                <FormHeader title= {missionId ? 'Editar Misión' : 'Crear Misión'} onBack={onBack}></FormHeader>
                 <CardContent>
                     <Stack spacing={2}>
                         <TextField
@@ -203,7 +180,6 @@ function MissionCreateEditView({ missionId, onBack }) {
                             <input type="file" hidden onChange={handleFileUpload} />
                         </Button>
 
-
                         <Box display="flex" justifyContent="center" mt={2}>
                             <Button onClick={handleSave} variant="contained" sx={{ bgcolor: '#1976D2' }}>
                                 Guardar Cambios
@@ -212,21 +188,13 @@ function MissionCreateEditView({ missionId, onBack }) {
                     </Stack>
                 </CardContent>
             </Card>
-
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={3000}
-                onClose={() => setSnackbarOpen(false)}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            >
-                <Alert
-                    severity="success"
-                    variant="filled"
-                    sx={{ backgroundColor: '#5be031', color: 'white' }}
-                >
-                    {missionId ? '¡Misión actualizada con éxito!' : '¡Misión creada con éxito!'}
-                </Alert>
-            </Snackbar>
+            
+            <CustomSnackBar
+                message={missionId ? '¡Misión actualizada con éxito!' : '¡Misión creada con éxito!'}
+                snackbarOpen={snackbarOpen}
+                setSnackbarOpen={setSnackbarOpen}
+                severity="success"
+            />
         </>
     )
 }

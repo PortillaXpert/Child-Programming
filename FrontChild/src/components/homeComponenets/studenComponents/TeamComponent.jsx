@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getTeamByStudentCode } from '@/services/api/teamServiceApi';
-import SkeletonCard from '@/components/common/skeletonCard';
+import SkeletonCard from '@/components/others/skeletonCard';
 import CardContainer from '@/components/common/CardContainer';
 import HeaderWithIcon from '@/components/common/HeaderWithIcon';
 import StudentItem from '@/components/teams/StudentItem';

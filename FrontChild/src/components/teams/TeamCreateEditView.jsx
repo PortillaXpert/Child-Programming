@@ -3,22 +3,19 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader,
     IconButton,
     Stack,
     TextField,
     Typography,
-    Snackbar,
-    Alert,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import AddIcon from '@mui/icons-material/Add'
-import { useNavigate } from 'react-router-dom'
 import { getTeamById, updateTeam, createTeam } from '@/services/api/teamServiceApi'
-import ConfirmDialog from '@/components/others/ConfirmDialog'
+import ConfirmDialog from '@/components/others/dialog/ConfirmDialog'
 import StudentItem from '@/components/teams/StudentItem'
-
+import FormHeader from '@/components/common/FormHeader'
+import CustomSnackBar from '@/components/common/ui/CustomSnackBar'
+import { validateTeamFields, validateStudentInputs } from '@/utils/validators/teamsValidators';
 
 function TeamCreateEditView({ teamId, onBack }) {
     const [team, setTeam] = useState({ name: '', course: '', students: [] })
@@ -28,8 +25,6 @@ function TeamCreateEditView({ teamId, onBack }) {
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [studentToDelete, setStudentToDelete] = useState(null)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
-    const navigate = useNavigate()
-    const message = teamId ? '¡Equipo actualizado correctamente!' : '¡Equipo guardado con éxito!'
 
     useEffect(() => {
         if (teamId) {
@@ -44,46 +39,6 @@ function TeamCreateEditView({ teamId, onBack }) {
         setTeamErrors((prev) => ({ ...prev, [field]: '' }))
     }
 
-    const validateTeamFields = () => {
-        const newTeamErrors = { name: '', course: '' }
-        let isValid = true
-
-        if (!team.name.trim()) {
-            newTeamErrors.name = 'El nombre del equipo es obligatorio.'
-            isValid = false
-        }
-        if (!team.course.trim()) {
-            newTeamErrors.course = 'El curso es obligatorio.'
-            isValid = false
-        }
-
-        setTeamErrors(newTeamErrors)
-        return isValid
-    }
-
-    const validateInputs = () => {
-        const newErrors = { fullName: '', studentCod: '' }
-        let isValid = true
-
-        if (!newStudent.fullName.trim()) {
-            newErrors.fullName = 'El nombre no puede estar vacío.'
-            isValid = false
-        }
-
-        if (!newStudent.studentCod.trim()) {
-            newErrors.studentCod = 'El código no puede estar vacío.'
-            isValid = false
-        } else if (!/^\d+$/.test(newStudent.studentCod)) {
-            newErrors.studentCod = 'El código debe ser numérico.'
-            isValid = false
-        } else if (team.students.some(s => s.studentCod === newStudent.studentCod.trim())) {
-            newErrors.studentCod = 'Este código ya está registrado.'
-            isValid = false
-        }
-
-        setErrors(newErrors)
-        return isValid
-    }
 
     const confirmDeleteStudent = (student) => {
         setStudentToDelete(student)
@@ -101,58 +56,54 @@ function TeamCreateEditView({ teamId, onBack }) {
     }
 
     const handleAddStudent = () => {
-        if (!validateInputs()) return
-
         const newEntry = {
             fullName: newStudent.fullName.trim(),
             studentCod: newStudent.studentCod.trim(),
             course: team.course,
-        }
+        };
+        
+        const { isValid, errors } = validateStudentInputs(newEntry, team.students);
+
+        setErrors(errors);
+        if (!isValid) return;
+    
 
         setTeam((prev) => ({
             ...prev,
             students: [...prev.students, newEntry],
         }))
         setNewStudent({ fullName: '', studentCod: '' })
-        setErrors({ fullName: '', studentCod: '' })
         setTeamErrors((prev) => ({ ...prev, students: '' }))
     }
 
     const handleSave = async () => {
-        const teamValid = validateTeamFields()
-        if (!teamValid) return
-        if (team.students.length  < 2) {
-            setTeamErrors((prev) => ({ ...prev, students: 'Debe agregar al menos dos estudiantes.' }))
-            return
+        const { isValid, errors } = validateTeamFields(team);
+        setTeamErrors(errors);
+        if (!isValid) return;
+    
+        if (team.students.length < 2) {
+            setTeamErrors(prev => ({ ...prev, students: 'Debe agregar al menos dos estudiantes.' }));
+            return;
         }
+    
         try {
             if (teamId) {
-                await updateTeam(team.id, team)
+                await updateTeam(team.id, team);
             } else {
-                await createTeam(team)
+                await createTeam(team);
             }
-            setSnackbarOpen(true)
+            setSnackbarOpen(true);
         } catch (err) {
-            console.error('Error al guardar equipo:', err)
+            console.error('Error al guardar equipo:', err);
         }
-    }
+    };
 
     if (!team) return <Typography>Cargando equipo...</Typography>
 
     return (
         <>
             <Card sx={{ width: '50vw', height: '70vh', overflowY: 'auto', overflowX: 'hidden', scrollbarColor: '#1976D2 white', scrollbarWidth: 'thin' }}>
-                <CardHeader
-                    sx={{ bgcolor: '#1976D2', color: 'white', p: 3 }}
-                    title={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <IconButton onClick={onBack} sx={{ color: 'white' }}>
-                                <ArrowBackIcon />
-                            </IconButton>
-                            <Typography variant="h6">{teamId ? 'Editar Equipo' : 'Crear Equipo'}</Typography>
-                        </Box>
-                    }
-                />
+                <FormHeader title= {teamId ? 'Editar Equipo' : 'Crear Equipo'} onBack={onBack}></FormHeader>
                 <CardContent>
                     <Stack spacing={2}>
                         <TextField
@@ -227,20 +178,12 @@ function TeamCreateEditView({ teamId, onBack }) {
                 title="¿Eliminar estudiante?"
                 content={`¿Estás seguro de que deseas eliminar a ${studentToDelete?.fullName || 'este estudiante'}?`}
             />
-            <Snackbar
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                open={snackbarOpen}
-                autoHideDuration={3000}
-                onClose={() => setSnackbarOpen(false)}
-            >
-                <Alert
-                    severity="success"
-                    variant="filled"
-                    sx={{ width: '100%', backgroundColor: '#5be031', color: 'white' }}
-                >
-                    {message}
-                </Alert>
-            </Snackbar>
+            <CustomSnackBar
+                message={teamId ? '¡Equipo actualizado correctamente!' : '¡Equipo guardado con éxito!'}
+                snackbarOpen={snackbarOpen}
+                setSnackbarOpen={setSnackbarOpen}
+                severity="success"
+            />
         </>
     )
 }

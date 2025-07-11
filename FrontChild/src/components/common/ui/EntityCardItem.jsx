@@ -1,5 +1,5 @@
 import { Box, Typography, Avatar, Chip } from '@mui/material';
-import ActionButtons from '@/components/common/ActionButtons';
+import ActionButtons from '@/components/common/ui/ActionButtons';
 
 const colors = ['#6A5ACD', '#008080', '#4B0082', '#FF8C00', '#DA70D6'];
 const getColorByIndex = (index) => colors[index % colors.length];

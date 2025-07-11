@@ -3,10 +3,11 @@ import { getAllAssignments } from "@/services/api/assignmentServiceApi";
 import CardContainer from "@/components/common/CardContainer";
 import SectionHeader from "@/components/common/SectionHeader";
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import SearchInput from "@/components/common/SearchInput";
-import SkeletonCard from "@/components/common/skeletonCard";
+import SearchInput from "@/components/common/ui/SearchInput";
+import SkeletonCard from "@/components/others/skeletonCard";
 import EntityList from "@/components/common/EntityList";
-import EntityCardItem from "@/components/common/EntityCardItem";
+import EntityCardItem from "@/components/common/ui/EntityCardItem";
+import AssignmentDetailsView from '@/components/assignment/AssignmentDetailsView';
 
 const statusColors = {
     PENDING: '#FFA726',       
@@ -29,6 +30,7 @@ function AssignmentTeacherComponent() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [isCreating, setIsCreating] = useState(false);
+    const [selectedAssignmentId, setSelectedAssignmentId] = useState(null);
 
     const fetchAssignments = async () => {
         setLoading(true);
@@ -54,6 +56,18 @@ function AssignmentTeacherComponent() {
         return <SkeletonCard titleLines={1} items={3} />;
     }
 
+    if (selectedAssignmentId) {
+        return (
+            <AssignmentDetailsView
+                assignmentId={selectedAssignmentId}
+                onBack={() => {
+                    setSelectedAssignmentId(null);
+                    fetchAssignments();
+                }}
+            />
+        );
+    }
+
     return (
         <CardContainer
             header={
@@ -72,20 +86,19 @@ function AssignmentTeacherComponent() {
                 />
             }
             list={
-                <EntityList
-                    items={filteredAssignments}
-                    renderItem={(assignment, index) => (
-                        <EntityCardItem
-                            item={assignment}
-                            index={index}
-                            icon={<AssignmentIcon />}
-                            title={assignment.titleMission}
-                            subtitle={`Equipo: ${assignment.teamName} • Curso: ${assignment.teamCourse}`}
-                            chipLabel={statusLabels[assignment.status] || 'Desconocido'}
-                            chipColor={getStatusColor(assignment.status)}
-                        />
-                    )}
-                />
+                <EntityList items={filteredAssignments} renderItem={(assignment, index) =>
+                    <EntityCardItem
+                        item={assignment}
+                        index={index}
+                        icon={<AssignmentIcon />}
+                        title={assignment.titleMission}
+                        subtitle={`Equipo: ${assignment.teamName} • Curso: ${assignment.teamCourse}`}
+                        chipLabel={statusLabels[assignment.status] || 'Desconocido'}
+                        chipColor={getStatusColor(assignment.status)}
+                        onView={(id) => setSelectedAssignmentId(id)}
+                    />
+                }>
+                </EntityList>
             }
         />
     );

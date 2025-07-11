@@ -7,12 +7,12 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { getAssignments, getMissionById } from '@/services/api/missionServiceApi'
-import SkeletonCard from '@/components/common/skeletonCard'
+import SkeletonCard from '@/components/others/skeletonCard'
 import HeaderWithIcon from '@/components/common/HeaderWithIcon'
 import ObjectivesSection from '@/components/missions/ObjectivesSection'
 import MaterialsSection from '@/components/missions/MaterialsSection'
 import TimeSection from '@/components/missions/TimeSection'
-import ButtonCustom from '@/components/common/ButtonCustom'
+import ButtonCustom from '@/components/common/ui/ButtonCustom'
 
 function MisionComponent({ teamId }) {
   const [mission, setMission] = useState(null)
