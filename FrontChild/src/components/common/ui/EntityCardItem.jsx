@@ -1,8 +1,7 @@
 import { Box, Typography, Avatar, Chip } from '@mui/material';
 import ActionButtons from '@/components/common/ui/ActionButtons';
+import { getColorByIndex } from '@/utils/const';
 
-const colors = ['#6A5ACD', '#008080', '#4B0082', '#FF8C00', '#DA70D6'];
-const getColorByIndex = (index) => colors[index % colors.length];
 
 const EntityCardItem = ({ item, index, icon, title, subtitle, 
         chipLabel, chipColor, onEdit, onView, onDelete }) => (
@@ -43,7 +42,7 @@ const EntityCardItem = ({ item, index, icon, title, subtitle,
                 )}
             </Box>
         </Box>
-        <ActionButtons item={item} onEdit={onEdit} onView={onView} onDelete={onDelete} />
+        <ActionButtons item={item} onEdit={onEdit} onView={onView} onDelete={onDelete} chipColor={chipColor} />
     </Box>
 );
 

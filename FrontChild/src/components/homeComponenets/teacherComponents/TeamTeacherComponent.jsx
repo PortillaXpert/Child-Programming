@@ -61,7 +61,7 @@ function TeamTeacherComponent() {
     const handleDeleteTeam = async () => {
         try {
             await deleteTeam(teamToDelete.id);
-            setTeams((prev) => prev.filter((team) => team.id !== teamToDelete.id));
+            setTeams(await getAllTeams());
             setConfirmDeleteOpen(false);
             setTeamToDelete(null);
         } catch (error) {
@@ -97,6 +97,8 @@ function TeamTeacherComponent() {
                                 index={index}
                                 icon={<img src="/caticon.svg" alt="Ícono gato" style={{ width: 24 }} />}
                                 title={team.name}
+                                chipLabel={team.active ? 'Activo' : 'Inactivo'}
+                                chipColor={team.active ? 'green' : 'gray'}
                                 subtitle={`Curso: ${team.course} • ${team.students.length} estudiantes`}
                                 onEdit={(id) => setEditingTeamId(id)}
                                 onView={(id) => {
@@ -124,7 +126,7 @@ function TeamTeacherComponent() {
                 open={confirmDeleteOpen}
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={handleDeleteTeam}
-                title="¿Eliminar equipo?"
+                title="¿Desactivar equipo?"
                 content={`¿Estás seguro de que deseas desactivar este equipo?`}
             />
         </>

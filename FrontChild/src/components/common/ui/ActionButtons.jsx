@@ -3,6 +3,7 @@ import { Box, IconButton, Tooltip } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import BlockIcon from '@mui/icons-material/Block';
+import { CheckCircle } from '@mui/icons-material';
 
 const tooltipStyles = {
     sx: {
@@ -15,7 +16,10 @@ const tooltipStyles = {
     }
 }
 
-function ActionButtons({ onEdit, onView, onDelete, item }) {
+function ActionButtons({ onEdit, onView, onDelete, item, chipColor }) {
+    const isActive = chipColor === 'green';
+    const toggleTooltip = isActive ? 'Desactivar' : 'Activar';
+    const ToggleIcon = isActive ? BlockIcon : CheckCircle;
     return (
         <Box display={'flex'} gap={'4px'}>
             <Tooltip title="Editar"  componentsProps={{ tooltip: tooltipStyles }}>
@@ -34,12 +38,17 @@ function ActionButtons({ onEdit, onView, onDelete, item }) {
                     <VisibilityIcon fontSize="small" />
                 </IconButton>
             </Tooltip>
-            <Tooltip title="Desactivar"  componentsProps={{ tooltip: tooltipStyles }} >
-                <IconButton size="small"
-                    onClick={() => onDelete(item)} 
-                    sx={{ bgcolor: '#1976D2', color: 'white', '&:hover': { bgcolor: '#125a9c' } }}
+            <Tooltip title={toggleTooltip} componentsProps={{ tooltip: tooltipStyles }}>
+                <IconButton
+                    size="small"
+                    onClick={() => onDelete(item)}
+                    sx={{
+                    bgcolor: '#1976D2',
+                    color: 'white',
+                    '&:hover': { bgcolor: '#125a9c' },
+                    }}
                 >
-                    <BlockIcon  fontSize="small"/>
+                    <ToggleIcon fontSize="small" />
                 </IconButton>
             </Tooltip>
         </Box>

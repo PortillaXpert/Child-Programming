@@ -13,10 +13,11 @@ import { useState, useEffect } from 'react'
 import { getMissionById, createMission, updateMission } from '@/services/api/missionServiceApi'
 import CustomDataTimePicker from '@/components/common/ui/CustomDataTimePicker'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { validateMissionFields } from '@/utils/validators/missionValidators';
+import { validateMissionFields } from '@/utils/validators/missionsValidator';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import FormHeader from '@/components/common/FormHeader'
 import CustomSnackBar from '@/components/common/ui/CustomSnackBar'
+
 
 function MissionCreateEditView({ missionId, onBack }) {
     const [mission, setMission] = useState({

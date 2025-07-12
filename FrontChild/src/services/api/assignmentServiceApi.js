@@ -17,3 +17,12 @@ export async function getAssignmentById(assignmentId) {
     const json = await res.json()
     return json.data
 }
+
+export async function deleteAssignment(assignmentId) {
+    const res = await fetch(`${API_URL}/mission-assignments/${assignmentId}`, {
+        method: 'DELETE'
+    })
+    if (!res.ok) {
+        throw new Error(`Error deleting assignment: ${res.statusText}`)
+    }
+}

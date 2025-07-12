@@ -96,7 +96,8 @@ public class MTAssignmentImp implements IMTAssigmentRepository {
     public void delete(Long id) {
         MissionTeamAssignedEntity entity = jpaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Assignment not found with id: " + id));
-        jpaRepository.delete(entity);
+        entity.setStatus(AssignmentStatus.DESACTIVATE);
+        jpaRepository.save(entity);
     }
 
 

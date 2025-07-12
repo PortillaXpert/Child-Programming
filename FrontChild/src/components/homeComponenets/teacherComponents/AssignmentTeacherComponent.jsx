@@ -8,22 +8,10 @@ import SkeletonCard from "@/components/others/skeletonCard";
 import EntityList from "@/components/common/EntityList";
 import EntityCardItem from "@/components/common/ui/EntityCardItem";
 import AssignmentDetailsView from '@/components/assignment/AssignmentDetailsView';
+import ConfirmDialog from "@/components/others/dialog/ConfirmDialog";   
+import { deleteAssignment } from "@/services/api/assignmentServiceApi"; 
+import { getStatusColor, getStatusLabel} from "@/utils/const";
 
-const statusColors = {
-    PENDING: '#FFA726',       
-    IN_PROGRESS: '#29B6F6',  
-    COMPLETED: '#66BB6A',     
-    REVIEWED: '#AB47BC',      
-};
-
-const statusLabels = {
-    PENDING: 'Pendiente',
-    IN_PROGRESS: 'En Progreso',
-    COMPLETED: 'Completada',
-    REVIEWED: 'Revisada',
-};
-
-const getStatusColor = (status) => statusColors[status] || '#BDBDBD'; 
 
 function AssignmentTeacherComponent() {
     const [assignments, setAssignments] = useState([]);
@@ -31,6 +19,8 @@ function AssignmentTeacherComponent() {
     const [search, setSearch] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [selectedAssignmentId, setSelectedAssignmentId] = useState(null);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [assignmentToDelete, setAssignmentToDelete] = useState(null);
 
     const fetchAssignments = async () => {
         setLoading(true);
@@ -68,39 +58,65 @@ function AssignmentTeacherComponent() {
         );
     }
 
+    const handleDeleteAssignment = async () => {
+        try {
+            await deleteAssignment(assignmentToDelete.id);
+            setAssignments(await getAllAssignments());
+            setConfirmDeleteOpen(false);
+            setAssignmentToDelete(null);
+        } catch (error) {
+            console.error("Error al eliminar la asignación:", error);
+            alert("Ocurrió un error al eliminar la asignación.");
+        }
+    }
+
     return (
-        <CardContainer
-            header={
-                <SectionHeader
-                    title="Gestión de Asignaciones"
-                    icon={<AssignmentIcon sx={{ color: 'white', fontSize: 30 }} />}
-                    onCreate={() => setIsCreating(true)}
-                    tooltipText="Crear asignación"
-                />
-            }
-            search={
-                <SearchInput
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    label="Buscar asignación"
-                />
-            }
-            list={
-                <EntityList items={filteredAssignments} renderItem={(assignment, index) =>
-                    <EntityCardItem
-                        item={assignment}
-                        index={index}
-                        icon={<AssignmentIcon />}
-                        title={assignment.titleMission}
-                        subtitle={`Equipo: ${assignment.teamName} • Curso: ${assignment.teamCourse}`}
-                        chipLabel={statusLabels[assignment.status] || 'Desconocido'}
-                        chipColor={getStatusColor(assignment.status)}
-                        onView={(id) => setSelectedAssignmentId(id)}
+        <>
+            <CardContainer
+                header={
+                    <SectionHeader
+                        title="Gestión de Asignaciones"
+                        icon={<AssignmentIcon sx={{ color: 'white', fontSize: 30 }} />}
+                        onCreate={() => setIsCreating(true)}
+                        tooltipText="Crear asignación"
                     />
-                }>
-                </EntityList>
-            }
-        />
+                }
+                search={
+                    <SearchInput
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        label="Buscar asignación"
+                    />
+                }
+                list={
+                    <EntityList items={filteredAssignments} renderItem={(assignment, index) =>
+                        <EntityCardItem
+                            item={assignment}
+                            index={index}
+                            icon={<AssignmentIcon />}
+                            title={assignment.titleMission}
+                            subtitle={`Equipo: ${assignment.teamName} • Curso: ${assignment.teamCourse}`}
+                            chipLabel={getStatusLabel(assignment.status)}
+                            chipColor={getStatusColor(assignment.status)}
+                            onView={(id) => setSelectedAssignmentId(id)}
+                            onDelete={(assignment) => {
+                                setAssignmentToDelete(assignment);
+                                setConfirmDeleteOpen(true);
+                            }}
+                        />
+                    }>
+                    </EntityList>
+                }
+            />
+
+            <ConfirmDialog
+            open={confirmDeleteOpen}
+            onClose={() => setConfirmDeleteOpen(false)}
+            onConfirm={handleDeleteAssignment}
+            title="¿Desactivar Asignación?"
+            content={`¿Estás seguro de que deseas desactivar esta asignación?`}
+            />
+        </>
     );
 }
 

@@ -14,13 +14,7 @@ import TimeSection from '@/components/missions/TimeSection';
 import StudentItem from '@/components/teams/StudentItem';
 import { getAssignmentById } from '@/services/api/assignmentServiceApi';
 import FormHeader from '@/components/common/FormHeader';
-
-const statusLabels = {
-    PENDING: 'Pendiente',
-    IN_PROGRESS: 'En Progreso',
-    COMPLETED: 'Completada',
-    REVIEWED: 'Revisada',
-};
+import { statusLabels } from '@/utils/const';
 
 function AssignmentDetailsView({ assignmentId, onBack }) {
     const [assignment, setAssignment] = useState(null);
