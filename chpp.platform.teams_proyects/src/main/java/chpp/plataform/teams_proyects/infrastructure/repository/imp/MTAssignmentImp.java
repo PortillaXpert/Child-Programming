@@ -51,7 +51,7 @@ public class MTAssignmentImp implements IMTAssigmentRepository {
     public MissionTeamAssigment updateTasks(Long assignmentId, List<TaskComplete> tasks) {
         MissionTeamAssignedEntity entity = jpaRepository.findById(assignmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Assignment not found with id: " + assignmentId));
-
+        entity.setStatus(AssignmentStatus.COMPLETED);
         return mapper.toDomain(jpaRepository.save(entity));
     }
 
@@ -59,7 +59,6 @@ public class MTAssignmentImp implements IMTAssigmentRepository {
     public MissionTeamAssigment updateStatus(Long assignmentId, AssignmentStatus status) {
         MissionTeamAssignedEntity entity = jpaRepository.findById(assignmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Assignment not found with id: " + assignmentId));
-
         entity.setStatus(status);
         return mapper.toDomain(jpaRepository.save(entity));
     }
@@ -83,6 +82,14 @@ public class MTAssignmentImp implements IMTAssigmentRepository {
         MissionTeamAssignedEntity entity = jpaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Assignment not found with id: " + id));
         return mapper.toDomain(entity);
+    }
+
+    @Override
+    public List<MissionTeamAssigment> getByTeamId(Long teamId) {
+        return jpaRepository.findByTeamId(teamId)
+                .stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override

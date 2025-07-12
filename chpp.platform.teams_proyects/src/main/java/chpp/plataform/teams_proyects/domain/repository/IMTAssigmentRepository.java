@@ -15,5 +15,6 @@ public interface IMTAssigmentRepository {
     MissionTeamAssigment updateStatus(Long assignmentId, AssignmentStatus status);
     MissionTeamAssigment update(Long id,MissionTeamAssigment missionTeamAssigment);
     MissionTeamAssigment getById(Long id);
+    List<MissionTeamAssigment> getByTeamId(Long teamId);
     void delete(Long id);
 }

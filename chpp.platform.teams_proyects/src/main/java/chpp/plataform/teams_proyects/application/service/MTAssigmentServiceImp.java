@@ -33,6 +33,9 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
 
         MissionTeamAssigment assignment = MissionTAMapper.toDomain(dto);
 
+        ResponseDto<MissionTeamAssignedDTO> BAD_REQUEST = getAssignsByTeam(dto.getTeamId());
+        if (BAD_REQUEST != null) return BAD_REQUEST;
+
         if (assignment.getTasksCompleted() != null) {
             assignment.getTasksCompleted().forEach(task -> task.setAssignment(assignment));
         }
@@ -45,6 +48,24 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
                 MessageLoader.getInstance().getMessage(MessagesConstant.IM002),
                 createdDto
         );
+    }
+
+    private ResponseDto<MissionTeamAssignedDTO> getAssignsByTeam(Long teamId) {
+        List<MissionTeamAssigment> existingAssignments =
+                assignmentRepository.getByTeamId(teamId);
+
+        boolean hasActiveAssignment = existingAssignments.stream()
+                .anyMatch(a -> a.getStatus() != AssignmentStatus.COMPLETED &&
+                        a.getStatus() != AssignmentStatus.REVIEWED);
+
+        if (hasActiveAssignment) {
+            return new ResponseDto<>(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Mission Team Assignment already in progress",
+                    null
+            );
+        }
+        return null;
     }
 
     @Override
@@ -121,6 +142,8 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
     public ResponseDto<MissionTeamAssignedDTO> update(Long id, MissionTeamAssignedDTO missionTeamAssignedDTO) {
         MissionTeamAssigment assignment = getAssignmentOrThrow(id);
         validateAssignmentDTO(missionTeamAssignedDTO);
+        ResponseDto<MissionTeamAssignedDTO> BAD_REQUEST = getAssignsByTeam(missionTeamAssignedDTO.getTeamId());
+        if (BAD_REQUEST != null) return BAD_REQUEST;
         MissionTeamAssigment updatedAssignment =
                 assignmentRepository.update(id, MissionTAMapper.toDomain(missionTeamAssignedDTO));
         MissionTeamAssignedDTO updatedDto = MissionTAMapper.toDTO(updatedAssignment);
@@ -135,6 +158,19 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
     public void delete(Long id) {
         validateAndGetAssignmentId(id);
         assignmentRepository.delete(id);
+    }
+
+    @Override
+    public ResponseDto<List<MissionTeamAssignedDTO>> getByTeamId(Long teamId) {
+        if (teamId == null) {
+            throw new BusinessRuleException(
+                    HttpStatus.BAD_REQUEST.value(),
+                    MessagesConstant.EM006,
+                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, "teamId")
+            );
+        }
+        List<MissionTeamAssigment> assignments = assignmentRepository.getByTeamId(teamId);
+        return getListResponseDto(assignments);
     }
 
     private void validateAssignmentDTO(MissionTeamAssignedDTO dto) {

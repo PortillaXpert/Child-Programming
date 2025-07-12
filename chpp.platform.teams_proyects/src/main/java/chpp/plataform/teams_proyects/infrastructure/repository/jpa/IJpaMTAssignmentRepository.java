@@ -11,4 +11,7 @@ public interface IJpaMTAssignmentRepository extends JpaRepository<MissionTeamAss
     @Query("SELECT a FROM MissionTeamAssignedEntity a WHERE a.team.id " +
             "= :teamId AND a.status = chpp.plataform.teams_proyects.domain.model.AssignmentStatus.IN_PROGRESS")
     List<MissionTeamAssignedEntity> findInProgressByTeamId(@Param("teamId") Long teamId);
+
+    @Query("SELECT a FROM MissionTeamAssignedEntity a WHERE a.team.id = :teamId")
+    List<MissionTeamAssignedEntity> findByTeamId(Long teamId);
 }
