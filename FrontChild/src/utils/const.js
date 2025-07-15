@@ -23,3 +23,12 @@ export const statusLabels = {
 };
 
 export const getStatusLabel = (status) => statusLabels[status] || 'Desconocido';
+
+export const statusOptions = [
+    { value: 'PENDING', label: 'Pendiente' },
+    { value: 'IN_PROGRESS', label: 'En Progreso' },
+    { value: 'COMPLETED', label: 'Completada' },
+    { value: 'REVIEWED', label: 'Revisada' },
+    { value: 'ACTIVE', label: 'Activa' },
+    { value: 'DESACTIVATE', label: 'Inactiva' },
+];

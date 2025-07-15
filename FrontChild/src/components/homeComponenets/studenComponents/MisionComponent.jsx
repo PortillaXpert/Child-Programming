@@ -6,7 +6,8 @@ import {
   Box,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { getAssignments, getMissionById } from '@/services/api/missionServiceApi'
+import {getMissionById } from '@/services/api/missionServiceApi'
+import { getAssignmentsByTeam } from '@/services/api/assignmentServiceApi'
 import SkeletonCard from '@/components/others/skeletonCard'
 import HeaderWithIcon from '@/components/common/HeaderWithIcon'
 import ObjectivesSection from '@/components/missions/ObjectivesSection'
@@ -21,7 +22,7 @@ function MisionComponent({ teamId }) {
   useEffect(() => {
     const fetchMission = async () => {
       try {
-        const assignments = await getAssignments(teamId)
+        const assignments = await getAssignmentsByTeam(teamId)
         if (assignments.length === 0) return
 
         const firstMissionId = assignments[0].missionId

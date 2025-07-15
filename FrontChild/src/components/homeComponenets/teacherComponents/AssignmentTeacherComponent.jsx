@@ -11,7 +11,7 @@ import AssignmentDetailsView from '@/components/assignment/AssignmentDetailsView
 import ConfirmDialog from "@/components/others/dialog/ConfirmDialog";   
 import { deleteAssignment } from "@/services/api/assignmentServiceApi"; 
 import { getStatusColor, getStatusLabel} from "@/utils/const";
-
+import AssignmentCreateEditView from '@/components/assignment/AssignmentCreateEditView';
 
 function AssignmentTeacherComponent() {
     const [assignments, setAssignments] = useState([]);
@@ -21,6 +21,7 @@ function AssignmentTeacherComponent() {
     const [selectedAssignmentId, setSelectedAssignmentId] = useState(null);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [assignmentToDelete, setAssignmentToDelete] = useState(null);
+    const [editingAssignmentId, setEditingAssignmentId] = useState(null);
 
     const fetchAssignments = async () => {
         setLoading(true);
@@ -52,6 +53,19 @@ function AssignmentTeacherComponent() {
                 assignmentId={selectedAssignmentId}
                 onBack={() => {
                     setSelectedAssignmentId(null);
+                    fetchAssignments();
+                }}
+            />
+        );
+    }
+
+    if (isCreating || editingAssignmentId) {
+        return (
+            <AssignmentCreateEditView
+                assignmentId={editingAssignmentId}
+                onBack={() => {
+                    setEditingAssignmentId(null);
+                    setIsCreating(false);
                     fetchAssignments();
                 }}
             />
