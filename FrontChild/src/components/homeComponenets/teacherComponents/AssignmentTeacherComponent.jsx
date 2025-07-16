@@ -117,6 +117,7 @@ function AssignmentTeacherComponent() {
                                 setAssignmentToDelete(assignment);
                                 setConfirmDeleteOpen(true);
                             }}
+                            onEdit ={(id) => setEditingAssignmentId(id)}
                         />
                     }>
                     </EntityList>

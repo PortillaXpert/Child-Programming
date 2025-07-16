@@ -16,9 +16,9 @@ const tooltipStyles = {
 };
 
 function ActionButtons({ onEdit, onView, onDelete, item, chipColor }) {
-    const isActive = chipColor === 'green';
-    const toggleTooltip = isActive ? 'Desactivar' : 'Activar';
-    const ToggleIcon = isActive ? BlockIcon : CheckCircle;
+    const isActive = chipColor === 'gray';
+    const toggleTooltip = isActive ? 'Activar' : 'Desactivar';
+    const ToggleIcon = isActive ? CheckCircle : BlockIcon ;
 
     return (
         <Box display="flex" gap="4px">

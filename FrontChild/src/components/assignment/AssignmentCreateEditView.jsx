@@ -23,12 +23,16 @@ import {
 import FormHeader from '@/components/common/FormHeader';
 import CustomSnackBar from '@/components/common/ui/CustomSnackBar';
 import EntityCardItem from '@/components/common/ui/EntityCardItem';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import TeamDetailDialog from '@/components/teams/TeamDetailDialog';
 import MissionDetailDialog from '@/components/missions/MissionDetailDialog';
 import { statusLabels } from '@/utils/const';
+import Select from '@mui/material/Select';
+import {statusOptions} from '@/utils/const';
+import MenuItem from '@mui/material/MenuItem';
+import StarIcon from '@/components/icon/StarIcon';
+
 
 const tooltipStyles = {
     sx: {
@@ -143,7 +147,7 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                         <EntityCardItem
                                             item={mission}
                                             index={index}
-                                            icon={<AssignmentIcon />}
+                                            icon={<StarIcon color = 'white' />}
                                             title={mission.title}
                                             subtitle={mission.description}
                                             chipLabel={isSelected ? 'Seleccionada' : ''}
@@ -158,6 +162,7 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                                 onClick={() =>
                                                     isSelected ? setSelectedMissionId('') : handleMissionSelect(mission.id)
                                                 }
+                                                disabled={!!assignmentId}
                                             >
                                                 {isSelected ? <RemoveCircleIcon /> : <AddCircleIcon />}
                                             </IconButton>
@@ -178,7 +183,7 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                         <EntityCardItem
                                             item={team}
                                             index={index}
-                                            icon={<AssignmentIcon />}
+                                            icon={<img src="/caticon.svg" alt="Ícono gato" style={{ width: 24 }} />}
                                             title={team.name}
                                             subtitle={`Curso: ${team.course}`}
                                             chipLabel={isSelected ? 'Asignado' : ''}
@@ -186,11 +191,12 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                             onView ={() => handleOpenTeamDialog(team.id)}
                                         />
                                     </Box>
-                                    <Box sx={{ width: '8%' }} display="flex" justifyContent="flex-end" gap={1} componentsProps={{ tooltip: tooltipStyles }}>
-                                        <Tooltip title={isSelected ? 'Quitar equipo' : 'Agregar equipo'} >
+                                    <Box sx={{ width: '8%' }} display="flex" justifyContent="flex-end" gap={1}>
+                                        <Tooltip title={isSelected ? 'Quitar equipo' : 'Agregar equipo'} componentsProps={{ tooltip: tooltipStyles }}>
                                             <IconButton
                                                 sx={{ color: '#1976D2' , backgroundColor: 'white', '&:hover': { backgroundColor: '#e3f2fd' } }}
                                                 onClick={() => handleToggleTeam(team.id)}
+                                                disabled={!!assignmentId}
                                             >
                                                 {isSelected ? <RemoveCircleIcon /> : <AddCircleIcon />}
                                             </IconButton>
@@ -202,9 +208,13 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                     </Stack>
 
                     {assignmentId && (
-                        <Typography mt={3}>
-                            Estado actual: <strong>{statusLabels[status]}</strong>
-                        </Typography>
+                        <Select value={status} onChange={e => setStatus(e.target.value)} fullWidth sx={{mt: 2}}>
+                            {statusOptions.map(opt => (
+                            <MenuItem key={opt.value} value={opt.value}>
+                            {statusLabels[opt.value]}
+                            </MenuItem>
+                            ))}
+                        </Select>
                     )}
 
                     <Box display="flex" justifyContent="center" mt={3}>
