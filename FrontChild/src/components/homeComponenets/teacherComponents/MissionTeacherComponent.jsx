@@ -1,63 +1,33 @@
-import { useEffect, useState } from 'react'
 import { getMissions, deleteMission } from '@/services/api/missionServiceApi'
+import { useFetchData } from '@/hooks/useFetchData'
+import { useSearchFilter } from '@/hooks/useSearchFilter'
+import { useCrudStates } from '@/hooks/useCrudStates'
 import SkeletonCard from '@/components/others/skeletonCard'
-import EntityList from '@/components/common/EntityList';
-import EntityCardItem from '@/components/common/ui/EntityCardItem';
+import EntityList from '@/components/common/EntityList'
+import EntityCardItem from '@/components/common/ui/EntityCardItem'
 import ConfirmDialog from '@/components/others/dialog/ConfirmDialog'
 import SearchInput from '@/components/common/ui/SearchInput'
 import CardContainer from '@/components/common/CardContainer'
 import SectionHeader from '@/components/common/SectionHeader'
 import MissionDetailDialog from '@/components/missions/MissionDetailDialog'
 import MissionCreateEditView from '@/components/missions/MissionCreateEditView'
-import StarIcon from '@/components/icon/StarIcon';
+import StarIcon from '@/components/icon/StarIcon'
 
 function MissionTeacherComponent() {
-    const [missions, setMissions] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [search, setSearch] = useState('')
-    const [selectedMissionId, setSelectedMissionId] = useState(null)
-    const [editingMissionId, setEditingMissionId] = useState(null)
-    const [isCreating, setIsCreating] = useState(false)
-    const [openDialog, setOpenDialog] = useState(false)
-    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
-    const [missionToDelete, setMissionToDelete] = useState(null)
-
-    const fetchMissions = async () => {
-        setLoading(true)
-        try {
-            const data = await getMissions()
-            setMissions(data)
-        } catch (err) {
-            console.error('Error al cargar misiones:', err)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        fetchMissions()
-    }, [])
-
-    const filteredMissions = missions.filter((mission) =>
-        mission.title.toLowerCase().includes(search.toLowerCase())
-    )
-
-    if (loading || !missions) {
-        return <SkeletonCard titleLines={1} items={3} />
-    }
-
-    if (editingMissionId || isCreating) {
-        return (
-            <MissionCreateEditView
-                missionId={editingMissionId}
-                onBack={() => {
-                    setEditingMissionId(null)
-                    setIsCreating(false)
-                    fetchMissions()
-                }}
-            />
-        )
-    }
+    const { data: missions, setData: setMissions, loading, fetchData } = useFetchData(getMissions)
+    const { search, setSearch, filtered: filteredMissions } = useSearchFilter(missions, 'title')
+    const {
+        editingId: editingMissionId,
+        setEditingId: setEditingMissionId,
+        isCreating,
+        setIsCreating,
+        selectedId: selectedMissionId,
+        setSelectedId: setSelectedMissionId,
+        confirmDeleteOpen,
+        setConfirmDeleteOpen,
+        itemToDelete: missionToDelete,
+        setItemToDelete: setMissionToDelete,
+    } = useCrudStates()
 
     const handleDeleteMission = async () => {
         try {
@@ -73,6 +43,21 @@ function MissionTeacherComponent() {
             console.error('Error al eliminar misión:', error)
             alert('Ocurrió un error al eliminar la misión.')
         }
+    }
+
+    if (loading || !missions) return <SkeletonCard titleLines={1} items={3} />
+
+    if (editingMissionId || isCreating) {
+        return (
+            <MissionCreateEditView
+                missionId={editingMissionId}
+                onBack={() => {
+                    setEditingMissionId(null)
+                    setIsCreating(false)
+                    fetchData()
+                }}
+            />
+        )
     }
 
     return (
@@ -100,18 +85,17 @@ function MissionTeacherComponent() {
                             <EntityCardItem
                                 item={mission}
                                 index={index}
-                                icon={<StarIcon color = 'white' />}
+                                icon={<StarIcon color="white" />}
                                 title={mission.title}
                                 chipLabel={mission.active ? 'Activa' : 'Inactiva'}
                                 chipColor={mission.active ? 'green' : 'gray'}
                                 onEdit={(id) => setEditingMissionId(id)}
                                 onView={(id) => {
-                                    setSelectedMissionId(id);
-                                    setOpenDialog(true);
+                                    setSelectedMissionId(id)
                                 }}
                                 onDelete={(mission) => {
-                                    setMissionToDelete(mission);
-                                    setConfirmDeleteOpen(true);
+                                    setMissionToDelete(mission)
+                                    setConfirmDeleteOpen(true)
                                 }}
                             />
                         )}
@@ -119,10 +103,9 @@ function MissionTeacherComponent() {
                 }
             />
 
-
             <MissionDetailDialog
-                open={openDialog}
-                onClose={() => setOpenDialog(false)}
+                open={selectedMissionId !== null}
+                onClose={() => setSelectedMissionId(null)}
                 missionId={selectedMissionId}
             />
 
@@ -131,7 +114,7 @@ function MissionTeacherComponent() {
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={handleDeleteMission}
                 title="¿Desactivar misión?"
-                content={`¿Estás seguro de que deseas desactivar esta misión?`}
+                content="¿Estás seguro de que deseas desactivar esta misión?"
             />
         </>
     )

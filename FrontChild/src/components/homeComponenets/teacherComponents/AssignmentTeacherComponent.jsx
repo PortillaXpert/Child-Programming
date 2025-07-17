@@ -1,87 +1,82 @@
-import { useEffect, useState } from "react";
-import { getAllAssignments } from "@/services/api/assignmentServiceApi";
-import CardContainer from "@/components/common/CardContainer";
-import SectionHeader from "@/components/common/SectionHeader";
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import SearchInput from "@/components/common/ui/SearchInput";
-import SkeletonCard from "@/components/others/skeletonCard";
-import EntityList from "@/components/common/EntityList";
-import EntityCardItem from "@/components/common/ui/EntityCardItem";
-import AssignmentDetailsView from '@/components/assignment/AssignmentDetailsView';
-import ConfirmDialog from "@/components/others/dialog/ConfirmDialog";   
-import { deleteAssignment } from "@/services/api/assignmentServiceApi"; 
-import { getStatusColor, getStatusLabel} from "@/utils/const";
-import AssignmentCreateEditView from '@/components/assignment/AssignmentCreateEditView';
+import { getAllAssignments, deleteAssignment } from "@/services/api/assignmentServiceApi"
+
+import CardContainer from "@/components/common/CardContainer"
+import SectionHeader from "@/components/common/SectionHeader"
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import SearchInput from "@/components/common/ui/SearchInput"
+import SkeletonCard from "@/components/others/skeletonCard"
+import EntityList from "@/components/common/EntityList"
+import EntityCardItem from "@/components/common/ui/EntityCardItem"
+import AssignmentDetailsView from '@/components/assignment/AssignmentDetailsView'
+import ConfirmDialog from "@/components/others/dialog/ConfirmDialog"
+import AssignmentCreateEditView from '@/components/assignment/AssignmentCreateEditView'
+
+import { getStatusColor, getStatusLabel } from "@/utils/const"
+import { useCrudStates } from "@/hooks/useCrudStates"
+import { useDeleteHandler } from "@/hooks/useDeleteHandler"
+import { useFetchData } from "@/hooks/useFetchData"
+import { useSearchFilter } from "@/hooks/useSearchFilter"
 
 function AssignmentTeacherComponent() {
-    const [assignments, setAssignments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState('');
-    const [isCreating, setIsCreating] = useState(false);
-    const [selectedAssignmentId, setSelectedAssignmentId] = useState(null);
-    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-    const [assignmentToDelete, setAssignmentToDelete] = useState(null);
-    const [editingAssignmentId, setEditingAssignmentId] = useState(null);
+    const {
+        editingId,
+        setEditingId,
+        isCreating,
+        setIsCreating,
+        selectedId,
+        setSelectedId,
+        confirmDeleteOpen,
+        setConfirmDeleteOpen,
+        itemToDelete,
+        setItemToDelete,
+    } = useCrudStates()
 
-    const fetchAssignments = async () => {
-        setLoading(true);
-        try {
-            const data = await getAllAssignments(); 
-            setAssignments(data);
-        } catch (err) {
-            console.error("Error al cargar asignaciones:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const {
+        data: assignments,
+        setData: setAssignments,
+        loading,
+        fetchData
+    } = useFetchData(getAllAssignments)
 
-    useEffect(() => {
-        fetchAssignments();
-    }, []);
+    const {
+        search,
+        setSearch,
+        filtered: filteredAssignments
+    } = useSearchFilter(assignments, "titleMission")
 
-    const filteredAssignments = assignments.filter((assignment) =>
-        assignment.titleMission.toLowerCase().includes(search.toLowerCase())
-    );
+    const { handleDelete } = useDeleteHandler(deleteAssignment, setAssignments)
 
-    if (loading) {
-        return <SkeletonCard titleLines={1} items={3} />;
+    const confirmDelete = async () => {
+        await handleDelete(itemToDelete.id)
+        setConfirmDeleteOpen(false)
+        setItemToDelete(null)
     }
 
-    if (selectedAssignmentId) {
+    if (loading) return <SkeletonCard titleLines={1} items={3} />
+
+    if (selectedId) {
         return (
             <AssignmentDetailsView
-                assignmentId={selectedAssignmentId}
+                assignmentId={selectedId}
                 onBack={() => {
-                    setSelectedAssignmentId(null);
-                    fetchAssignments();
+                    setSelectedId(null)
+                    fetchData()
                 }}
             />
-        );
+        )
     }
 
-    if (isCreating || editingAssignmentId) {
+    if (isCreating || editingId) {
         return (
             <AssignmentCreateEditView
-                assignmentId={editingAssignmentId}
+                assignmentId={editingId}
                 onBack={() => {
-                    setEditingAssignmentId(null);
-                    setIsCreating(false);
-                    fetchAssignments();
+                    setEditingId(null)
+                    setIsCreating(false)
+                    fetchData()
                 }}
             />
-        );
-    }
-
-    const handleDeleteAssignment = async () => {
-        try {
-            await deleteAssignment(assignmentToDelete.id);
-            setAssignments(await getAllAssignments());
-            setConfirmDeleteOpen(false);
-            setAssignmentToDelete(null);
-        } catch (error) {
-            console.error("Error al eliminar la asignación:", error);
-            alert("Ocurrió un error al eliminar la asignación.");
-        }
+        )
     }
 
     return (
@@ -103,36 +98,38 @@ function AssignmentTeacherComponent() {
                     />
                 }
                 list={
-                    <EntityList items={filteredAssignments} renderItem={(assignment, index) =>
-                        <EntityCardItem
-                            item={assignment}
-                            index={index}
-                            icon={<AssignmentIcon />}
-                            title={assignment.titleMission}
-                            subtitle={`Equipo: ${assignment.teamName} • Curso: ${assignment.teamCourse}`}
-                            chipLabel={getStatusLabel(assignment.status)}
-                            chipColor={getStatusColor(assignment.status)}
-                            onView={(id) => setSelectedAssignmentId(id)}
-                            onDelete={(assignment) => {
-                                setAssignmentToDelete(assignment);
-                                setConfirmDeleteOpen(true);
-                            }}
-                            onEdit ={(id) => setEditingAssignmentId(id)}
-                        />
-                    }>
-                    </EntityList>
+                    <EntityList
+                        items={filteredAssignments}
+                        renderItem={(assignment, index) => (
+                            <EntityCardItem
+                                item={assignment}
+                                index={index}
+                                icon={<AssignmentIcon />}
+                                title={assignment.titleMission}
+                                subtitle={`Equipo: ${assignment.teamName} • Curso: ${assignment.teamCourse}`}
+                                chipLabel={getStatusLabel(assignment.status)}
+                                chipColor={getStatusColor(assignment.status)}
+                                onView={(id) => setSelectedId(id)}
+                                onDelete={(assignment) => {
+                                    setItemToDelete(assignment)
+                                    setConfirmDeleteOpen(true)
+                                }}
+                                onEdit={(id) => setEditingId(id)}
+                            />
+                        )}
+                    />
                 }
             />
 
             <ConfirmDialog
-            open={confirmDeleteOpen}
-            onClose={() => setConfirmDeleteOpen(false)}
-            onConfirm={handleDeleteAssignment}
-            title="¿Desactivar Asignación?"
-            content={`¿Estás seguro de que deseas desactivar esta asignación?`}
+                open={confirmDeleteOpen}
+                onClose={() => setConfirmDeleteOpen(false)}
+                onConfirm={confirmDelete}
+                title="¿Desactivar Asignación?"
+                content="¿Estás seguro de que deseas desactivar esta asignación?"
             />
         </>
-    );
+    )
 }
 
-export default AssignmentTeacherComponent;
+export default AssignmentTeacherComponent

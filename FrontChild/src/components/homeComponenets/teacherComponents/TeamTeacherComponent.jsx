@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
 import { getAllTeams, deleteTeam } from '@/services/api/teamServiceApi';
+import { useFetchData } from '@/hooks/useFetchData';
+import { useSearchFilter } from '@/hooks/useSearchFilter';
+import { useCrudStates } from '@/hooks/useCrudStates';
 import SkeletonCard from '@/components/others/skeletonCard';
 import TeamDetailDialog from '@/components/teams/TeamDetailDialog';
 import TeamCreateEditView from '@/components/teams/TeamCreateEditView';
@@ -11,52 +13,20 @@ import EntityList from '@/components/common/EntityList';
 import EntityCardItem from '@/components/common/ui/EntityCardItem';
 
 function TeamTeacherComponent() {
-    const [teams, setTeams] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState('');
-    const [openDialog, setOpenDialog] = useState(false);
-    const [selectedTeamId, setSelectedTeamId] = useState(null);
-    const [editingTeamId, setEditingTeamId] = useState(null);
-    const [isCreating, setIsCreating] = useState(false);
-    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-    const [teamToDelete, setTeamToDelete] = useState(null);
-
-    const fetchTeams = async () => {
-        setLoading(true);
-        try {
-            const data = await getAllTeams();
-            setTeams(data);
-        } catch (err) {
-            console.error('Error al cargar equipos:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchTeams();
-    }, []);
-
-    const filteredTeams = teams.filter((team) =>
-        team.name.toLowerCase().includes(search.toLowerCase())
-    );
-
-    if (loading || !teams) {
-        return <SkeletonCard titleLines={1} items={3} />;
-    }
-
-    if (editingTeamId || isCreating) {
-        return (
-            <TeamCreateEditView
-                teamId={editingTeamId}
-                onBack={() => {
-                    setEditingTeamId(null);
-                    setIsCreating(false);
-                    fetchTeams();
-                }}
-            />
-        );
-    }
+    const { data: teams, setData: setTeams, loading, fetchData } = useFetchData(getAllTeams);
+    const { search, setSearch, filtered: filteredTeams } = useSearchFilter(teams, 'name');
+    const {
+        editingId: editingTeamId,
+        setEditingId: setEditingTeamId,
+        isCreating,
+        setIsCreating,
+        selectedId: selectedTeamId,
+        setSelectedId: setSelectedTeamId,
+        confirmDeleteOpen,
+        setConfirmDeleteOpen,
+        itemToDelete: teamToDelete,
+        setItemToDelete: setTeamToDelete,
+    } = useCrudStates();
 
     const handleDeleteTeam = async () => {
         try {
@@ -69,6 +39,21 @@ function TeamTeacherComponent() {
             alert('Ocurrió un error al eliminar el equipo.');
         }
     };
+
+    if (loading || !teams) return <SkeletonCard titleLines={1} items={3} />;
+
+    if (editingTeamId || isCreating) {
+        return (
+            <TeamCreateEditView
+                teamId={editingTeamId}
+                onBack={() => {
+                    setEditingTeamId(null);
+                    setIsCreating(false);
+                    fetchData();
+                }}
+            />
+        );
+    }
 
     return (
         <>
@@ -103,7 +88,6 @@ function TeamTeacherComponent() {
                                 onEdit={(id) => setEditingTeamId(id)}
                                 onView={(id) => {
                                     setSelectedTeamId(id);
-                                    setOpenDialog(true);
                                 }}
                                 onDelete={(team) => {
                                     setTeamToDelete(team);
@@ -115,10 +99,9 @@ function TeamTeacherComponent() {
                 }
             />
 
-
             <TeamDetailDialog
-                open={openDialog}
-                onClose={() => setOpenDialog(false)}
+                open={selectedTeamId !== null}
+                onClose={() => setSelectedTeamId(null)}
                 teamId={selectedTeamId}
             />
 
@@ -127,7 +110,7 @@ function TeamTeacherComponent() {
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={handleDeleteTeam}
                 title="¿Desactivar equipo?"
-                content={`¿Estás seguro de que deseas desactivar este equipo?`}
+                content="¿Estás seguro de que deseas desactivar este equipo?"
             />
         </>
     );
