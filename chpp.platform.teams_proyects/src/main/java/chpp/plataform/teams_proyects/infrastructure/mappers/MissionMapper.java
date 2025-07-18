@@ -32,7 +32,7 @@ public class MissionMapper {
                 dto.getObjectives(),
                 dto.getStartDate(),
                 dto.getEndDate(),
-                true,
+                dto.isActive(),
                 dto.getMaterials() != null ?
                         dto.getMaterials().stream()
                                 .map(AttachmentMapper::toDomain)

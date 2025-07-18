@@ -29,7 +29,7 @@ const HomePage = () => {
     })
   }
 
-  const role = 'PROFESOR'
+  const role = 'ESTUDIANTE'
 
   return (
     <>

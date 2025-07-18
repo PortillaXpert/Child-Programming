@@ -1,87 +1,41 @@
 import {
-    Box,
-    Card,
-    CardContent,
-    Stack,
-    Typography,
-    IconButton,
-    Tooltip,
-    Button,
+    Box, Card, CardContent, Stack, Typography, Button,
+    Select, MenuItem
 } from '@mui/material';
-import { useEffect, useState } from 'react';
-import {
-    getMissions,
-} from '@/services/api/missionServiceApi';
-import {
-    getAllTeams,
-} from '@/services/api/teamServiceApi';
-import {
-    createAssignment,
-    updateAssignment,
-    getAssignmentById,
-} from '@/services/api/assignmentServiceApi';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import FormHeader from '@/components/common/FormHeader';
 import CustomSnackBar from '@/components/common/ui/CustomSnackBar';
 import EntityCardItem from '@/components/common/ui/EntityCardItem';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import TeamDetailDialog from '@/components/teams/TeamDetailDialog';
 import MissionDetailDialog from '@/components/missions/MissionDetailDialog';
-import { statusLabels } from '@/utils/const';
-import Select from '@mui/material/Select';
-import {statusOptions} from '@/utils/const';
-import MenuItem from '@mui/material/MenuItem';
+import TooltipIconButton from '@/components/common/ui/TooltipIconButton';
 import StarIcon from '@/components/icon/StarIcon';
-
-
-const tooltipStyles = {
-    sx: {
-        bgcolor: '#1976D2',
-        color: 'white',
-        fontSize: '0.875rem',
-        borderRadius: 1,
-        px: 1.5,
-        py: 0.5,
-    },
-};
-
+import { statusOptions, statusLabels } from '@/utils/const';
+import { useState } from 'react';
+import { useAssignmentForm } from '@/hooks/formHooks/useAssignmentForm';
 
 function AssignmentCreateEditView({ assignmentId, onBack }) {
-    const [missions, setMissions] = useState([]);
-    const [teams, setTeams] = useState([]);
-    const [selectedMissionId, setSelectedMissionId] = useState('');
-    const [selectedTeams, setSelectedTeams] = useState([]);
-    const [status, setStatus] = useState('IN_PROGRESS');
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const {
+        missions,
+        teams,
+        selectedMissionId,
+        selectedTeams,
+        status,
+        snackbarOpen,
+        snackbarMessage,
+        severity,
+        setStatus,
+        setSnackbarOpen,
+        handleMissionSelect,
+        handleToggleTeam,
+        handleSave,
+    } = useAssignmentForm(assignmentId);
+
     const [teamDialogOpen, setTeamDialogOpen] = useState(false);
     const [teamDialogId, setTeamDialogId] = useState(null);
     const [missionDialogOpen, setMissionDialogOpen] = useState(false);
     const [missionDialogId, setMissionDialogId] = useState(null);
-
-    useEffect(() => {
-        getMissions().then(setMissions);
-        getAllTeams().then(setTeams);
-
-        if (assignmentId) {
-            getAssignmentById(assignmentId).then(data => {
-                setSelectedMissionId(data.missionId);
-                setSelectedTeams([data.teamId]);
-                setStatus(data.status);
-            });
-        }
-    }, [assignmentId]);
-
-    const handleMissionSelect = (missionId) => {
-        setSelectedMissionId(missionId);
-    };
-
-    const handleToggleTeam = (teamId) => {
-        setSelectedTeams(prev =>
-            prev.includes(teamId)
-                ? prev.filter(id => id !== teamId)
-                : [...prev, teamId]
-        );
-    };
 
     const handleOpenTeamDialog = (teamId) => {
         setTeamDialogId(teamId);
@@ -93,46 +47,9 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
         setMissionDialogOpen(true);
     };
 
-    const handleSave = async () => {
-        try {
-            const mission = missions.find(m => m.id === selectedMissionId);
-            const selectedTeamObjects = teams.filter(t => selectedTeams.includes(t.id));
-
-            if (assignmentId) {
-                const team = selectedTeamObjects[0];
-                const assignment = {
-                    titleMission: mission.title,
-                    missionId: mission.id,
-                    teamId: team.id,
-                    teamName: team.name,
-                    teamCourse: team.course,
-                    status,
-                };
-                await updateAssignment(assignmentId, assignment);
-            } else {
-                for (const team of selectedTeamObjects) {
-                    const assignment = {
-                        titleMission: mission.title,
-                        missionId: mission.id,
-                        teamId: team.id,
-                        teamName: team.name,
-                        teamCourse: team.course,
-                        status: 'IN_PROGRESS',
-                    };
-                    await createAssignment(assignment);
-                }
-            }
-
-            setSnackbarOpen(true);
-        } catch (error) {
-            console.error('Error al guardar asignaciones:', error);
-        }
-    };
-
-    //TODO: CORREGIR EDITR Y CREAR
     return (
         <>
-            <Card sx={{ width: '50vw', height: '70vh', overflowY: 'auto', overflowX: 'hidden', scrollbarColor: '#1976D2 white', scrollbarWidth: 'thin' }}>
+            <Card sx={{ width: '50vw', height: '70vh', overflowY: 'auto' }}>
                 <FormHeader
                     title={assignmentId ? 'Editar Asignación' : 'Asignar Misión a Equipos'}
                     onBack={onBack}
@@ -148,7 +65,7 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                         <EntityCardItem
                                             item={mission}
                                             index={index}
-                                            icon={<StarIcon color = 'white' />}
+                                            icon={<StarIcon color='white' />}
                                             title={mission.title}
                                             subtitle={mission.description}
                                             chipLabel={isSelected ? 'Seleccionada' : ''}
@@ -156,18 +73,15 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                             onView={() => handleOpenMissionDialog(mission.id)}
                                         />
                                     </Box>
-                                    <Box sx={{ width: '8%' }} display="flex" justifyContent="flex-end" gap={1}>
-                                        <Tooltip title={isSelected ? 'Quitar misión' : 'Agregar misión'} componentsProps={{ tooltip: tooltipStyles }}>
-                                            <IconButton
-                                                sx={{ color: '#1976D2' , backgroundColor: 'white', '&:hover': { backgroundColor: '#e3f2fd' } }}
-                                                onClick={() =>
-                                                    isSelected ? setSelectedMissionId('') : handleMissionSelect(mission.id)
-                                                }
-                                                disabled={!!assignmentId}
-                                            >
-                                                {isSelected ? <RemoveCircleIcon /> : <AddCircleIcon />}
-                                            </IconButton>
-                                        </Tooltip>
+                                    <Box sx={{ width: '8%' }} display="flex" justifyContent="flex-end">
+                                        <TooltipIconButton
+                                            title={isSelected ? 'Quitar misión' : 'Agregar misión'}
+                                            icon={isSelected ? <RemoveCircleIcon /> : <AddCircleIcon />}
+                                            onClick={() =>
+                                                isSelected ? handleMissionSelect('') : handleMissionSelect(mission.id)
+                                            }
+                                            disabled={!!assignmentId}
+                                        />
                                     </Box>
                                 </Box>
                             );
@@ -189,19 +103,16 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                             subtitle={`Curso: ${team.course}`}
                                             chipLabel={isSelected ? 'Asignado' : ''}
                                             chipColor={isSelected ? '#388e3c' : ''}
-                                            onView ={() => handleOpenTeamDialog(team.id)}
+                                            onView={() => handleOpenTeamDialog(team.id)}
                                         />
                                     </Box>
-                                    <Box sx={{ width: '8%' }} display="flex" justifyContent="flex-end" gap={1}>
-                                        <Tooltip title={isSelected ? 'Quitar equipo' : 'Agregar equipo'} componentsProps={{ tooltip: tooltipStyles }}>
-                                            <IconButton
-                                                sx={{ color: '#1976D2' , backgroundColor: 'white', '&:hover': { backgroundColor: '#e3f2fd' } }}
-                                                onClick={() => handleToggleTeam(team.id)}
-                                                disabled={!!assignmentId}
-                                            >
-                                                {isSelected ? <RemoveCircleIcon /> : <AddCircleIcon />}
-                                            </IconButton>
-                                        </Tooltip>
+                                    <Box sx={{ width: '8%' }} display="flex" justifyContent="flex-end">
+                                        <TooltipIconButton
+                                            title={isSelected ? 'Quitar equipo' : 'Agregar equipo'}
+                                            icon={isSelected ? <RemoveCircleIcon /> : <AddCircleIcon />}
+                                            onClick={() => handleToggleTeam(team.id)}
+                                            disabled={!!assignmentId}
+                                        />
                                     </Box>
                                 </Box>
                             );
@@ -209,11 +120,11 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                     </Stack>
 
                     {assignmentId && (
-                        <Select value={status} onChange={e => setStatus(e.target.value)} fullWidth sx={{mt: 2}}>
+                        <Select value={status} onChange={e => setStatus(e.target.value)} fullWidth sx={{ mt: 2 }}>
                             {statusOptions.map(opt => (
-                            <MenuItem key={opt.value} value={opt.value}>
-                            {statusLabels[opt.value]}
-                            </MenuItem>
+                                <MenuItem key={opt.value} value={opt.value}>
+                                    {statusLabels[opt.value]}
+                                </MenuItem>
                             ))}
                         </Select>
                     )}
@@ -232,10 +143,10 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
             </Card>
 
             <CustomSnackBar
-                message={assignmentId ? '¡Asignación actualizada con éxito!' : '¡Asignaciones creadas con éxito!'}
+                message={snackbarMessage}
                 snackbarOpen={snackbarOpen}
                 setSnackbarOpen={setSnackbarOpen}
-                severity="success"
+                severity={severity}
             />
 
             <TeamDetailDialog

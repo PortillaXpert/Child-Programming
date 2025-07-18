@@ -1,73 +1,40 @@
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import BlockIcon from '@mui/icons-material/Block';
 import { CheckCircle } from '@mui/icons-material';
-
-const tooltipStyles = {
-    sx: {
-        bgcolor: '#1976D2',
-        color: 'white',
-        fontSize: '0.875rem',
-        borderRadius: 1,
-        px: 1.5,
-        py: 0.5,
-    },
-};
+import TooltipIconButton from '@/components/common/ui/TooltipIconButton';
 
 function ActionButtons({ onEdit, onView, onDelete, item, chipColor }) {
+
     const isActive = chipColor === 'gray';
     const toggleTooltip = isActive ? 'Activar' : 'Desactivar';
-    const ToggleIcon = isActive ? CheckCircle : BlockIcon ;
+    const ToggleIcon = isActive ? <CheckCircle fontSize="small" /> : <BlockIcon fontSize="small" />;
 
     return (
         <Box display="flex" gap="4px">
             {onEdit && (
-                <Tooltip title="Editar" componentsProps={{ tooltip: tooltipStyles }}>
-                    <IconButton
-                        size="small"
-                        onClick={() => onEdit(item.id)}
-                        sx={{
-                            bgcolor: '#1976D2',
-                            color: 'white',
-                            '&:hover': { bgcolor: '#125a9c' },
-                        }}
-                    >
-                        <EditIcon fontSize="small" />
-                    </IconButton>
-                </Tooltip>
+                <TooltipIconButton
+                    title="Editar"
+                    icon={<EditIcon fontSize="small" />}
+                    onClick={() => onEdit(item.id)}
+                />
             )}
 
             {onView && (
-                <Tooltip title="Ver" componentsProps={{ tooltip: tooltipStyles }}>
-                    <IconButton
-                        size="small"
-                        onClick={() => onView(item.id)}
-                        sx={{
-                            bgcolor: '#1976D2',
-                            color: 'white',
-                            '&:hover': { bgcolor: '#125a9c' },
-                        }}
-                    >
-                        <VisibilityIcon fontSize="small" />
-                    </IconButton>
-                </Tooltip>
+                <TooltipIconButton
+                    title="Ver"
+                    icon={<VisibilityIcon fontSize="small" />}
+                    onClick={() => onView(item.id)}
+                />
             )}
 
             {onDelete && (
-                <Tooltip title={toggleTooltip} componentsProps={{ tooltip: tooltipStyles }}>
-                    <IconButton
-                        size="small"
-                        onClick={() => onDelete(item)}
-                        sx={{
-                            bgcolor: '#1976D2',
-                            color: 'white',
-                            '&:hover': { bgcolor: '#125a9c' },
-                        }}
-                    >
-                        <ToggleIcon fontSize="small" />
-                    </IconButton>
-                </Tooltip>
+                <TooltipIconButton
+                    title={toggleTooltip}
+                    icon={ToggleIcon}
+                    onClick={() => onDelete(item)}
+                />
             )}
         </Box>
     );

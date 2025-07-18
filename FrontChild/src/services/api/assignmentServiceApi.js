@@ -46,16 +46,16 @@ export async function createAssignment(assignmentData) {
         throw new Error(`Error creating assignment: ${res.statusText}`)
     }
     const json = await res.json()
-    return json.data
+    console.log(json)
+    return json.data.status
 }
 
-export async function updateAssignment(assignmentId, assignmentData) {
-    const res = await fetch(`${API_URL}/mission-assignments/${assignmentId}/status`, {
-        method: 'PUT',
+export async function updateAssignment(assignmentId, status) {
+    const res = await fetch(`${API_URL}/mission-assignments/${assignmentId}/status?status=${status}`, {
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(assignmentData)
     })
     if (!res.ok) {
         throw new Error(`Error updating assignment: ${res.statusText}`)
