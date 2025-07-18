@@ -6,7 +6,7 @@ import HeaderWithIcon from '@/components/common/HeaderWithIcon';
 import StudentItem from '@/components/teams/StudentItem';
 import CustomSnackBar from '@/components/common/ui/CustomSnackBar';
 import { Typography, Stack } from '@mui/material';
-import { useFetchData } from '@/hooks/useFetchData';
+import { useFetchData } from '@/hooks/dataHooks/useFetchData';
 import { useSnackBar} from '@/hooks/useSnackBar';
 
 function TeamComponent({ studentCode }) {

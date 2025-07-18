@@ -1,7 +1,7 @@
 import { getAllTeams, deleteTeam } from '@/services/api/teamServiceApi';
-import { useFetchData } from '@/hooks/useFetchData';
-import { useSearchFilter } from '@/hooks/useSearchFilter';
-import { useCrudStates } from '@/hooks/useCrudStates';
+import { useFetchData } from '@/hooks/dataHooks/useFetchData';
+import { useSearchFilter } from '@/hooks/dataHooks/useSearchFilter';
+import { useCrudStates } from '@/hooks/dataHooks/useCrudStates';
 import SkeletonCard from '@/components/others/skeletonCard';
 import TeamDetailDialog from '@/components/teams/TeamDetailDialog';
 import TeamCreateEditView from '@/components/teams/TeamCreateEditView';

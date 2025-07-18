@@ -12,10 +12,10 @@ import ConfirmDialog from "@/components/others/dialog/ConfirmDialog"
 import AssignmentCreateEditView from '@/components/assignment/AssignmentCreateEditView'
 
 import { getStatusColor, getStatusLabel } from "@/utils/const"
-import { useCrudStates } from "@/hooks/useCrudStates"
-import { useDeleteHandler } from "@/hooks/useDeleteHandler"
-import { useFetchData } from "@/hooks/useFetchData"
-import { useSearchFilter } from "@/hooks/useSearchFilter"
+import { useCrudStates } from "@/hooks/dataHooks/useCrudStates"
+import { useDeleteHandler } from "@/hooks/dataHooks/useDeleteHandler"
+import { useFetchData } from "@/hooks/dataHooks/useFetchData"
+import { useSearchFilter } from "@/hooks/dataHooks/useSearchFilter"
 
 function AssignmentTeacherComponent() {
     const {

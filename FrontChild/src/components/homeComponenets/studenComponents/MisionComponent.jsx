@@ -5,7 +5,7 @@ import {
   Divider,
   Box,
 } from '@mui/material'
-import { useFetchData } from '@/hooks/useFetchData'
+import { useFetchData } from '@/hooks/dataHooks/useFetchData'
 import { getMissionById } from '@/services/api/missionServiceApi'
 import { getAssignmentsByTeam } from '@/services/api/assignmentServiceApi'
 import SkeletonCard from '@/components/others/skeletonCard'
