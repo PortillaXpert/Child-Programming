@@ -14,13 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -51,6 +49,14 @@ public class TeamController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/active")
+    @Operation(summary = "Obtener equipos activos")
+    @ApiResponse(responseCode = "200", description = "Lista de equipos activos")
+    public ResponseEntity<ResponseDto<List<TeamDTO>>> getActiveTeams() {
+        ResponseDto<List<TeamDTO>> response = teamService.getActiveTeams();
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar un equipo existente / Reasignar estudiante a otro equipo")
     @ApiResponse(responseCode = "200", description = "Equipo actualizado exitosamente")
@@ -70,7 +76,7 @@ public class TeamController {
     }
 
     @GetMapping("/course/{courseId}")
-    @Operation(summary = "Obtener equipos por curso")
+    @Operation(summary = "Obtener equipos activos por curso")
     @ApiResponse(responseCode = "200", description = "Lista de equipos por curso")
     public ResponseEntity<ResponseDto<List<TeamDTO>>> getTeamsByCourse(
             @PathVariable String courseId) {

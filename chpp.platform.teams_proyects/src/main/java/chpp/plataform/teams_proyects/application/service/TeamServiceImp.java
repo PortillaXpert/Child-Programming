@@ -6,6 +6,7 @@ import chpp.plataform.teams_proyects.domain.model.Student;
 import chpp.plataform.teams_proyects.domain.model.Team;
 import chpp.plataform.teams_proyects.domain.repository.ITeamRepository;
 import chpp.plataform.teams_proyects.domain.service.ITeamService;
+import chpp.plataform.teams_proyects.infrastructure.dto.StudentDTO;
 import chpp.plataform.teams_proyects.infrastructure.dto.TeamDTO;
 import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.StudentEntity;
 import chpp.plataform.teams_proyects.infrastructure.exceptions.BusinessRuleException;
@@ -14,6 +15,9 @@ import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamMapper;
 import chpp.plataform.teams_proyects.infrastructure.messages.MessageLoader;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.IJpaStudentRepository;
+import chpp.plataform.teams_proyects.shared.exceptions.ExceptionsUtils;
+import chpp.plataform.teams_proyects.shared.messages.MessagesUtils;
+import chpp.plataform.teams_proyects.shared.validation.ValidationUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,71 +39,68 @@ public class TeamServiceImp implements ITeamService {
 
     @Override
     public ResponseDto<TeamDTO> createTeam(TeamDTO teamDto) {
-        validateTeamDTO(teamDto);
+        ValidationUtils.validateRequired(teamDto, "team");
 
         Team team = TeamMapper.toDomain(teamDto);
         team.setStudents(null);
         team.setActive(true);
         Team createdTeam = teamRepository.create(team);
+        List<Student> students = teamDto.getStudents().stream()
+                .map(StudentMapper::toDomain).collect(Collectors.toList());
 
-        if (teamDto.getStudents() != null && !teamDto.getStudents().isEmpty()) {
-            List<StudentEntity> existingStudents =
-                    validateAndGetExistingStudents
-                            (teamDto.getStudents().stream()
-                                    .map(StudentMapper::toDomain).toList());
+        assignStudentsToTeam(students, createdTeam, null);
 
-            validateAllStudentsFromSameCourse(existingStudents);
-            validateStudentsNotInOtherTeams(existingStudents, null);
-
-            for (StudentEntity student : existingStudents) {
-                student.setTeam(TeamEntityMapper.toEntity(createdTeam));
-            }
-
-            jpaStudentRepository.saveAll(existingStudents);
-        }
-
-        TeamDTO createdTeamDto = TeamMapper.toDTO(createdTeam);
         return new ResponseDto<>(
                 HttpStatus.CREATED.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM002),
-                createdTeamDto
+                MessagesUtils.get(MessagesConstant.IM002),
+                TeamMapper.toDTO(createdTeam)
         );
     }
-
 
     @Transactional
     @Override
     public ResponseDto<TeamDTO> updateTeam(Long id, TeamDTO teamDto) {
         Team existingTeam = getTeamOrThrow(id);
-        validateTeamDTO(teamDto);
+        ValidationUtils.validateRequired(teamDto, "team");
+
         Team team = TeamMapper.toDomain(teamDto);
         team.setId(id);
         team.setActive(true);
-        if (team.getStudents() != null && !team.getStudents().isEmpty()) {
-            List<StudentEntity> existingStudents = validateAndGetExistingStudents(team.getStudents());
-            validateAllStudentsFromSameCourse(existingStudents);
-            validateStudentsNotInOtherTeams(existingStudents, id);
 
-            List<Long> studentCodes = team.getStudents().stream()
-                    .map(Student::getStudentCod)
-                    .toList();
-
-            syncStudentAssignments(id, studentCodes);
-        }
+        assignStudentsToTeam(team.getStudents(), existingTeam, id);
 
         Team updatedTeam = teamRepository.update(id, team);
-        TeamDTO updatedTeamDto = TeamMapper.toDTO(updatedTeam);
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM003),
-                updatedTeamDto
+                MessagesUtils.get(MessagesConstant.IM003),
+                TeamMapper.toDTO(updatedTeam)
         );
+    }
+
+    private void assignStudentsToTeam(List<Student> students, Team team, Long currentTeamId) {
+        if (students == null || students.isEmpty()) return;
+
+        List<StudentEntity> existingStudents = validateAndGetExistingStudents(students);
+        validateAllStudentsFromSameCourse(existingStudents);
+        validateStudentsNotInOtherTeams(existingStudents, currentTeamId);
+
+        if (currentTeamId == null) {
+            for (StudentEntity student : existingStudents) {
+                student.setTeam(TeamEntityMapper.toEntity(team));
+            }
+            jpaStudentRepository.saveAll(existingStudents);
+        } else {
+            List<Long> newStudentCodes = students.stream()
+                    .map(Student::getStudentCod)
+                    .toList();
+            syncStudentAssignments(currentTeamId, newStudentCodes);
+        }
     }
 
     private List<StudentEntity> validateAndGetExistingStudents(List<Student> students) {
         List<Long> studentCodes = students.stream()
                 .map(Student::getStudentCod)
-                .collect(Collectors.toList());
+                .toList();
 
         List<StudentEntity> existingStudents = jpaStudentRepository.findByStudentCodIn(studentCodes);
 
@@ -139,8 +140,7 @@ public class TeamServiceImp implements ITeamService {
     }
 
     private void syncStudentAssignments(Long teamId, List<Long> newStudentCodes) {
-        Team existingTeamEntity = teamRepository.findById(teamId)
-                .orElseThrow(() -> new EntityNotFoundException("Equipo no encontrado"));
+        Team existingTeamEntity = getTeamOrThrow(teamId);
 
         Set<Long> currentStudentCodes = existingTeamEntity.getStudents().stream()
                 .map(Student::getStudentCod)
@@ -163,119 +163,88 @@ public class TeamServiceImp implements ITeamService {
 
     @Override
     public ResponseDto<List<TeamDTO>> getTeamsByCourse(String courseId) {
-        if (courseId == null || courseId.isBlank()) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM004,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM004, "courseId")
-            );
-        }
+        ValidationUtils.validateRequired(courseId, "courseId");
         List<Team> teams = teamRepository.findByCourseId(courseId);
-        return getListResponseDto(teams);
+        return buildTeamListResponseDto(teams);
     }
 
     @Override
     public ResponseDto<List<TeamDTO>> getTeams() {
-        List<Team> teams = teamRepository.findAll();
-        return getListResponseDto(teams);
+        return buildTeamListResponseDto(teamRepository.findAll());
     }
 
+    @Override
+    public ResponseDto<Void> activateTeam(Long teamId) {
+        ValidationUtils.validateRequired(teamId, "teamId");
+        getTeamOrThrow(teamId);
+        teamRepository.activateTeam(teamId);
+        return new ResponseDto<>(
+                HttpStatus.NO_CONTENT.value(),
+                MessagesUtils.get(MessagesConstant.IM005),
+                null
+        );
+    }
+
+    @Override
+    public ResponseDto<List<TeamDTO>> getActiveTeams() {
+        return buildTeamListResponseDto(teamRepository.getTeamsActive());
+    }
 
     @Override
     public ResponseDto<Void> dissolveTeam(Long teamId) {
         getTeamOrThrow(teamId);
-
         teamRepository.dissolve(teamId);
         return new ResponseDto<>(
                 HttpStatus.NO_CONTENT.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM004),
+                MessagesUtils.get(MessagesConstant.IM004),
                 null
         );
     }
 
     @Override
     public ResponseDto<TeamDTO> getTeamByStudentCode(String studentCode) {
-        if (studentCode == null || studentCode.isBlank()) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM004,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM004, "studentCode")
-            );
-        }
+        ValidationUtils.validateRequired(studentCode, "studentCode");
+
         Team team = teamRepository.getTeamByStudentCode(studentCode);
         if (team == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.NOT_FOUND.value(),
-                    MessagesConstant.EM002,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM002, studentCode)
-            );
+            throw ExceptionsUtils.notFound(MessagesConstant.EM002, studentCode);
         }
-        TeamDTO teamDto = TeamMapper.toDTO(team);
+
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
-                teamDto
+                MessagesUtils.get(MessagesConstant.IM001),
+                TeamMapper.toDTO(team)
         );
     }
 
     @Override
     public ResponseDto<TeamDTO> findTeamById(Long teamId) {
         Team team = getTeamOrThrow(teamId);
-        TeamDTO teamDto = TeamMapper.toDTO(team);
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
-                teamDto
+                MessagesUtils.get(MessagesConstant.IM001),
+                TeamMapper.toDTO(team)
         );
     }
 
-
-    private void validateTeamDTO(TeamDTO dto) {
-        if (dto == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM004,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM004, "team")
-            );
-        }
-
-    }
-
-    private void validateId(Long id, String fieldName) {
-        if (id == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM006,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, fieldName)
-            );
-        }
-    }
-
     private Team getTeamOrThrow(Long teamId) {
-        validateId(teamId, "teamId");
+        ValidationUtils.validateRequired(teamId, "teamId");
         return teamRepository.findById(teamId)
-                .orElseThrow(() -> new BusinessRuleException(
-                        HttpStatus.NOT_FOUND.value(),
-                        MessagesConstant.EM002,
-                        MessageLoader.getInstance().getMessage(MessagesConstant.EM002, teamId)
-                ));
+                .orElseThrow(() -> ExceptionsUtils.notFound(MessagesConstant.EM002, teamId));
     }
 
-    private ResponseDto<List<TeamDTO>> getListResponseDto(List<Team> teams) {
+    private ResponseDto<List<TeamDTO>> buildTeamListResponseDto(List<Team> teams) {
         if (teams == null || teams.isEmpty()) {
             return new ResponseDto<>(
                     HttpStatus.OK.value(),
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM012),
+                    MessagesUtils.get(MessagesConstant.EM012),
                     Collections.emptyList()
             );
         }
-        List<TeamDTO> teamDTOs = teams.stream()
-                .map(TeamMapper::toDTO)
-                .collect(Collectors.toList());
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
-                teamDTOs
+                MessagesUtils.get(MessagesConstant.IM001),
+                teams.stream().map(TeamMapper::toDTO).toList()
         );
     }
 }

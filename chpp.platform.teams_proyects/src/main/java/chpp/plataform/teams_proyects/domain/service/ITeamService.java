@@ -15,8 +15,9 @@ public interface ITeamService {
     ResponseDto<List<TeamDTO>> getTeamsByCourse(String courseId);
     ResponseDto<List<TeamDTO>> getTeams();
 
-
+    ResponseDto<List<TeamDTO>> getActiveTeams();
     ResponseDto<Void> dissolveTeam(Long teamId);
     ResponseDto<TeamDTO> getTeamByStudentCode(String studentCode);
+    ResponseDto<Void> activateTeam(Long teamId);
 
 }

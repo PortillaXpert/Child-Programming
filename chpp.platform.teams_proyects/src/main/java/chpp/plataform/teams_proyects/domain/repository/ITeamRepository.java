@@ -14,4 +14,6 @@ public interface ITeamRepository {
     List<Team> findByCourseId(String courseId);
     void dissolve(Long teamId);
     Team getTeamByStudentCode(String studentCode);
+    List<Team> getTeamsActive();
+    void activateTeam(Long teamId);
 }

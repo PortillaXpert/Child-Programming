@@ -2,7 +2,6 @@ package chpp.plataform.teams_proyects.infrastructure.repository.imp;
 
 import chpp.plataform.teams_proyects.domain.model.Team;
 import chpp.plataform.teams_proyects.domain.repository.ITeamRepository;
-import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.StudentEntity;
 import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.TeamEntity;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaTeamRepository;
@@ -46,11 +45,21 @@ public class TeamRepositoryImp implements ITeamRepository {
 
     @Override
     public List<Team> findAll() {
+        return jpaTeamRepository.findAll()
+                .stream()
+                .map(TeamEntityMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Team> getTeamsActive() {
         return jpaTeamRepository.findAllActiveTeams()
                 .stream()
                 .map(TeamEntityMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
+
 
     @Override
     public List<Team> findByCourseId(String courseId) {
@@ -61,13 +70,20 @@ public class TeamRepositoryImp implements ITeamRepository {
     }
 
 
-
     @Override
     public void dissolve(Long teamId) {
         TeamEntity team = jpaTeamRepository.findById(teamId)
                 .orElseThrow(EntityNotFoundException::new);
 
         team.setActive(false);
+        jpaTeamRepository.save(team);
+    }
+
+    @Override
+    public void activateTeam(Long teamId) {
+        TeamEntity team = jpaTeamRepository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Equipo no encontrado con ID: " + teamId));
+        team.setActive(true);
         jpaTeamRepository.save(team);
     }
 
