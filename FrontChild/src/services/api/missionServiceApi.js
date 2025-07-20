@@ -6,16 +6,16 @@ export async function getMissionById(id) {
     return sendRequest(`${API_MISSION}/${id}`)
 }
 
-export async function getMissions() {
-    return sendRequest(API_MISSION)
+export async function getMissions(page = 0, size = 4) {
+    return sendRequest(`${API_MISSION}?page=${page}&size=${size}`);
 }
 
-export async function getActiveMissions() {
-    return sendRequest(`${API_MISSION}/active`)
+export async function getActiveMissions(page = 0, size = 4) {
+    return sendRequest(`${API_MISSION}/active?page=${page}&size=${size}`);
 }
 
-export async function getInactiveMissions() {
-    return sendRequest(`${API_MISSION}/inactive`)
+export async function getInactiveMissions(page = 0, size = 4) {
+    return sendRequest(`${API_MISSION}/inactive?page=${page}&size=${size}`);
 }
 
 export async function activateMission(id) {

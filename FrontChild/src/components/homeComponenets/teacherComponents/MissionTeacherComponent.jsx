@@ -1,5 +1,5 @@
 import { getMissions, deleteMission } from '@/services/api/missionServiceApi'
-import { useFetchData } from '@/hooks/dataHooks/useFetchData'
+import { useFetchPaginatedData } from '@/hooks/dataHooks/useFecthPaginatedData'
 import { useSearchFilter } from '@/hooks/dataHooks/useSearchFilter'
 import { useCrudStates } from '@/hooks/dataHooks/useCrudStates'
 import SkeletonCard from '@/components/others/skeletonCard'
@@ -12,10 +12,21 @@ import SectionHeader from '@/components/common/SectionHeader'
 import MissionDetailDialog from '@/components/missions/MissionDetailDialog'
 import MissionCreateEditView from '@/components/missions/MissionCreateEditView'
 import StarIcon from '@/components/icon/StarIcon'
+import CustomPagination from '@/components/common/ui/CustomPagination'
 
 function MissionTeacherComponent() {
-    const { data: missions, setData: setMissions, loading, fetchData } = useFetchData(getMissions)
+    const {
+        data: missions,
+        setData: setMissions,
+        loading,
+        page,
+        setPage,
+        totalPages,
+        fetchData,
+    } = useFetchPaginatedData(getMissions, 0, 4)
+
     const { search, setSearch, filtered: filteredMissions } = useSearchFilter(missions, 'title')
+
     const {
         editingId: editingMissionId,
         setEditingId: setEditingMissionId,
@@ -32,11 +43,7 @@ function MissionTeacherComponent() {
     const handleDeleteMission = async () => {
         try {
             await deleteMission(missionToDelete.id)
-            setMissions((prev) =>
-                prev.map((m) =>
-                    m.id === missionToDelete.id ? { ...m, active: false } : m
-                )
-            )
+            fetchData()
             setConfirmDeleteOpen(false)
             setMissionToDelete(null)
         } catch (error) {
@@ -79,27 +86,28 @@ function MissionTeacherComponent() {
                     />
                 }
                 list={
-                    <EntityList
-                        items={filteredMissions}
-                        renderItem={(mission, index) => (
-                            <EntityCardItem
-                                item={mission}
-                                index={index}
-                                icon={<StarIcon color="white" />}
-                                title={mission.title}
-                                chipLabel={mission.active ? 'Activa' : 'Inactiva'}
-                                chipColor={mission.active ? 'green' : 'gray'}
-                                onEdit={(id) => setEditingMissionId(id)}
-                                onView={(id) => {
-                                    setSelectedMissionId(id)
-                                }}
-                                onDelete={(mission) => {
-                                    setMissionToDelete(mission)
-                                    setConfirmDeleteOpen(true)
-                                }}
-                            />
-                        )}
-                    />
+                    <>
+                        <EntityList
+                            items={filteredMissions}
+                            renderItem={(mission, index) => (
+                                <EntityCardItem
+                                    item={mission}
+                                    index={index}
+                                    icon={<StarIcon color="white" />}
+                                    title={mission.title}
+                                    chipLabel={mission.active ? 'Activa' : 'Inactiva'}
+                                    chipColor={mission.active ? 'green' : 'gray'}
+                                    onEdit={(id) => setEditingMissionId(id)}
+                                    onView={(id) => setSelectedMissionId(id)}
+                                    onDelete={(mission) => {
+                                        setMissionToDelete(mission)
+                                        setConfirmDeleteOpen(true)
+                                    }}
+                                />
+                            )}
+                        />
+                        <CustomPagination totalPages={totalPages} page={page} setPage={setPage}></CustomPagination>
+                    </>
                 }
             />
 

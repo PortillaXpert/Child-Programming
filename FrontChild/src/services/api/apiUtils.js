@@ -5,6 +5,7 @@ export async function sendRequest(url, options = {}) {
         const response = await fetch(url, options)
         if (!response.ok) throw new Error('Error en la solicitud')
         const json = await response.json()
+        console.log('Respuesta de la API:', json.data)
         return json.data
     } catch (error) {
         console.error('Error en sendRequest:', error)

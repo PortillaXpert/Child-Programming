@@ -6,18 +6,20 @@ import chpp.plataform.teams_proyects.domain.model.Mission;
 import chpp.plataform.teams_proyects.domain.repository.IMissionRepository;
 import chpp.plataform.teams_proyects.domain.service.IMissionService;
 import chpp.plataform.teams_proyects.infrastructure.dto.MisionDTO;
+import chpp.plataform.teams_proyects.infrastructure.dto.common.PagedResponseDTO;
 import chpp.plataform.teams_proyects.infrastructure.exceptions.BusinessRuleException;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionMapper;
 import chpp.plataform.teams_proyects.shared.exceptions.ExceptionsUtils;
 import chpp.plataform.teams_proyects.shared.messages.MessagesUtils;
 import chpp.plataform.teams_proyects.shared.validation.ValidationUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,11 +43,6 @@ public class MissionServiceImp implements IMissionService {
     }
 
     @Override
-    public ResponseDto<List<MisionDTO>> getAllMissions() {
-        return buildMissionListResponseDto(missionRepository.findAll());
-    }
-
-    @Override
     public ResponseDto<MisionDTO> updateMission(Long id, MisionDTO missionDTO) {
         Mission existingMission = getMissionOrThrow(id);
         ValidationUtils.validateRequired(missionDTO, "mission");
@@ -61,6 +58,24 @@ public class MissionServiceImp implements IMissionService {
     }
 
     @Override
+    public ResponseDto<PagedResponseDTO<MisionDTO>> getAllMissions(int page, int size) {
+        Page<Mission> missionsPage = missionRepository.findAll(PageRequest.of(page, size));
+        return buildPagedResponseDto(missionsPage);
+    }
+
+    @Override
+    public ResponseDto<PagedResponseDTO<MisionDTO>> getActiveMissions(int page, int size) {
+        Page<Mission> missionsPage = missionRepository.findByActiveTrue(PageRequest.of(page, size));
+        return buildPagedResponseDto(missionsPage);
+    }
+
+    @Override
+    public ResponseDto<PagedResponseDTO<MisionDTO>> getInactiveMissions(int page, int size) {
+        Page<Mission> missionsPage = missionRepository.findByActiveFalse(PageRequest.of(page, size));
+        return buildPagedResponseDto(missionsPage);
+    }
+
+    @Override
     public ResponseDto<MisionDTO> getMissionById(Long id) {
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
@@ -70,34 +85,9 @@ public class MissionServiceImp implements IMissionService {
     }
 
     @Override
-    public ResponseDto<List<MisionDTO>> getActiveMissions() {
-        List<MisionDTO> missions = missionRepository.findByActiveTrue().stream()
-                .map(MissionMapper::toDTO)
-                .toList();
-        return new ResponseDto<>(
-                HttpStatus.OK.value(),
-                MessagesUtils.get(MessagesConstant.IM001),
-                missions
-        );
-    }
-
-    @Override
-    public ResponseDto<List<MisionDTO>> getInactiveMissions() {
-        List<MisionDTO> missions = missionRepository.findByActiveFalse().stream()
-                .map(MissionMapper::toDTO)
-                .toList();
-        return new ResponseDto<>(
-                HttpStatus.OK.value(),
-                MessagesUtils.get(MessagesConstant.IM001),
-                missions
-        );
-    }
-
-    @Override
     public ResponseDto<Void> activateMission(Long missionId) {
         getMissionOrThrow(missionId);
         boolean activated = missionRepository.activateMission(missionId);
-
         if (!activated) {
             throw new BusinessRuleException(
                     HttpStatus.CONFLICT.value(),
@@ -105,7 +95,6 @@ public class MissionServiceImp implements IMissionService {
                     MessagesUtils.get(MessagesConstant.EM011, "Mission", missionId)
             );
         }
-
         return new ResponseDto<>(
                 HttpStatus.NO_CONTENT.value(),
                 MessagesUtils.get(MessagesConstant.IM005, "activate"),
@@ -117,7 +106,6 @@ public class MissionServiceImp implements IMissionService {
     public ResponseDto<Void> deactivateMission(Long missionId) {
         getMissionOrThrow(missionId);
         boolean deactivated = missionRepository.deactivateMission(missionId);
-
         if (!deactivated) {
             throw new BusinessRuleException(
                     HttpStatus.CONFLICT.value(),
@@ -125,7 +113,6 @@ public class MissionServiceImp implements IMissionService {
                     MessagesUtils.get(MessagesConstant.EM011, "Mission", missionId)
             );
         }
-
         return new ResponseDto<>(
                 HttpStatus.NO_CONTENT.value(),
                 MessagesUtils.get(MessagesConstant.IM005, "desactivate"),
@@ -139,23 +126,24 @@ public class MissionServiceImp implements IMissionService {
                 .orElseThrow(() -> ExceptionsUtils.notFound(MessagesConstant.EM002, missionId));
     }
 
-    private ResponseDto<List<MisionDTO>> buildMissionListResponseDto(List<Mission> missions) {
-        if (missions == null || missions.isEmpty()) {
-            return new ResponseDto<>(
-                    HttpStatus.OK.value(),
-                    MessagesUtils.get(MessagesConstant.EM012),
-                    Collections.emptyList()
-            );
-        }
-
-        List<MisionDTO> missionDTOS = missions.stream()
+    private ResponseDto<PagedResponseDTO<MisionDTO>> buildPagedResponseDto(Page<Mission> page) {
+        List<MisionDTO> content = page.getContent()
+                .stream()
                 .map(MissionMapper::toDTO)
                 .toList();
+
+        PagedResponseDTO<MisionDTO> response = new PagedResponseDTO<>(
+                page.getNumber(),
+                page.getTotalPages(),
+                page.getTotalElements(),
+                content,
+                page.isLast()
+        );
 
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
                 MessagesUtils.get(MessagesConstant.IM001),
-                missionDTOS
+                response
         );
     }
 }

@@ -4,6 +4,7 @@ package chpp.plataform.teams_proyects.infrastructure.controller;
 import chpp.plataform.teams_proyects.domain.common.ResponseDto;
 import chpp.plataform.teams_proyects.domain.service.IMissionService;
 import chpp.plataform.teams_proyects.infrastructure.dto.MisionDTO;
+import chpp.plataform.teams_proyects.infrastructure.dto.common.PagedResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -42,10 +44,11 @@ public class MissionController {
 
     @GetMapping
     @Operation(summary = "Obtener todas las misiones")
-    @ApiResponse(responseCode = "200", description = "Lista de misiones")
-    public ResponseEntity<ResponseDto<List<MisionDTO>>> getAllMissions() {
-        ResponseDto<List<MisionDTO>> response = missionService.getAllMissions();
-        return ResponseEntity.ok(response);
+    @ApiResponse(responseCode = "200", description = "Paginas de misiones")
+    public ResponseEntity<ResponseDto<PagedResponseDTO<MisionDTO>>> getAllMissions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(missionService.getAllMissions(page, size));
     }
 
     @GetMapping("/{id}")
@@ -68,18 +71,20 @@ public class MissionController {
 
     @GetMapping("/active")
     @Operation(summary = "Obtener misiones activas")
-    @ApiResponse(responseCode = "200", description = "Lista de misiones activas")
-    public ResponseEntity<ResponseDto<List<MisionDTO>>> getActiveMissions() {
-        ResponseDto<List<MisionDTO>> response = missionService.getActiveMissions();
-        return ResponseEntity.ok(response);
+    @ApiResponse(responseCode = "200", description = "Pagina de misiones activas")
+    public ResponseEntity<ResponseDto<PagedResponseDTO<MisionDTO>>> getActiveMissions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(missionService.getActiveMissions(page, size));
     }
 
     @GetMapping("/inactive")
     @Operation(summary = "Obtener misiones inactivas")
-    @ApiResponse(responseCode = "200", description = "Lista de misiones inactivas")
-    public ResponseEntity<ResponseDto<List<MisionDTO>>> getInactiveMissions() {
-        ResponseDto<List<MisionDTO>> response = missionService.getInactiveMissions();
-        return ResponseEntity.ok(response);
+    @ApiResponse(responseCode = "200", description = "Pagina de misiones inactivas")
+    public ResponseEntity<ResponseDto<PagedResponseDTO<MisionDTO>>> getInactiveMissions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(missionService.getInactiveMissions(page, size));
     }
 
     @PatchMapping("/{id}/activate")

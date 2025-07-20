@@ -14,10 +14,15 @@ import StarIcon from '@/components/icon/StarIcon';
 import { statusOptions, statusLabels } from '@/utils/const';
 import { useState } from 'react';
 import { useAssignmentForm } from '@/hooks/formHooks/useAssignmentForm';
+import CustomPagination from '@/components/common/ui/CustomPagination';
 
 function AssignmentCreateEditView({ assignmentId, onBack }) {
     const {
         missions,
+        missionsLoading,
+        missionPage,
+        setMissionPage,
+        totalMissionPages,
         teams,
         selectedMissionId,
         selectedTeams,
@@ -31,6 +36,7 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
         handleToggleTeam,
         handleSave,
     } = useAssignmentForm(assignmentId);
+
 
     const [teamDialogOpen, setTeamDialogOpen] = useState(false);
     const [teamDialogId, setTeamDialogId] = useState(null);
@@ -49,7 +55,8 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
 
     return (
         <>
-            <Card sx={{ width: '50vw', height: '70vh', overflowY: 'auto' }}>
+            <Card sx={{ width: '50vw', height: '70vh', overflowY: 'auto' ,scrollbarColor: '#1976D2 white',
+                scrollbarWidth: 'thin',}}>
                 <FormHeader
                     title={assignmentId ? 'Editar Asignación' : 'Asignar Misión a Equipos'}
                     onBack={onBack}
@@ -75,7 +82,7 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                     </Box>
                                     <Box sx={{ width: '8%' }} display="flex" justifyContent="flex-end">
                                         <TooltipIconButton
-                                            title={isSelected ? 'Quitar misión' : 'Agregar misión'}
+                                            title={isSelected ? 'Quitar misión' : 'Seleccionar misión'}
                                             icon={isSelected ? <RemoveCircleIcon /> : <AddCircleIcon />}
                                             onClick={() =>
                                                 isSelected ? handleMissionSelect('') : handleMissionSelect(mission.id)
@@ -86,6 +93,11 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                 </Box>
                             );
                         })}
+                        <CustomPagination
+                        totalPages={totalMissionPages}
+                        page={missionPage}
+                        setPage={setMissionPage}
+                        />
                     </Stack>
 
                     <Typography fontWeight={600} mt={3} mb={1}>Selecciona equipos</Typography>
@@ -108,7 +120,7 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                     </Box>
                                     <Box sx={{ width: '8%' }} display="flex" justifyContent="flex-end">
                                         <TooltipIconButton
-                                            title={isSelected ? 'Quitar equipo' : 'Agregar equipo'}
+                                            title={isSelected ? 'Quitar equipo' : 'Seleccionar equipo'}
                                             icon={isSelected ? <RemoveCircleIcon /> : <AddCircleIcon />}
                                             onClick={() => handleToggleTeam(team.id)}
                                             disabled={!!assignmentId}

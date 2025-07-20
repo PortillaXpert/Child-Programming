@@ -6,13 +6,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface JpaMissionRepository extends JpaRepository<MissionEntity, Long> {
 
-    List<MissionEntity> findByActiveTrue();
-
-    List<MissionEntity> findByActiveFalse();
+    Page<MissionEntity> findByActiveTrue(Pageable pageable);
+    Page<MissionEntity> findByActiveFalse(Pageable pageable);
 
     @Modifying
     @Query("UPDATE MissionEntity m SET m.active = :active WHERE m.id = :id")

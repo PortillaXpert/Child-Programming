@@ -8,13 +8,14 @@ import chpp.plataform.teams_proyects.infrastructure.mappers.AttachmentEntityMapp
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaMissionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -39,27 +40,18 @@ public class MissionRepositoryImp implements IMissionRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Mission> findAll() {
-        return jpaMissionRepository.findAll().stream()
-                .map(MissionEntityMapper::toDomain)
-                .collect(Collectors.toList());
+    public Page<Mission> findAll(Pageable pageable) {
+        return jpaMissionRepository.findAll(pageable).map(MissionEntityMapper::toDomain);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Mission> findByActiveTrue() {
-        return jpaMissionRepository.findByActiveTrue().stream()
-                .map(MissionEntityMapper::toDomain)
-                .collect(Collectors.toList());
+    public Page<Mission> findByActiveTrue(Pageable pageable) {
+        return jpaMissionRepository.findByActiveTrue(pageable).map(MissionEntityMapper::toDomain);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Mission> findByActiveFalse() {
-        return jpaMissionRepository.findByActiveFalse().stream()
-                .map(MissionEntityMapper::toDomain)
-                .collect(Collectors.toList());
+    public Page<Mission> findByActiveFalse(Pageable pageable) {
+        return jpaMissionRepository.findByActiveFalse(pageable).map(MissionEntityMapper::toDomain);
     }
 
     @Override
