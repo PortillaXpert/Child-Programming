@@ -8,17 +8,17 @@ import chpp.plataform.teams_proyects.domain.model.TaskComplete;
 import chpp.plataform.teams_proyects.domain.repository.IMTAssigmentRepository;
 import chpp.plataform.teams_proyects.domain.service.IMTAssigmentService;
 import chpp.plataform.teams_proyects.infrastructure.dto.MissionTeamAssignedDTO;
-import chpp.plataform.teams_proyects.infrastructure.exceptions.BusinessRuleException;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionTAMapper;
-import chpp.plataform.teams_proyects.infrastructure.messages.MessageLoader;
+import chpp.plataform.teams_proyects.shared.exceptions.ExceptionsUtils;
+import chpp.plataform.teams_proyects.shared.messages.MessagesUtils;
+import chpp.plataform.teams_proyects.shared.validation.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -32,125 +32,84 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
         validateAssignmentDTO(dto);
 
         MissionTeamAssigment assignment = MissionTAMapper.toDomain(dto);
+        ResponseDto<MissionTeamAssignedDTO> conflict = getAssignsByTeam(dto.getTeamId());
 
-        ResponseDto<MissionTeamAssignedDTO> BAD_REQUEST = getAssignsByTeam(dto.getTeamId());
-        if (BAD_REQUEST != null) return BAD_REQUEST;
+        if (conflict != null) return conflict;
 
         if (assignment.getTasksCompleted() != null) {
             assignment.getTasksCompleted().forEach(task -> task.setAssignment(assignment));
         }
 
         MissionTeamAssigment createdAssignment = assignmentRepository.create(assignment);
-        MissionTeamAssignedDTO createdDto = MissionTAMapper.toDTO(createdAssignment);
-
         return new ResponseDto<>(
                 HttpStatus.CREATED.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM002),
-                createdDto
+                MessagesUtils.get(MessagesConstant.IM002),
+                MissionTAMapper.toDTO(createdAssignment)
         );
-    }
-
-    private ResponseDto<MissionTeamAssignedDTO> getAssignsByTeam(Long teamId) {
-        List<MissionTeamAssigment> existingAssignments =
-                assignmentRepository.getByTeamId(teamId);
-
-        boolean hasActiveAssignment = existingAssignments.stream()
-                .anyMatch(a -> a.getStatus() != AssignmentStatus.COMPLETED &&
-                        a.getStatus() != AssignmentStatus.REVIEWED);
-
-        if (hasActiveAssignment) {
-            return new ResponseDto<>(
-                    HttpStatus.BAD_REQUEST.value(),
-                    "Mission Team Assignment already in progress",
-                    null
-            );
-        }
-        return null;
     }
 
     @Override
     public ResponseDto<List<MissionTeamAssignedDTO>> getAllMissionTeamAssigned() {
-        List<MissionTeamAssigment> assignments = assignmentRepository.getAllMissionTeamAssigned();
-        return getListResponseDto(assignments);
+        return getListResponseDto(assignmentRepository.getAllMissionTeamAssigned());
     }
 
     @Override
     public ResponseDto<List<MissionTeamAssignedDTO>> findInProgressByTeamId(Long teamId) {
-        if (teamId == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM006,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, "teamId")
-            );
-        }
+        ValidationUtils.validateRequired(teamId, "teamId");
         List<MissionTeamAssigment> assignments = assignmentRepository.findInProgressByTeamId(teamId);
         return getListResponseDto(assignments);
     }
 
     @Override
     public ResponseDto<MissionTeamAssignedDTO> updateTasks(Long assignmentId, List<TaskComplete> tasks) {
-        if (tasks == null || tasks.isEmpty()) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM004,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM004, "tasks")
-            );
-        }
+        ValidationUtils.validateRequired(tasks, "tasks");
+
         MissionTeamAssigment updatedAssignment = assignmentRepository.updateTasks(
                 validateAndGetAssignmentId(assignmentId), tasks);
-        MissionTeamAssignedDTO updatedDto = MissionTAMapper.toDTO(updatedAssignment);
 
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM003),
-                updatedDto
+                MessagesUtils.get(MessagesConstant.IM003),
+                MissionTAMapper.toDTO(updatedAssignment)
         );
     }
 
     @Override
     public ResponseDto<MissionTeamAssignedDTO> updateStatus(Long assignmentId, AssignmentStatus status) {
-        if (status == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM004,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM004, "status")
-            );
-        }
+        ValidationUtils.validateRequired(status, "status");
+
         MissionTeamAssigment updatedAssignment = assignmentRepository.updateStatus(
                 validateAndGetAssignmentId(assignmentId), status);
-        MissionTeamAssignedDTO updatedDto = MissionTAMapper.toDTO(updatedAssignment);
 
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM003),
-                updatedDto
+                MessagesUtils.get(MessagesConstant.IM003),
+                MissionTAMapper.toDTO(updatedAssignment)
         );
     }
 
     @Override
     public ResponseDto<MissionTeamAssignedDTO> getAssignmentById(Long assignmentId) {
-        MissionTeamAssigment assignment = getAssignmentOrThrow(assignmentId);
-        MissionTeamAssignedDTO assignmentDto = MissionTAMapper.toDTO(assignment);
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM003),
-                assignmentDto
+                MessagesUtils.get(MessagesConstant.IM003),
+                MissionTAMapper.toDTO(getAssignmentOrThrow(assignmentId))
         );
     }
 
     @Override
-    public ResponseDto<MissionTeamAssignedDTO> update(Long id, MissionTeamAssignedDTO missionTeamAssignedDTO) {
-        MissionTeamAssigment assignment = getAssignmentOrThrow(id);
-        validateAssignmentDTO(missionTeamAssignedDTO);
-        ResponseDto<MissionTeamAssignedDTO> BAD_REQUEST = getAssignsByTeam(missionTeamAssignedDTO.getTeamId());
-        if (BAD_REQUEST != null) return BAD_REQUEST;
-        MissionTeamAssigment updatedAssignment =
-                assignmentRepository.update(id, MissionTAMapper.toDomain(missionTeamAssignedDTO));
-        MissionTeamAssignedDTO updatedDto = MissionTAMapper.toDTO(updatedAssignment);
+    public ResponseDto<MissionTeamAssignedDTO> update(Long id, MissionTeamAssignedDTO dto) {
+        getAssignmentOrThrow(id);
+        validateAssignmentDTO(dto);
+
+        ResponseDto<MissionTeamAssignedDTO> conflict = getAssignsByTeam(dto.getTeamId());
+        if (conflict != null) return conflict;
+
+        MissionTeamAssigment updated = assignmentRepository.update(id, MissionTAMapper.toDomain(dto));
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM003),
-                updatedDto
+                MessagesUtils.get(MessagesConstant.IM003),
+                MissionTAMapper.toDTO(updated)
         );
     }
 
@@ -162,49 +121,19 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
 
     @Override
     public ResponseDto<List<MissionTeamAssignedDTO>> getByTeamId(Long teamId) {
-        if (teamId == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM006,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, "teamId")
-            );
-        }
+        ValidationUtils.validateRequired(teamId, "teamId");
         List<MissionTeamAssigment> assignments = assignmentRepository.getByTeamId(teamId);
         return getListResponseDto(assignments);
     }
 
     private void validateAssignmentDTO(MissionTeamAssignedDTO dto) {
-        if (dto == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM004,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM004, "assignment")
-            );
-        }
-        if (dto.getTeamId() == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM006,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, "teamId")
-            );
-        }
-        if (dto.getMissionId() == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM006,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, "missionId")
-            );
-        }
+        ValidationUtils.validateRequired(dto, "assignment");
+        ValidationUtils.validateRequired(dto.getTeamId(), "teamId");
+        ValidationUtils.validateRequired(dto.getMissionId(), "missionId");
     }
 
     private Long validateAndGetAssignmentId(Long assignmentId) {
-        if (assignmentId == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    MessagesConstant.EM006,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM006, "assignmentId")
-            );
-        }
+        ValidationUtils.validateRequired(assignmentId, "assignmentId");
         return assignmentId;
     }
 
@@ -212,29 +141,43 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
         validateAndGetAssignmentId(assignmentId);
         MissionTeamAssigment assignment = assignmentRepository.getById(assignmentId);
         if (assignment == null) {
-            throw new BusinessRuleException(
-                    HttpStatus.NOT_FOUND.value(),
-                    MessagesConstant.EM007,
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM007, "Assignment", assignmentId)
-            );
+            throw ExceptionsUtils.notFound(MessagesConstant.EM007, "Assignment", assignmentId);
         }
         return assignment;
+    }
+
+    private ResponseDto<MissionTeamAssignedDTO> getAssignsByTeam(Long teamId) {
+        List<MissionTeamAssigment> existingAssignments = assignmentRepository.getByTeamId(teamId);
+        boolean hasActive = existingAssignments.stream()
+                .anyMatch(a -> a.getStatus() != AssignmentStatus.COMPLETED &&
+                        a.getStatus() != AssignmentStatus.REVIEWED);
+
+        if (hasActive) {
+            return new ResponseDto<>(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Mission Team Assignment already in progress",
+                    null
+            );
+        }
+        return null;
     }
 
     private ResponseDto<List<MissionTeamAssignedDTO>> getListResponseDto(List<MissionTeamAssigment> assignments) {
         if (assignments.isEmpty()) {
             return new ResponseDto<>(
                     HttpStatus.OK.value(),
-                    MessageLoader.getInstance().getMessage(MessagesConstant.EM012),
+                    MessagesUtils.get(MessagesConstant.EM012),
                     Collections.emptyList()
             );
         }
+
         List<MissionTeamAssignedDTO> dtos = assignments.stream()
                 .map(MissionTAMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
+
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
-                MessageLoader.getInstance().getMessage(MessagesConstant.IM001),
+                MessagesUtils.get(MessagesConstant.IM001),
                 dtos
         );
     }
