@@ -1,65 +1,51 @@
-const API_URL = 'http://localhost:8085/chpp_teams_proyects/api/v1'
+import { sendRequest, API_BASE } from './apiUtils'
+
+const API_ASSIGNMENT = `${API_BASE}/mission-assignments`
 
 export async function getAllAssignments() {
-    const res = await fetch(`${API_URL}/mission-assignments`)
-    if (!res.ok) {
-        throw new Error(`Error fetching assignments: ${res.statusText}`)
-    }
-    const json = await res.json()
-    return json.data
+    return sendRequest(API_ASSIGNMENT)
 }
 
 export async function getAssignmentsByTeam(teamId) {
-    const res = await fetch(`${API_URL}/mission-assignments/team/${teamId}`)
-    const json = await res.json()
-    return json.data
+    return sendRequest(`${API_ASSIGNMENT}/team/${teamId}`)
 }
 
-
 export async function getAssignmentById(assignmentId) {
-    const res = await fetch(`${API_URL}/mission-assignments/${assignmentId}`)
-    if (!res.ok) {
-        throw new Error(`Error fetching assignment: ${res.statusText}`)
-    }
-    const json = await res.json()
-    return json.data
+    return sendRequest(`${API_ASSIGNMENT}/${assignmentId}`)
 }
 
 export async function deleteAssignment(assignmentId) {
-    const res = await fetch(`${API_URL}/mission-assignments/${assignmentId}`, {
-        method: 'DELETE'
+    return sendRequest(`${API_ASSIGNMENT}/${assignmentId}`, {
+        method: 'DELETE',
     })
-    if (!res.ok) {
-        throw new Error(`Error deleting assignment: ${res.statusText}`)
-    }
 }
 
 export async function createAssignment(assignmentData) {
-    const res = await fetch(`${API_URL}/mission-assignments`, {
+    return sendRequest(API_ASSIGNMENT, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify(assignmentData)
+        body: JSON.stringify(assignmentData),
     })
-    if (!res.ok) {
-        throw new Error(`Error creating assignment: ${res.statusText}`)
-    }
-    const json = await res.json()
-    console.log(json)
-    return json.data.status
 }
 
 export async function updateAssignment(assignmentId, status) {
-    const res = await fetch(`${API_URL}/mission-assignments/${assignmentId}/status?status=${status}`, {
+    return sendRequest(`${API_ASSIGNMENT}/${assignmentId}/status?status=${status}`, {
         method: 'PATCH',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
     })
-    if (!res.ok) {
-        throw new Error(`Error updating assignment: ${res.statusText}`)
-    }
-    const json = await res.json()
-    return json.data
+}
+
+
+export async function updateAssignmentTasks(assignmentId, tasks) {
+    return sendRequest(`${API_URL}/mission-assignments/${assignmentId}/tasks`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tasks),
+    })
 }
