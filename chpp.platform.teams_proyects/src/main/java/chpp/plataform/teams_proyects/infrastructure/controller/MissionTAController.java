@@ -6,6 +6,7 @@ import chpp.plataform.teams_proyects.domain.model.AssignmentStatus;
 import chpp.plataform.teams_proyects.domain.model.TaskComplete;
 import chpp.plataform.teams_proyects.domain.service.IMTAssigmentService;
 import chpp.plataform.teams_proyects.infrastructure.dto.MissionTeamAssignedDTO;
+import chpp.plataform.teams_proyects.infrastructure.dto.common.PagedResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,8 +40,11 @@ public class MissionTAController {
     @GetMapping
     @Operation(summary = "Obtener todas las asignaciones de misiones")
     @ApiResponse(responseCode = "200", description = "Lista de asignaciones")
-    public ResponseEntity<ResponseDto<List<MissionTeamAssignedDTO>>> getAllAssignments() {
-        ResponseDto<List<MissionTeamAssignedDTO>> response = assignmentService.getAllMissionTeamAssigned();
+    public ResponseEntity<ResponseDto<PagedResponseDTO<MissionTeamAssignedDTO>>> getAllAssignments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        ResponseDto<PagedResponseDTO<MissionTeamAssignedDTO>>
+                response = assignmentService.getAllMissionTeamAssigned(page, size);
         return ResponseEntity.ok(response);
     }
 

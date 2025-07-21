@@ -14,7 +14,8 @@ import AssignmentCreateEditView from '@/components/assignment/AssignmentCreateEd
 import { getStatusColor, getStatusLabel } from "@/utils/const"
 import { useCrudStates } from "@/hooks/dataHooks/useCrudStates"
 import { useDeleteHandler } from "@/hooks/dataHooks/useDeleteHandler"
-import { useFetchData } from "@/hooks/dataHooks/useFetchData"
+import { useFetchPaginatedData } from "@/hooks/dataHooks/useFecthPaginatedData"
+import CustomPagination from "@/components/common/ui/CustomPagination"
 import { useSearchFilter } from "@/hooks/dataHooks/useSearchFilter"
 
 function AssignmentTeacherComponent() {
@@ -35,8 +36,11 @@ function AssignmentTeacherComponent() {
         data: assignments,
         setData: setAssignments,
         loading,
-        fetchData
-    } = useFetchData(getAllAssignments)
+        page,
+        setPage,
+        totalPages,
+        fetchData,
+    } = useFetchPaginatedData(getAllAssignments, 0, 4)
 
     const {
         search,
@@ -98,26 +102,29 @@ function AssignmentTeacherComponent() {
                     />
                 }
                 list={
-                    <EntityList
-                        items={filteredAssignments}
-                        renderItem={(assignment, index) => (
-                            <EntityCardItem
-                                item={assignment}
-                                index={index}
-                                icon={<AssignmentIcon />}
-                                title={assignment.titleMission}
-                                subtitle={`Equipo: ${assignment.teamName} • Curso: ${assignment.teamCourse}`}
-                                chipLabel={getStatusLabel(assignment.status)}
-                                chipColor={getStatusColor(assignment.status)}
-                                onView={(id) => setSelectedId(id)}
-                                onDelete={(assignment) => {
-                                    setItemToDelete(assignment)
-                                    setConfirmDeleteOpen(true)
-                                }}
-                                onEdit={(id) => setEditingId(id)}
-                            />
-                        )}
-                    />
+                    <>
+                        <EntityList
+                            items={filteredAssignments}
+                            renderItem={(assignment, index) => (
+                                <EntityCardItem
+                                    item={assignment}
+                                    index={index}
+                                    icon={<AssignmentIcon />}
+                                    title={assignment.titleMission}
+                                    subtitle={`Equipo: ${assignment.teamName} • Curso: ${assignment.teamCourse}`}
+                                    chipLabel={getStatusLabel(assignment.status)}
+                                    chipColor={getStatusColor(assignment.status)}
+                                    onView={(id) => setSelectedId(id)}
+                                    onDelete={(assignment) => {
+                                        setItemToDelete(assignment)
+                                        setConfirmDeleteOpen(true)
+                                    }}
+                                    onEdit={(id) => setEditingId(id)}
+                                />
+                            )}
+                        />
+                    <CustomPagination totalPages={totalPages} page={page} setPage={setPage}></CustomPagination>
+                    </>
                 }
             />
 

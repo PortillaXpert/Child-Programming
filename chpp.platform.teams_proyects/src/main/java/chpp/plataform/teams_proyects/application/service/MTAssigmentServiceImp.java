@@ -8,12 +8,17 @@ import chpp.plataform.teams_proyects.domain.model.TaskComplete;
 import chpp.plataform.teams_proyects.domain.repository.IMTAssigmentRepository;
 import chpp.plataform.teams_proyects.domain.service.IMTAssigmentService;
 import chpp.plataform.teams_proyects.infrastructure.dto.MissionTeamAssignedDTO;
+import chpp.plataform.teams_proyects.infrastructure.dto.TeamDTO;
+import chpp.plataform.teams_proyects.infrastructure.dto.common.PagedResponseDTO;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionTAMapper;
 import chpp.plataform.teams_proyects.shared.exceptions.ExceptionsUtils;
 import chpp.plataform.teams_proyects.shared.messages.MessagesUtils;
 import chpp.plataform.teams_proyects.shared.validation.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
@@ -49,8 +54,36 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
     }
 
     @Override
-    public ResponseDto<List<MissionTeamAssignedDTO>> getAllMissionTeamAssigned() {
-        return getListResponseDto(assignmentRepository.getAllMissionTeamAssigned());
+    public ResponseDto<PagedResponseDTO<MissionTeamAssignedDTO>> getAllMissionTeamAssigned(int page, int size) {
+        Page<MissionTeamAssigment> pagedResponse = assignmentRepository.getAllMissionTeamAssigned(
+                PageRequest.of(page, size)
+        );
+
+        List<MissionTeamAssignedDTO> content = pagedResponse.getContent().stream()
+                .map(MissionTAMapper::toDTO)
+                .toList();
+
+        PagedResponseDTO<MissionTeamAssignedDTO> response = new PagedResponseDTO<>(
+                pagedResponse.getNumber(),
+                pagedResponse.getTotalPages(),
+                pagedResponse.getTotalElements(),
+                content,
+                pagedResponse.isLast()
+        );
+
+        if (response.getData().isEmpty()) {
+            return new ResponseDto<>(
+                    HttpStatus.OK.value(),
+                    MessagesUtils.get(MessagesConstant.EM012),
+                    null
+            );
+        }
+
+        return new ResponseDto<>(
+                HttpStatus.OK.value(),
+                MessagesUtils.get(MessagesConstant.IM001),
+                response
+        );
     }
 
     @Override

@@ -3,9 +3,7 @@ import { sendRequest, API_BASE } from './apiUtils'
 const TEAM_API = `${API_BASE}/teams`
 
 export async function getAllTeams(page = 0, size = 4) {
-    const response = sendRequest(`${TEAM_API}?page=${page}&size=${size}`)
-    console.log('Response from getAllTeams:', response)
-    return response
+    return sendRequest(`${TEAM_API}?page=${page}&size=${size}`)
 }
 
 export async function getActiveTeams(page = 0, size = 4) {

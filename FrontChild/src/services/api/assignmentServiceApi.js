@@ -2,8 +2,8 @@ import { sendRequest, API_BASE } from './apiUtils'
 
 const API_ASSIGNMENT = `${API_BASE}/mission-assignments`
 
-export async function getAllAssignments() {
-    return sendRequest(API_ASSIGNMENT)
+export async function getAllAssignments(page = 0, size = 4) {
+    return sendRequest(`${API_ASSIGNMENT}?page=${page}&size=${size}`)
 }
 
 export async function getAssignmentsByTeam(teamId) {

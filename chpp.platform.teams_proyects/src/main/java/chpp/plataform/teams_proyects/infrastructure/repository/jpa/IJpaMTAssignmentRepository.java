@@ -1,6 +1,9 @@
 package chpp.plataform.teams_proyects.infrastructure.repository.jpa;
 
 import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.MissionTeamAssignedEntity;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +17,5 @@ public interface IJpaMTAssignmentRepository extends JpaRepository<MissionTeamAss
 
     @Query("SELECT a FROM MissionTeamAssignedEntity a WHERE a.team.id = :teamId")
     List<MissionTeamAssignedEntity> findByTeamId(Long teamId);
+
 }

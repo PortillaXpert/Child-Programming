@@ -10,6 +10,8 @@ import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.IJpaMTAssignmentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.MissionTeamAssignedEntity;
@@ -32,11 +34,8 @@ public class MTAssignmentImp implements IMTAssigmentRepository {
     }
 
     @Override
-    public List<MissionTeamAssigment> getAllMissionTeamAssigned() {
-        return jpaRepository.findAll()
-                .stream()
-                .map(mapper::toDomain)
-                .collect(Collectors.toList());
+    public Page<MissionTeamAssigment> getAllMissionTeamAssigned(Pageable pageable) {
+        return jpaRepository.findAll(pageable).map(mapper::toDomain);
     }
 
     @Override
