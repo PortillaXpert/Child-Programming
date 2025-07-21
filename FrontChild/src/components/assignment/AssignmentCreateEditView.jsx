@@ -24,6 +24,10 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
         setMissionPage,
         totalMissionPages,
         teams,
+        teamsLoading,
+        teamPage,
+        setTeamPage,
+        totalTeamPages,
         selectedMissionId,
         selectedTeams,
         status,
@@ -129,6 +133,11 @@ function AssignmentCreateEditView({ assignmentId, onBack }) {
                                 </Box>
                             );
                         })}
+                        <CustomPagination
+                        totalPages={totalTeamPages}
+                        page={teamPage}
+                        setPage={setTeamPage}
+                        />
                     </Stack>
 
                     {assignmentId && (

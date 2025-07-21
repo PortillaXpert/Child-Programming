@@ -4,6 +4,7 @@ package chpp.plataform.teams_proyects.infrastructure.controller;
 import chpp.plataform.teams_proyects.domain.common.ResponseDto;
 import chpp.plataform.teams_proyects.domain.service.ITeamService;
 import chpp.plataform.teams_proyects.infrastructure.dto.TeamDTO;
+import chpp.plataform.teams_proyects.infrastructure.dto.common.PagedResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -43,17 +45,21 @@ public class TeamController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los equipos")
-    @ApiResponse(responseCode = "200", description = "Lista de Equipos")
-    public ResponseEntity<ResponseDto<List<TeamDTO>>>  getAllTeams() {
-        ResponseDto<List<TeamDTO>> response = teamService.getTeams();
+    @ApiResponse(responseCode = "200", description = "Pagina de Equipos")
+    public ResponseEntity<ResponseDto<PagedResponseDTO<TeamDTO>>> getAllTeams(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        ResponseDto<PagedResponseDTO<TeamDTO>> response = teamService.getTeams(page, size);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/active")
     @Operation(summary = "Obtener equipos activos")
-    @ApiResponse(responseCode = "200", description = "Lista de equipos activos")
-    public ResponseEntity<ResponseDto<List<TeamDTO>>> getActiveTeams() {
-        ResponseDto<List<TeamDTO>> response = teamService.getActiveTeams();
+    @ApiResponse(responseCode = "200", description = "Pagina de equipos activos")
+    public ResponseEntity<ResponseDto<PagedResponseDTO<TeamDTO>>> getActiveTeams(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        ResponseDto<PagedResponseDTO<TeamDTO>> response = teamService.getActiveTeams(page, size);
         return ResponseEntity.ok(response);
     }
 
@@ -78,9 +84,11 @@ public class TeamController {
     @GetMapping("/course/{courseId}")
     @Operation(summary = "Obtener equipos activos por curso")
     @ApiResponse(responseCode = "200", description = "Lista de equipos por curso")
-    public ResponseEntity<ResponseDto<List<TeamDTO>>> getTeamsByCourse(
+    public ResponseEntity<ResponseDto<PagedResponseDTO<TeamDTO>>> getTeamsByCourse(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             @PathVariable String courseId) {
-        ResponseDto<List<TeamDTO>> response = teamService.getTeamsByCourse(courseId);
+        ResponseDto<PagedResponseDTO<TeamDTO>> response = teamService.getTeamsByCourse(page, size, courseId);
         return ResponseEntity.ok(response);
     }
 

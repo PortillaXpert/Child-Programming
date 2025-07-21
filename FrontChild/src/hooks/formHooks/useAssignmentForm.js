@@ -4,7 +4,7 @@ import {
     createAssignment,
     updateAssignment
 } from '@/services/api/assignmentServiceApi';
-import { getAllTeams } from '@/services/api/teamServiceApi';
+import { getActiveTeams } from '@/services/api/teamServiceApi';
 import { getActiveMissions } from '@/services/api/missionServiceApi';
 import { useFetchPaginatedData } from '@/hooks/dataHooks/useFecthPaginatedData';
 
@@ -15,9 +15,16 @@ export function useAssignmentForm(assignmentId) {
         page: missionPage,
         setPage: setMissionPage,
         totalPages: totalMissionPages,
-    } = useFetchPaginatedData(getActiveMissions);
+    } = useFetchPaginatedData(getActiveMissions,0,4);
 
-    const [teams, setTeams] = useState([]);
+    const {
+        data: teams,
+        loading: teamsLoading,
+        page: teamPage,
+        setPage: setTeamPage,
+        totalPages: totalTeamPages,
+    } = useFetchPaginatedData(getActiveTeams, 0, 4);
+
     const [selectedMissionId, setSelectedMissionId] = useState('');
     const [selectedTeams, setSelectedTeams] = useState([]);
     const [status, setStatus] = useState('IN_PROGRESS');
@@ -26,8 +33,6 @@ export function useAssignmentForm(assignmentId) {
     const [severity, setSeverity] = useState('success');
 
     useEffect(() => {
-        getAllTeams().then(setTeams);
-
         if (assignmentId) {
             getAssignmentById(assignmentId).then(data => {
                 setSelectedMissionId(data.missionId);
@@ -96,6 +101,10 @@ export function useAssignmentForm(assignmentId) {
         setMissionPage,
         totalMissionPages,
         teams,
+        teamsLoading,
+        teamPage,
+        setTeamPage,
+        totalTeamPages,
         selectedMissionId,
         selectedTeams,
         status,

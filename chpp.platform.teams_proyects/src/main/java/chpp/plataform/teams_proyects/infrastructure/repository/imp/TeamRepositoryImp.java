@@ -7,13 +7,13 @@ import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.repository.jpa.JpaTeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -44,29 +44,22 @@ public class TeamRepositoryImp implements ITeamRepository {
     }
 
     @Override
-    public List<Team> findAll() {
-        return jpaTeamRepository.findAll()
-                .stream()
-                .map(TeamEntityMapper::toDomain)
-                .collect(Collectors.toList());
+    public Page<Team> findAll(Pageable pageable) {
+        return jpaTeamRepository.findAll(pageable).map(TeamEntityMapper::toDomain);
     }
 
     @Override
-    public List<Team> getTeamsActive() {
-        return jpaTeamRepository.findAllActiveTeams()
-                .stream()
-                .map(TeamEntityMapper::toDomain)
-                .collect(Collectors.toList());
+    public Page<Team> getTeamsActive(Pageable pageable) {
+        return jpaTeamRepository.findAllActiveTeams(pageable)
+                .map(TeamEntityMapper::toDomain);
     }
 
 
 
     @Override
-    public List<Team> findByCourseId(String courseId) {
-        return jpaTeamRepository.findActiveTeamsByCourse(courseId)
-                .stream()
-                .map(TeamEntityMapper::toDomain)
-                .collect(Collectors.toList());
+    public Page<Team> findByCourseId(Pageable pageable, String courseId) {
+        return jpaTeamRepository
+                .findActiveTeamsByCourse(pageable, courseId).map(TeamEntityMapper::toDomain);
     }
 
 

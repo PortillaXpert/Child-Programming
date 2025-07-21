@@ -1,5 +1,4 @@
 import { getAllTeams, deleteTeam } from '@/services/api/teamServiceApi';
-import { useFetchData } from '@/hooks/dataHooks/useFetchData';
 import { useSearchFilter } from '@/hooks/dataHooks/useSearchFilter';
 import { useCrudStates } from '@/hooks/dataHooks/useCrudStates';
 import SkeletonCard from '@/components/others/skeletonCard';
@@ -11,9 +10,20 @@ import SectionHeader from '@/components/common/SectionHeader';
 import SearchInput from '@/components/common/ui/SearchInput';
 import EntityList from '@/components/common/EntityList';
 import EntityCardItem from '@/components/common/ui/EntityCardItem';
+import CustomPagination from '@/components/common/ui/CustomPagination';
+import { useFetchPaginatedData } from '@/hooks/dataHooks/useFecthPaginatedData';
 
 function TeamTeacherComponent() {
-    const { data: teams, setData: setTeams, loading, fetchData } = useFetchData(getAllTeams);
+    const {
+        data: teams,
+        setData: setTeams,
+        loading,
+        page,
+        setPage,
+        totalPages,
+        fetchData,
+    } = useFetchPaginatedData(getAllTeams, 0, 4)
+    
     const { search, setSearch, filtered: filteredTeams } = useSearchFilter(teams, 'name');
     const {
         editingId: editingTeamId,
@@ -74,28 +84,31 @@ function TeamTeacherComponent() {
                     />
                 }
                 list={
-                    <EntityList
-                        items={filteredTeams}
-                        renderItem={(team, index) => (
-                            <EntityCardItem
-                                item={team}
-                                index={index}
-                                icon={<img src="/caticon.svg" alt="Ícono gato" style={{ width: 24 }} />}
-                                title={team.name}
-                                chipLabel={team.active ? 'Activo' : 'Inactivo'}
-                                chipColor={team.active ? 'green' : 'gray'}
-                                subtitle={`Curso: ${team.course} • ${team.students.length} estudiantes`}
-                                onEdit={(id) => setEditingTeamId(id)}
-                                onView={(id) => {
-                                    setSelectedTeamId(id);
-                                }}
-                                onDelete={(team) => {
-                                    setTeamToDelete(team);
-                                    setConfirmDeleteOpen(true);
-                                }}
-                            />
-                        )}
-                    />
+                    <>
+                        <EntityList
+                            items={filteredTeams}
+                            renderItem={(team, index) => (
+                                <EntityCardItem
+                                    item={team}
+                                    index={index}
+                                    icon={<img src="/caticon.svg" alt="Ícono gato" style={{ width: 24 }} />}
+                                    title={team.name}
+                                    chipLabel={team.active ? 'Activo' : 'Inactivo'}
+                                    chipColor={team.active ? 'green' : 'gray'}
+                                    subtitle={`Curso: ${team.course} • ${team.students.length} estudiantes`}
+                                    onEdit={(id) => setEditingTeamId(id)}
+                                    onView={(id) => {
+                                        setSelectedTeamId(id);
+                                    }}
+                                    onDelete={(team) => {
+                                        setTeamToDelete(team);
+                                        setConfirmDeleteOpen(true);
+                                    }}
+                                />
+                            )}
+                        />
+                        <CustomPagination totalPages={totalPages} page={page} setPage={setPage}></CustomPagination>
+                    </>
                 }
             />
 

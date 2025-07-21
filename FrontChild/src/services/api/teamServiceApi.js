@@ -2,25 +2,26 @@ import { sendRequest, API_BASE } from './apiUtils'
 
 const TEAM_API = `${API_BASE}/teams`
 
-export async function fetchData(url) {
-    return sendRequest(url)
+export async function getAllTeams(page = 0, size = 4) {
+    const response = sendRequest(`${TEAM_API}?page=${page}&size=${size}`)
+    console.log('Response from getAllTeams:', response)
+    return response
 }
 
-export async function getAllTeams() {
-    return fetchData(TEAM_API)
+export async function getActiveTeams(page = 0, size = 4) {
+    return sendRequest(`${TEAM_API}/active?page=${page}&size=${size}`)
 }
 
-export async function getActiveTeams() {
-    return fetchData(`${TEAM_API}/active`)
+export async function getTeamsByCourseId(courseId, page = 0, size = 4) {
+    return sendRequest(`${TEAM_API}/course/${courseId}?page=${page}&size=${size}`)
 }
-
 
 export async function getTeamById(teamId) {
-    return fetchData(`${TEAM_API}/${teamId}`)
+    return sendRequest(`${TEAM_API}/${teamId}`)
 }
 
 export async function getTeamByStudentCode(studentCode) {
-    return fetchData(`${TEAM_API}/student/${studentCode}`)
+    return sendRequest(`${TEAM_API}/student/${studentCode}`)
 }
 
 export async function createTeam(teamData) {

@@ -22,6 +22,6 @@ export const useFetchPaginatedData = (fetchFn, initialPage = 0, size = 4) => {
     useEffect(() => {
         fetchData()
     }, [page])
-    console.log('Datos actuales:', data, 'Página actual:', page, 'Total de páginas:', totalPages)
+    
     return { data, setData, loading, page, setPage, totalPages, fetchData }
 }

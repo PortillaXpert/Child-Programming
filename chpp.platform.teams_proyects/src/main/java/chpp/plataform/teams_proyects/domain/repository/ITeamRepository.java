@@ -1,6 +1,8 @@
 package chpp.plataform.teams_proyects.domain.repository;
 
 import chpp.plataform.teams_proyects.domain.model.Team;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,10 +12,10 @@ public interface ITeamRepository {
     Team update(Long id,Team team);
     Optional<Team> findById(Long id);
     boolean existsById(Long id);
-    List<Team> findAll();
-    List<Team> findByCourseId(String courseId);
+    Page<Team> findAll(Pageable pageable);
+    Page<Team> findByCourseId(Pageable pageable,String courseId);
     void dissolve(Long teamId);
     Team getTeamByStudentCode(String studentCode);
-    List<Team> getTeamsActive();
+    Page<Team> getTeamsActive(Pageable pageable);
     void activateTeam(Long teamId);
 }

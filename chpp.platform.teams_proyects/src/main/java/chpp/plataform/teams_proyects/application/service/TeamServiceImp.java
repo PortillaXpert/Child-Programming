@@ -2,12 +2,16 @@ package chpp.plataform.teams_proyects.application.service;
 
 import chpp.plataform.teams_proyects.domain.common.ResponseDto;
 import chpp.plataform.teams_proyects.domain.constant.MessagesConstant;
+import chpp.plataform.teams_proyects.domain.model.Mission;
 import chpp.plataform.teams_proyects.domain.model.Student;
 import chpp.plataform.teams_proyects.domain.model.Team;
 import chpp.plataform.teams_proyects.domain.repository.ITeamRepository;
 import chpp.plataform.teams_proyects.domain.service.ITeamService;
+import chpp.plataform.teams_proyects.infrastructure.dto.MisionDTO;
 import chpp.plataform.teams_proyects.infrastructure.dto.TeamDTO;
+import chpp.plataform.teams_proyects.infrastructure.dto.common.PagedResponseDTO;
 import chpp.plataform.teams_proyects.infrastructure.entity.teams_proyecs_entities.StudentEntity;
+import chpp.plataform.teams_proyects.infrastructure.mappers.MissionMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.StudentMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TeamMapper;
@@ -18,6 +22,8 @@ import chpp.plataform.teams_proyects.shared.validation.ValidationUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -159,15 +165,14 @@ public class TeamServiceImp implements ITeamService {
     }
 
     @Override
-    public ResponseDto<List<TeamDTO>> getTeamsByCourse(String courseId) {
+    public ResponseDto<PagedResponseDTO<TeamDTO>> getTeamsByCourse(int page, int size,String courseId) {
         ValidationUtils.validateRequired(courseId, "courseId");
-        List<Team> teams = teamRepository.findByCourseId(courseId);
-        return buildTeamListResponseDto(teams);
+        return buildPagedResponseDto(teamRepository.findByCourseId(PageRequest.of(page, size),courseId));
     }
 
     @Override
-    public ResponseDto<List<TeamDTO>> getTeams() {
-        return buildTeamListResponseDto(teamRepository.findAll());
+    public ResponseDto<PagedResponseDTO<TeamDTO>> getTeams(int page, int size) {
+        return buildPagedResponseDto(teamRepository.findAll(PageRequest.of(page, size)));
     }
 
     @Override
@@ -183,8 +188,8 @@ public class TeamServiceImp implements ITeamService {
     }
 
     @Override
-    public ResponseDto<List<TeamDTO>> getActiveTeams() {
-        return buildTeamListResponseDto(teamRepository.getTeamsActive());
+    public ResponseDto<PagedResponseDTO<TeamDTO>> getActiveTeams(int page, int size) {
+        return buildPagedResponseDto(teamRepository.getTeamsActive(PageRequest.of(page, size)));
     }
 
     @Override
@@ -197,6 +202,8 @@ public class TeamServiceImp implements ITeamService {
                 null
         );
     }
+
+
 
     @Override
     public ResponseDto<TeamDTO> getTeamByStudentCode(String studentCode) {
@@ -230,18 +237,24 @@ public class TeamServiceImp implements ITeamService {
                 .orElseThrow(() -> ExceptionsUtils.notFound(MessagesConstant.EM002, teamId));
     }
 
-    private ResponseDto<List<TeamDTO>> buildTeamListResponseDto(List<Team> teams) {
-        if (teams == null || teams.isEmpty()) {
-            return new ResponseDto<>(
-                    HttpStatus.OK.value(),
-                    MessagesUtils.get(MessagesConstant.EM012),
-                    Collections.emptyList()
-            );
-        }
+    private ResponseDto<PagedResponseDTO<TeamDTO>> buildPagedResponseDto(Page<Team> page) {
+        List<TeamDTO> content = page.getContent()
+                .stream()
+                .map(TeamMapper::toDTO)
+                .toList();
+
+        PagedResponseDTO<TeamDTO> response = new PagedResponseDTO<>(
+                page.getNumber(),
+                page.getTotalPages(),
+                page.getTotalElements(),
+                content,
+                page.isLast()
+        );
+
         return new ResponseDto<>(
                 HttpStatus.OK.value(),
                 MessagesUtils.get(MessagesConstant.IM001),
-                teams.stream().map(TeamMapper::toDTO).toList()
+                response
         );
     }
 }
