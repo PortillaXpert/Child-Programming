@@ -2,7 +2,7 @@ package chpp.plataform.teams_proyects.domain.repository;
 
 import chpp.plataform.teams_proyects.domain.model.AssignmentStatus;
 import chpp.plataform.teams_proyects.domain.model.MissionTeamAssigment;
-import chpp.plataform.teams_proyects.domain.model.TaskComplete;
+import chpp.plataform.teams_proyects.infrastructure.dto.TaskCompleteDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +13,7 @@ public interface IMTAssigmentRepository {
     MissionTeamAssigment create(MissionTeamAssigment missionTeamAssigment);
     Page<MissionTeamAssigment> getAllMissionTeamAssigned(Pageable pageable);
     List<MissionTeamAssigment> findInProgressByTeamId(Long teamId);
-    MissionTeamAssigment updateTasks(Long assignmentId, List<TaskComplete> tasks);
+    MissionTeamAssigment updateTasks(Long assignmentId, List<TaskCompleteDTO> tasks);
     MissionTeamAssigment updateStatus(Long assignmentId, AssignmentStatus status);
     MissionTeamAssigment update(Long id,MissionTeamAssigment missionTeamAssigment);
     MissionTeamAssigment getById(Long id);

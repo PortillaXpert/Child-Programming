@@ -29,7 +29,7 @@ const HomePage = () => {
     })
   }
 
-  const role = 'PROFESOR'
+  const role = 'ESTUDIANTE' // This should be dynamically set based on user role
 
   return (
     <>

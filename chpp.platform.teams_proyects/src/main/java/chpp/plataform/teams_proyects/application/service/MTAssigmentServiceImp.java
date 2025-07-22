@@ -8,6 +8,7 @@ import chpp.plataform.teams_proyects.domain.model.TaskComplete;
 import chpp.plataform.teams_proyects.domain.repository.IMTAssigmentRepository;
 import chpp.plataform.teams_proyects.domain.service.IMTAssigmentService;
 import chpp.plataform.teams_proyects.infrastructure.dto.MissionTeamAssignedDTO;
+import chpp.plataform.teams_proyects.infrastructure.dto.TaskCompleteDTO;
 import chpp.plataform.teams_proyects.infrastructure.dto.TeamDTO;
 import chpp.plataform.teams_proyects.infrastructure.dto.common.PagedResponseDTO;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionTAMapper;
@@ -94,7 +95,7 @@ public class MTAssigmentServiceImp implements IMTAssigmentService {
     }
 
     @Override
-    public ResponseDto<MissionTeamAssignedDTO> updateTasks(Long assignmentId, List<TaskComplete> tasks) {
+    public ResponseDto<MissionTeamAssignedDTO> updateTasks(Long assignmentId, List<TaskCompleteDTO> tasks) {
         ValidationUtils.validateRequired(tasks, "tasks");
 
         MissionTeamAssigment updatedAssignment = assignmentRepository.updateTasks(

@@ -6,6 +6,7 @@ import chpp.plataform.teams_proyects.domain.model.AssignmentStatus;
 import chpp.plataform.teams_proyects.domain.model.TaskComplete;
 import chpp.plataform.teams_proyects.domain.service.IMTAssigmentService;
 import chpp.plataform.teams_proyects.infrastructure.dto.MissionTeamAssignedDTO;
+import chpp.plataform.teams_proyects.infrastructure.dto.TaskCompleteDTO;
 import chpp.plataform.teams_proyects.infrastructure.dto.common.PagedResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -72,7 +73,7 @@ public class MissionTAController {
     @ApiResponse(responseCode = "200", description = "Tareas actualizadas exitosamente")
     public ResponseEntity<ResponseDto<MissionTeamAssignedDTO>> updateAssignmentTasks(
             @PathVariable Long assignmentId,
-            @RequestBody List<TaskComplete> tasks) {
+            @RequestBody List<TaskCompleteDTO> tasks) {
         ResponseDto<MissionTeamAssignedDTO> response = assignmentService.updateTasks(assignmentId, tasks);
         return ResponseEntity.ok(response);
     }

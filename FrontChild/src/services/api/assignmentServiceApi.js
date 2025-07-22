@@ -41,7 +41,7 @@ export async function updateAssignment(assignmentId, status) {
 
 
 export async function updateAssignmentTasks(assignmentId, tasks) {
-    return sendRequest(`${API_URL}/mission-assignments/${assignmentId}/tasks`, {
+    return sendRequest(`${API_ASSIGNMENT}/${assignmentId}/tasks`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

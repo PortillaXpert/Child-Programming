@@ -3,6 +3,7 @@ import chpp.plataform.teams_proyects.domain.model.AssignmentStatus;
 import chpp.plataform.teams_proyects.domain.model.MissionTeamAssigment;
 import chpp.plataform.teams_proyects.domain.model.TaskComplete;
 import chpp.plataform.teams_proyects.domain.repository.IMTAssigmentRepository;
+import chpp.plataform.teams_proyects.infrastructure.dto.TaskCompleteDTO;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.MissionTAEntityMapper;
 import chpp.plataform.teams_proyects.infrastructure.mappers.TaskEntityMapper;
@@ -47,9 +48,18 @@ public class MTAssignmentImp implements IMTAssigmentRepository {
     }
 
     @Override
-    public MissionTeamAssigment updateTasks(Long assignmentId, List<TaskComplete> tasks) {
+    public MissionTeamAssigment updateTasks(Long assignmentId, List<TaskCompleteDTO> tasks) {
         MissionTeamAssignedEntity entity = jpaRepository.findById(assignmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Assignment not found with id: " + assignmentId));
+        List<TaskComplete> completedTasks = tasks.stream()
+                .map(taskDTO -> {
+                    TaskComplete task = new TaskComplete();
+                    task.setId(taskDTO.getId());
+                    task.setTitle(taskDTO.getTitle());
+                    task.setAssignment(mapper.toDomain(entity));
+                    return task;
+                })
+                .toList();
         entity.setStatus(AssignmentStatus.COMPLETED);
         return mapper.toDomain(jpaRepository.save(entity));
     }
