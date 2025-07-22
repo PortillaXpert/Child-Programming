@@ -43,3 +43,9 @@ export async function deleteTeam(teamId) {
         method: 'DELETE',
     })
 }
+
+export async function activateTeam(teamId) {
+    return sendRequest(`${TEAM_API}/${teamId}/activate`, {
+        method: 'PATCH',
+    })
+}

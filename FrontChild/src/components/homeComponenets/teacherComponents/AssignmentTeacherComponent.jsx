@@ -83,6 +83,9 @@ function AssignmentTeacherComponent() {
         )
     }
 
+    const action = itemToDelete?.status != 'DESACTIVATE' ? 'Desactivar' : 'Activar';
+
+
     return (
         <>
             <CardContainer
@@ -132,8 +135,8 @@ function AssignmentTeacherComponent() {
                 open={confirmDeleteOpen}
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={confirmDelete}
-                title="¿Desactivar Asignación?"
-                content="¿Estás seguro de que deseas desactivar esta asignación?"
+                title={`¿${action} asignación?`}
+                content={`¿Estás seguro de que deseas ${action.toLowerCase()} esta asignación?`}
             />
         </>
     )

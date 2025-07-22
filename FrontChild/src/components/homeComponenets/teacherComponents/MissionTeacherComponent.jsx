@@ -1,4 +1,4 @@
-import { getMissions, deleteMission } from '@/services/api/missionServiceApi'
+import { getMissions, deleteMission, activateMission } from '@/services/api/missionServiceApi'
 import { useFetchPaginatedData } from '@/hooks/dataHooks/useFecthPaginatedData'
 import { useSearchFilter } from '@/hooks/dataHooks/useSearchFilter'
 import { useCrudStates } from '@/hooks/dataHooks/useCrudStates'
@@ -13,7 +13,6 @@ import MissionDetailDialog from '@/components/missions/MissionDetailDialog'
 import MissionCreateEditView from '@/components/missions/MissionCreateEditView'
 import StarIcon from '@/components/icon/StarIcon'
 import CustomPagination from '@/components/common/ui/CustomPagination'
-
 function MissionTeacherComponent() {
     const {
         data: missions,
@@ -42,7 +41,13 @@ function MissionTeacherComponent() {
 
     const handleDeleteMission = async () => {
         try {
-            await deleteMission(missionToDelete.id)
+            if (!missionToDelete) return
+
+            if (missionToDelete.active) {
+                await deleteMission(missionToDelete.id)
+            } else {
+                await activateMission(missionToDelete.id)
+            }
             fetchData()
             setConfirmDeleteOpen(false)
             setMissionToDelete(null)
@@ -66,6 +71,8 @@ function MissionTeacherComponent() {
             />
         )
     }
+
+    const action = missionToDelete?.active ? 'Desactivar' : 'Activar';
 
     return (
         <>
@@ -121,8 +128,8 @@ function MissionTeacherComponent() {
                 open={confirmDeleteOpen}
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={handleDeleteMission}
-                title="¿Desactivar misión?"
-                content="¿Estás seguro de que deseas desactivar esta misión?"
+                title={`¿${action} misión?`}
+                content={`¿Estás seguro de que deseas ${action.toLowerCase()} esta misión?`}
             />
         </>
     )

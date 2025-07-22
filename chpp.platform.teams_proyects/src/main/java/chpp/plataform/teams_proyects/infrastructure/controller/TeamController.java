@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -98,6 +99,14 @@ public class TeamController {
     @ApiResponse(responseCode = "204", description = "Equipo disuelto")
     public ResponseEntity<ResponseDto<Void>> dissolveTeam(@PathVariable Long teamId) {
         ResponseDto<Void> response = teamService.dissolveTeam(teamId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+    }
+
+    @PatchMapping("/{teamId}/activate")
+    @Operation(summary = "Activar equipo")
+    @ApiResponse(responseCode = "204", description = "Equipo activado")
+    public ResponseEntity<ResponseDto<Void>> activateTeam(@PathVariable Long teamId) {
+        ResponseDto<Void> response = teamService.activateTeam(teamId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
 

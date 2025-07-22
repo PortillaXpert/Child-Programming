@@ -1,4 +1,4 @@
-import { getAllTeams, deleteTeam } from '@/services/api/teamServiceApi';
+import { getAllTeams, deleteTeam, activateTeam } from '@/services/api/teamServiceApi';
 import { useSearchFilter } from '@/hooks/dataHooks/useSearchFilter';
 import { useCrudStates } from '@/hooks/dataHooks/useCrudStates';
 import SkeletonCard from '@/components/others/skeletonCard';
@@ -12,6 +12,7 @@ import EntityList from '@/components/common/EntityList';
 import EntityCardItem from '@/components/common/ui/EntityCardItem';
 import CustomPagination from '@/components/common/ui/CustomPagination';
 import { useFetchPaginatedData } from '@/hooks/dataHooks/useFecthPaginatedData';
+
 
 function TeamTeacherComponent() {
     const {
@@ -40,7 +41,14 @@ function TeamTeacherComponent() {
 
     const handleDeleteTeam = async () => {
         try {
-            await deleteTeam(teamToDelete.id);
+            
+            if (!teamToDelete) return
+
+            if (teamToDelete.active) {
+                await await deleteTeam(teamToDelete.id);
+            } else {
+                await activateTeam(teamToDelete.id)
+            }
             setTeams(await getAllTeams());
             setConfirmDeleteOpen(false);
             setTeamToDelete(null);
@@ -64,6 +72,8 @@ function TeamTeacherComponent() {
             />
         );
     }
+
+    const action = teamToDelete?.active ? 'Desactivar' : 'Activar';
 
     return (
         <>
@@ -122,8 +132,8 @@ function TeamTeacherComponent() {
                 open={confirmDeleteOpen}
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={handleDeleteTeam}
-                title="¿Desactivar equipo?"
-                content="¿Estás seguro de que deseas desactivar este equipo?"
+                title={`¿${action} equipo?`}
+                content={`¿Estás seguro de que deseas ${action.toLowerCase()} este equipo?`}
             />
         </>
     );
