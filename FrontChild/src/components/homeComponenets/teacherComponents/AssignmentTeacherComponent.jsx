@@ -46,7 +46,7 @@ function AssignmentTeacherComponent() {
         search,
         setSearch,
         filtered: filteredAssignments
-    } = useSearchFilter(assignments, "titleMission")
+    } = useSearchFilter(assignments, ["titleMission","status"])
 
     const { handleDelete } = useDeleteHandler(deleteAssignment, setAssignments)
 
@@ -102,6 +102,7 @@ function AssignmentTeacherComponent() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         label="Buscar asignación"
+                        placeholder="Título o estado de la asignación"
                     />
                 }
                 list={

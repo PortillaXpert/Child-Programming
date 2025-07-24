@@ -25,7 +25,7 @@ function TeamTeacherComponent() {
         fetchData,
     } = useFetchPaginatedData(getAllTeams, 0, 4)
     
-    const { search, setSearch, filtered: filteredTeams } = useSearchFilter(teams, 'name');
+    const { search, setSearch, filtered: filteredTeams } = useSearchFilter(teams, ['name','course']);
     const {
         editingId: editingTeamId,
         setEditingId: setEditingTeamId,
@@ -91,6 +91,7 @@ function TeamTeacherComponent() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         label="Buscar equipo"
+                        placeholder="Nombre del equipo o curso"
                     />
                 }
                 list={

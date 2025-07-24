@@ -24,7 +24,7 @@ function MissionTeacherComponent() {
         fetchData,
     } = useFetchPaginatedData(getMissions, 0, 4)
 
-    const { search, setSearch, filtered: filteredMissions } = useSearchFilter(missions, 'title')
+    const { search, setSearch, filtered: filteredMissions } = useSearchFilter(missions, ['title'])
 
     const {
         editingId: editingMissionId,
@@ -90,6 +90,7 @@ function MissionTeacherComponent() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         label="Buscar misión"
+                        placeholder="Título de la misión"
                     />
                 }
                 list={
