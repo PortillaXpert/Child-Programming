@@ -4,11 +4,13 @@ import {
     createAssignment,
     updateAssignment
 } from '@/services/api/assignmentServiceApi';
-import { getActiveTeams } from '@/services/api/teamServiceApi';
+import { getTeamsByCourseId } from '@/services/api/teamServiceApi';
 import { getActiveMissions } from '@/services/api/missionServiceApi';
 import { useFetchPaginatedData } from '@/hooks/dataHooks/useFecthPaginatedData';
 
 export function useAssignmentForm(assignmentId) {
+    const courses = ['MAT-101', 'FIS-201', 'QUI-102'];
+
     const {
         data: missions,
         loading: missionsLoading,
@@ -23,7 +25,7 @@ export function useAssignmentForm(assignmentId) {
         page: teamPage,
         setPage: setTeamPage,
         totalPages: totalTeamPages,
-    } = useFetchPaginatedData(getActiveTeams, 0, 4);
+    } = useFetchPaginatedData(getTeamsByCourseId, 0, 4, [courses]);
 
     const [selectedMissionId, setSelectedMissionId] = useState('');
     const [selectedTeams, setSelectedTeams] = useState([]);
