@@ -1,4 +1,4 @@
-import { getAllTeams, deleteTeam, activateTeam } from '@/services/api/teamServiceApi';
+import { getAllTeams, deleteTeam, activateTeam, getTeamsByCourseId } from '@/services/api/teamServiceApi';
 import { useSearchFilter } from '@/hooks/dataHooks/useSearchFilter';
 import { useCrudStates } from '@/hooks/dataHooks/useCrudStates';
 import SkeletonCard from '@/components/others/skeletonCard';
@@ -15,6 +15,8 @@ import { useFetchPaginatedData } from '@/hooks/dataHooks/useFecthPaginatedData';
 
 
 function TeamTeacherComponent() {
+    const courses = ['MAT-101', 'FIS-201', 'QUI-102'];
+
     const {
         data: teams,
         setData: setTeams,
@@ -23,7 +25,7 @@ function TeamTeacherComponent() {
         setPage,
         totalPages,
         fetchData,
-    } = useFetchPaginatedData(getAllTeams, 0, 4)
+    } = useFetchPaginatedData(getTeamsByCourseId, 0, 4, [courses]);
     
     const { search, setSearch, filtered: filteredTeams } = useSearchFilter(teams, ['name','course']);
     const {

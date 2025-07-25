@@ -82,16 +82,17 @@ public class TeamController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/course/{courseId}")
+    @PostMapping("/course")
     @Operation(summary = "Obtener equipos activos por curso")
     @ApiResponse(responseCode = "200", description = "Lista de equipos por curso")
     public ResponseEntity<ResponseDto<PagedResponseDTO<TeamDTO>>> getTeamsByCourse(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @PathVariable String courseId) {
-        ResponseDto<PagedResponseDTO<TeamDTO>> response = teamService.getTeamsByCourse(page, size, courseId);
+            @RequestBody List<String> courses) {
+        ResponseDto<PagedResponseDTO<TeamDTO>> response = teamService.getTeamsByCourse(page, size, courses);
         return ResponseEntity.ok(response);
     }
+
 
 
     @DeleteMapping("/{teamId}")

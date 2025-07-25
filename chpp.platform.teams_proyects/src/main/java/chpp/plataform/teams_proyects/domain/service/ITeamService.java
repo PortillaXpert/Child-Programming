@@ -13,7 +13,7 @@ public interface ITeamService {
 
     ResponseDto<TeamDTO> findTeamById(Long teamId);
 
-    ResponseDto<PagedResponseDTO<TeamDTO>> getTeamsByCourse(int page, int size,String courseId);
+    ResponseDto<PagedResponseDTO<TeamDTO>> getTeamsByCourse(int page, int size,List<String> courses);
     ResponseDto<PagedResponseDTO<TeamDTO>> getTeams(int page, int size);
 
     ResponseDto<PagedResponseDTO<TeamDTO>> getActiveTeams(int page, int size);

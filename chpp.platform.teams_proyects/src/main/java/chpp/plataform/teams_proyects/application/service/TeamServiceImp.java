@@ -165,9 +165,11 @@ public class TeamServiceImp implements ITeamService {
     }
 
     @Override
-    public ResponseDto<PagedResponseDTO<TeamDTO>> getTeamsByCourse(int page, int size,String courseId) {
-        ValidationUtils.validateRequired(courseId, "courseId");
-        return buildPagedResponseDto(teamRepository.findByCourseId(PageRequest.of(page, size),courseId));
+    public ResponseDto<PagedResponseDTO<TeamDTO>> getTeamsByCourse(int page, int size,List<String> courses) {
+        if( courses == null || courses.isEmpty()) {
+            return buildPagedResponseDto(teamRepository.findAll(PageRequest.of(page, size)));
+        }
+        return buildPagedResponseDto(teamRepository.findByCourseId(PageRequest.of(page, size),courses));
     }
 
     @Override

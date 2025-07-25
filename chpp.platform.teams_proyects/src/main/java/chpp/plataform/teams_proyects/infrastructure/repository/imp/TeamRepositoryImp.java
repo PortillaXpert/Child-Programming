@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -57,9 +58,9 @@ public class TeamRepositoryImp implements ITeamRepository {
 
 
     @Override
-    public Page<Team> findByCourseId(Pageable pageable, String courseId) {
+    public Page<Team> findByCourseId(Pageable pageable, List<String> courses) {
         return jpaTeamRepository
-                .findActiveTeamsByCourse(pageable, courseId).map(TeamEntityMapper::toDomain);
+                .findActiveTeamsByCourse(pageable, courses).map(TeamEntityMapper::toDomain);
     }
 
 

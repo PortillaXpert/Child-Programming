@@ -10,9 +10,14 @@ export async function getActiveTeams(page = 0, size = 4) {
     return sendRequest(`${TEAM_API}/active?page=${page}&size=${size}`)
 }
 
-export async function getTeamsByCourseId(courseId, page = 0, size = 4) {
-    return sendRequest(`${TEAM_API}/course/${courseId}?page=${page}&size=${size}`)
+export async function getTeamsByCourseId(page = 0, size = 4, courses = []) {
+    return sendRequest(`${TEAM_API}/course?page=${page}&size=${size}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(courses),
+    })
 }
+
 
 export async function getTeamById(teamId) {
     return sendRequest(`${TEAM_API}/${teamId}`)
